@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cogneLearn - Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="dashboard.html" class="navbar-brand">cogneLearn</a>
+            <ul class="navbar-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h1>Welcome, <span id="userName">User</span>!</h1>
+                <p>Track your learning progress and manage your playlists</p>
+            </div>
+            <button class="btn btn-primary" onclick="showAddPlaylistModal()">+ Add Playlist</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalFocusHours">0m</div>
+                <div class="stat-label">Total Focus Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalSessions">0</div>
+                <div class="stat-label">Sessions Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgAttention">0%</div>
+                <div class="stat-label">Average Attention</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="todayFocus">0m</div>
+                <div class="stat-label">Today's Focus</div>
+            </div>
+        </div>
+
+        <div class="recent-sessions">
+            <h2>Recent Sessions</h2>
+            <div class="sessions-table-wrap">
+                <table class="sessions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Focus</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentSessionsBody">
+                        <tr>
+                            <td colspan="4" class="sessions-empty">No sessions yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="playlists-section">
+            <h2>Your Playlists</h2>
+            <div class="playlist-list" id="playlistList">
+                <p style="color: var(--text-secondary); grid-column: 1/-1;">No playlists yet. Add one to get started!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Playlist Modal -->
+    <div id="playlistModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 1.5rem;">Add Videos to Playlist</h2>
+
+            <div class="form-group">
+                <label for="playlistName">Playlist Name</label>
+                <input type="text" id="playlistName" placeholder="e.g., Python Basics">
+            </div>
+
+            <div class="form-group">
+                <label for="videoIds">YouTube Links or IDs (one per line)</label>
+                <textarea id="videoIds"
+                    placeholder="https://youtu.be/jNQXAC9IVRw&#10;https://www.youtube.com/watch?v=dQw4w9WgXcQ&#10;https://www.youtube.com/playlist?list=PLxxxxxx"
+                    rows="6" style="font-family: monospace; font-size: 0.85rem;"></textarea>
+                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                    Paste full YouTube links (video or playlist) or raw video IDs. One per line.
+                </small>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="addPlaylist()">Add Playlist</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closePlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Playlist Modal -->
+    <div id="editPlaylistModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 520px; width: 90%; max-height: 85vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 1.5rem;">Edit Playlist</h2>
+            <p id="editPlaylistTitle" style="margin-bottom: 1rem; color: var(--text-secondary);"></p>
+
+            <div class="form-group">
+                <label for="addVideoLinks">Add videos (links or IDs, one per line)</label>
+                <textarea id="addVideoLinks"
+                    placeholder="https://youtu.be/jNQXAC9IVRw&#10;https://www.youtube.com/watch?v=dQw4w9WgXcQ&#10;https://www.youtube.com/playlist?list=PLxxxxxx"
+                    rows="5" style="font-family: monospace; font-size: 0.85rem;"></textarea>
+                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                    You can paste single video links or a playlist link to add all videos.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="removeVideoLinks">Remove videos (links or IDs, one per line)</label>
+                <textarea id="removeVideoLinks" placeholder="https://youtu.be/jNQXAC9IVRw&#10;W_lqV7mVbiw" rows="5"
+                    style="font-family: monospace; font-size: 0.85rem;"></textarea>
+                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                    Only individual videos can be removed (playlist links are ignored here).
+                </small>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="updatePlaylistVideos()">Save Changes</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeEditPlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/User.js"></script>
+    <script src="../js/Playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/ProductivityAnalytics.js"></script>
+    <script src="../js/AttentionMonitor.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/SimpleAnalytics.js"></script>
+    <script>
+        // Check if user is logged in
+        if (!User.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = User.getCurrentUser();
+        if (user && user.name) {
+            document.getElementById('userName').textContent = user.name.split(' ')[0];
+        }
+
+        // Load dashboard data using REST modules
+        async function loadDashboardData() {
+            try {
+                const dashboard = await SimpleAnalytics.getDashboard();
+                document.getElementById('totalFocusHours').textContent = (dashboard.totalFocusMinutes || 0) + 'm';
+                document.getElementById('totalSessions').textContent = dashboard.totalSessions || 0;
+                document.getElementById('avgAttention').textContent = (dashboard.avgAttention || 0) + '%';
+                document.getElementById('todayFocus').textContent = (dashboard.todayFocusMinutes || 0) + 'm';
+
+                await renderRecentSessions();
+                await loadPlaylists();
+            } catch (error) {
+                console.error(error);
+                alert('Failed to load dashboard data. Please try again.');
+            }
+        }
+
+        async function renderRecentSessions() {
+            const body = document.getElementById('recentSessionsBody');
+            const sessions = await SimpleAnalytics.getRecentSessions(5);
+
+            if (!sessions || sessions.length === 0) {
+                body.innerHTML = '<tr><td colspan="4" class="sessions-empty">No sessions yet.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = sessions.map(session => {
+                const dateLabel = formatShortDate(session.date);
+                const duration = (session.duration || 0) + 'm';
+                const focus = (session.avgFocus || 0) + '%';
+                const status = session.completed ? '✅' : '⚠️';
+                return `
+                    <tr>
+                        <td>${dateLabel}</td>
+                        <td>${duration}</td>
+                        <td>${focus}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function formatShortDate(isoDate) {
+            if (!isoDate) return '-';
+            const date = new Date(isoDate);
+            if (Number.isNaN(date.getTime())) return '-';
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        async function loadPlaylists() {
+            const playlists = await Playlist.getAll();
+            const playlistList = document.getElementById('playlistList');
+
+            if (!playlists || playlists.length === 0) {
+                playlistList.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1;">No playlists yet. Add one to get started!</p>';
+                return;
+            }
+
+            playlistList.innerHTML = playlists.map(p => `
+                <div class="playlist-card">
+                    <div onclick="goToPlayer('${p.playlistId || p.id}')" style="cursor: pointer; flex: 1;">
+                        <div class="playlist-thumb">📹</div>
+                        <div class="playlist-info">
+                            <div class="playlist-title">${p.title || p.name}</div>
+                            <div class="playlist-meta">${p.videos.length} videos</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-left: 0.5rem;">
+                        <button class="btn btn-secondary btn-small" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="showEditPlaylistModal('${p.playlistId || p.id}', '${p.title || p.name}')">Edit</button>
+                        <button class="btn btn-secondary btn-small" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="deletePlaylist('${p.playlistId || p.id}', '${p.title || p.name}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deletePlaylist(playlistId, playlistName) {
+            if (confirm(`Are you sure you want to delete the playlist "${playlistName}"? This cannot be undone.`)) {
+                await Playlist.delete(playlistId);
+                alert('Playlist deleted successfully!');
+                loadPlaylists();
+            }
+        }
+
+        function showAddPlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'flex';
+        }
+
+        function closePlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'none';
+            document.getElementById('videoIds').value = '';
+            document.getElementById('playlistName').value = '';
+        }
+
+        let editingPlaylistId = null;
+
+        function showEditPlaylistModal(playlistId, playlistName) {
+            editingPlaylistId = playlistId;
+            document.getElementById('editPlaylistTitle').textContent = `Editing: ${playlistName}`;
+            document.getElementById('addVideoLinks').value = '';
+            document.getElementById('removeVideoLinks').value = '';
+            document.getElementById('editPlaylistModal').style.display = 'flex';
+        }
+
+        function closeEditPlaylistModal() {
+            editingPlaylistId = null;
+            document.getElementById('editPlaylistModal').style.display = 'none';
+            document.getElementById('addVideoLinks').value = '';
+            document.getElementById('removeVideoLinks').value = '';
+        }
+
+        async function updatePlaylistVideos() {
+            if (!editingPlaylistId) {
+                alert('No playlist selected for editing.');
+                return;
+            }
+
+            const addText = document.getElementById('addVideoLinks').value.trim();
+            const removeText = document.getElementById('removeVideoLinks').value.trim();
+
+            if (!addText && !removeText) {
+                alert('Please add or remove at least one video.');
+                return;
+            }
+
+            const addLines = addText
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            const removeLines = removeText
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            const addVideoIdSet = new Set();
+            const addPlaylistIdSet = new Set();
+            const removeVideoIdSet = new Set();
+
+            addLines.forEach(line => {
+                const normalized = normalizeYouTubeInput(line);
+                if (normalized.videoId) {
+                    addVideoIdSet.add(normalized.videoId);
+                }
+                if (normalized.playlistId) {
+                    addPlaylistIdSet.add(normalized.playlistId);
+                }
+            });
+
+            removeLines.forEach(line => {
+                const normalized = normalizeYouTubeInput(line);
+                if (normalized.videoId) {
+                    removeVideoIdSet.add(normalized.videoId);
+                }
+            });
+
+            const playlistFallbacks = [];
+
+            if (addPlaylistIdSet.size > 0) {
+                const playlistIds = Array.from(addPlaylistIdSet);
+                for (const playlistId of playlistIds) {
+                    try {
+                        const playlistVideoIds = await fetchPlaylistVideoIds(playlistId);
+                        playlistVideoIds.forEach(id => addVideoIdSet.add(id));
+                    } catch (error) {
+                        playlistFallbacks.push(playlistId);
+                    }
+                }
+            }
+
+            const addIds = Array.from(addVideoIdSet).filter(id => Video.isValidYouTubeId(id));
+            const removeIds = Array.from(removeVideoIdSet).filter(id => Video.isValidYouTubeId(id));
+
+            for (const [idx, id] of addIds.entries()) {
+                await Playlist.addVideo(editingPlaylistId, {
+                    id: id,
+                    title: `Video ${idx + 1}`,
+                    kind: 'video'
+                });
+            }
+
+            for (const [idx, playlistId] of playlistFallbacks.entries()) {
+                await Playlist.addVideo(editingPlaylistId, {
+                    id: playlistId,
+                    title: `Playlist ${idx + 1}`,
+                    kind: 'playlist'
+                });
+            }
+
+            for (const id of removeIds) {
+                await Playlist.removeVideo(editingPlaylistId, id);
+            }
+
+            const addedCount = addIds.length + playlistFallbacks.length;
+            const removedCount = removeIds.length;
+
+            alert(`Playlist updated: ${addedCount} added, ${removedCount} removed.`);
+            if (playlistFallbacks.length > 0) {
+                alert('Some playlist links could not be expanded. They were added as playlist items instead.');
+            }
+            closeEditPlaylistModal();
+            loadPlaylists();
+        }
+
+        async function addPlaylist() {
+            const videoIdsText = document.getElementById('videoIds').value.trim();
+            const name = document.getElementById('playlistName').value.trim() || 'Untitled Playlist';
+
+            if (!videoIdsText) {
+                alert('Please enter at least one video ID');
+                return;
+            }
+
+            const lines = videoIdsText
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            const videoIdSet = new Set();
+            const playlistIdSet = new Set();
+
+            lines.forEach(line => {
+                const normalized = normalizeYouTubeInput(line);
+                if (normalized.videoId) {
+                    videoIdSet.add(normalized.videoId);
+                }
+                if (normalized.playlistId) {
+                    playlistIdSet.add(normalized.playlistId);
+                }
+            });
+
+            if (videoIdSet.size === 0 && playlistIdSet.size === 0) {
+                alert('Please enter at least one valid YouTube link or video ID');
+                return;
+            }
+
+            const playlistFallbacks = [];
+
+            if (playlistIdSet.size > 0) {
+                const playlistIds = Array.from(playlistIdSet);
+                for (const playlistId of playlistIds) {
+                    try {
+                        const playlistVideoIds = await fetchPlaylistVideoIds(playlistId);
+                        playlistVideoIds.forEach(id => videoIdSet.add(id));
+                    } catch (error) {
+                        playlistFallbacks.push(playlistId);
+                    }
+                }
+            }
+
+            const validIds = Array.from(videoIdSet).filter(id => Video.isValidYouTubeId(id));
+
+            if (validIds.length === 0 && playlistFallbacks.length === 0) {
+                alert('No valid video IDs found. Please check your links and try again.');
+                return;
+            }
+
+            const videos = validIds.map((id, idx) => ({
+                id: id,
+                title: `Video ${idx + 1}`,
+                kind: 'video'
+            }));
+
+            playlistFallbacks.forEach((playlistId, idx) => {
+                videos.push({
+                    id: playlistId,
+                    title: `Playlist ${idx + 1}`,
+                    kind: 'playlist'
+                });
+            });
+
+            await Playlist.create({
+                title: name,
+                description: '',
+                videos: videos
+            });
+
+            alert(`Playlist added successfully with ${videos.length} item(s)!`);
+            if (playlistFallbacks.length > 0) {
+                alert('Some playlist links could not be expanded. They were added as playlist items instead.');
+            }
+            closePlaylistModal();
+            loadPlaylists();
+        }
+
+        function normalizeYouTubeInput(input) {
+            if (!input) return { videoId: null, playlistId: null };
+
+            // If input is already a raw ID
+            if (Video.isValidYouTubeId(input)) {
+                return { videoId: input, playlistId: null };
+            }
+
+            const url = toValidUrl(input);
+            if (!url) return { videoId: null, playlistId: null };
+
+            const videoId = extractYouTubeVideoId(url);
+            const playlistId = extractYouTubePlaylistId(url);
+
+            return { videoId: videoId, playlistId: playlistId };
+        }
+
+        function toValidUrl(input) {
+            try {
+                return new URL(input);
+            } catch (error) {
+                try {
+                    return new URL('https://' + input);
+                } catch (innerError) {
+                    return null;
+                }
+            }
+        }
+
+        function extractYouTubeVideoId(url) {
+            const host = url.hostname.replace('www.', '');
+
+            if (host === 'youtu.be') {
+                const id = url.pathname.split('/').filter(Boolean)[0];
+                return Video.isValidYouTubeId(id) ? id : null;
+            }
+
+            if (host === 'youtube.com' || host === 'm.youtube.com') {
+                if (url.pathname === '/watch') {
+                    const id = url.searchParams.get('v');
+                    return Video.isValidYouTubeId(id) ? id : null;
+                }
+
+                if (url.pathname.startsWith('/shorts/')) {
+                    const id = url.pathname.split('/')[2];
+                    return Video.isValidYouTubeId(id) ? id : null;
+                }
+
+                if (url.pathname.startsWith('/embed/')) {
+                    const id = url.pathname.split('/')[2];
+                    return Video.isValidYouTubeId(id) ? id : null;
+                }
+            }
+
+            return null;
+        }
+
+        function extractYouTubePlaylistId(url) {
+            const host = url.hostname.replace('www.', '');
+            if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtu.be') {
+                const playlistId = url.searchParams.get('list');
+                return playlistId || null;
+            }
+            return null;
+        }
+
+        async function fetchPlaylistVideoIds(playlistId) {
+            const data = await Api.get(`/api/v1/playlist?playlistId=${encodeURIComponent(playlistId)}`);
+            if (!data || !Array.isArray(data.videoIds)) {
+                return [];
+            }
+            return data.videoIds;
+        }
+
+        function goToPlayer(playlistId) {
+            window.location.href = `player.html?playlist=${playlistId}`;
+        }
+
+        function logout() {
+            User.logout();
+        }
+
+        // Initialize
+        loadDashboardData();
+    </script>
+</body>
+
+</html>

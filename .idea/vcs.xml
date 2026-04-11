@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/public/models/face-api.js" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/server-spring/src/main/resources/static/public/models/face-api.js" vcs="Git" />
+  </component>
+</project>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cogneLearn - Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="dashboard.html" class="navbar-brand">cogneLearn</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <h2 id="authTitle">Login to cogneLearn</h2>
+        </div>
+
+        <form id="authForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div id="nameGroup" class="form-group" style="display: none;">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+
+        <div class="auth-toggle">
+            <span id="toggleText">Don't have an account? </span>
+            <a href="#" onclick="toggleAuthMode(event)">Sign Up</a>
+        </div>
+    </div>
+
+    <script src="../js/User.js"></script>
+    <script src="../js/Playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/ProductivityAnalytics.js"></script>
+    <script src="../js/AttentionMonitor.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        let isSignupMode = false;
+        const authForm = document.getElementById('authForm');
+        const authTitle = document.getElementById('authTitle');
+        const nameGroup = document.getElementById('nameGroup');
+        const toggleText = document.getElementById('toggleText');
+
+        // Check URL parameter for signup mode
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'signup') {
+            toggleAuthMode();
+        }
+
+        function toggleAuthMode(e) {
+            if (e) e.preventDefault();
+
+            isSignupMode = !isSignupMode;
+
+            if (isSignupMode) {
+                authTitle.textContent = 'Create Account';
+                nameGroup.style.display = 'block';
+                authForm.querySelector('button').textContent = 'Sign Up';
+                toggleText.textContent = 'Already have an account? ';
+                toggleText.nextElementSibling.textContent = 'Sign In';
+            } else {
+                authTitle.textContent = 'Login to cogneLearn';
+                nameGroup.style.display = 'none';
+                authForm.querySelector('button').textContent = 'Sign In';
+                toggleText.textContent = "Don't have an account? ";
+                toggleText.nextElementSibling.textContent = 'Sign Up';
+            }
+        }
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+
+            if (isSignupMode) {
+                if (!name) {
+                    alert('Please enter your name');
+                    return;
+                }
+                await Auth.signup(email, password, name);
+            } else {
+                await Auth.login(email, password);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/cognelearn;AUTO_SERVER=TRUE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+
+jwt:
+  issuer: cognelearn
+  secret: ${JWT_SECRET:dev-secret-change-me-please-update-32bytes}
+  expirationDays: 7
+
+playlistProxy:
+  cacheTtlMs: 600000
