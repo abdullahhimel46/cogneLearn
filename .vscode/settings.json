@@ -1,0 +1,5 @@
+{
+  "java.project.sourcePaths": ["server-spring/src/main/java"],
+  "java.project.outputPath": "server-spring/build/classes/java/main",
+  "java.configuration.updateBuildConfiguration": "automatic"
+}

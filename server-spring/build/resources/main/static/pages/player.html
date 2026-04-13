@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cogneLearn - Study Session</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="dashboard.html" class="navbar-brand">cogneLearn</a>
+            <ul class="navbar-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <style>
+        /* Remove transition to let YouTube handle loading naturally */
+    </style>
+
+    <div id="preSessionModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>🎯 Start Focus Session</h2>
+            <p>Set your focus plan before the video starts.</p>
+            <div class="form-group">
+                <label for="sessionDuration">Duration (minutes)</label>
+                <input type="number" id="sessionDuration" min="5" max="90" value="25">
+            </div>
+            <div class="form-group">
+                <label for="sessionCycles">Cycles</label>
+                <input type="number" id="sessionCycles" min="1" max="6" value="2">
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="cancelPreSession()">Cancel</button>
+                <button class="btn btn-primary" onclick="startPreSession()">Start Session 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="motivationalOverlay" class="motivational-overlay hidden">
+        <div class="motivational-card">
+            <div class="motivational-text">✨ Stay focused. Small progress is still progress.</div>
+            <button class="btn btn-primary" onclick="startLearning()">Start Learning ▶️</button>
+        </div>
+    </div>
+
+    <div id="sessionSummaryModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h2>📊 Session Summary</h2>
+            <div class="summary-grid">
+                <div>
+                    <div class="summary-label">Focus Score</div>
+                    <div class="summary-value" id="summaryFocusScore">0%</div>
+                </div>
+                <div>
+                    <div class="summary-label">Distraction Time</div>
+                    <div class="summary-value" id="summaryDistraction">0m</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="closeSummaryModal()">Done</button>
+        </div>
+    </div>
+
+    <div class="study-layout hidden" id="studyLayout">
+        <div class="study-top">
+            <div class="video-panel">
+                <div class="video-player" id="videoPlayer">
+                    <iframe id="videoFrame" width="100%" height="100%" src="" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="study-side">
+                <div class="timer-section">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-status" id="timerStatus">Ready to start</div>
+                    <div class="timer-buttons">
+                        <button class="btn btn-primary btn-small" id="startTimerBtn"
+                            onclick="startTimer()">Start</button>
+                        <button class="btn btn-secondary btn-small" id="pauseTimerBtn" onclick="pauseTimer()"
+                            style="display: none;">Pause</button>
+                        <button class="btn btn-secondary btn-small" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <div class="attention-bar-container">
+                    <div class="attention-bar-label">Focus Level</div>
+                    <div class="attention-bar">
+                        <div class="attention-fill" id="attentionFill" style="width: 0%;">
+                            <span id="attentionPercent">0%</span>
+                        </div>
+                    </div>
+                    <div class="attention-status" id="attentionStatus">Ready to start</div>
+                    <button class="btn btn-small" style="margin-top: 0.5rem;" onclick="toggleAttentionTracking()">
+                        <span id="toggleAttentionBtn">Start Attention Tracking</span>
+                    </button>
+                </div>
+
+                <div class="session-info card">
+                    <h3>📊 Session Info</h3>
+                    <div class="session-info-row">
+                        <span>Duration</span>
+                        <span id="sessionInfoDuration">25m</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Cycles</span>
+                        <span id="sessionInfoCycles">2</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Current Cycle</span>
+                        <span id="sessionInfoCurrent">1</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Focus Avg</span>
+                        <span id="sessionInfoFocus">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="player-playlist">
+            <div class="sidebar-header">Playlist</div>
+            <div class="playlist-items" id="playlistItems"></div>
+        </div>
+    </div>
+
+    <!-- Load Face-API.js from CDN (must be available before inline script) -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <script src="../js/User.js"></script>
+    <script src="../js/Playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/ProductivityAnalytics.js"></script>
+    <script src="../js/AttentionMonitor.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/SimpleAnalytics.js"></script>
+
+    <script>
+        // 🔥 Face-API.js Attention Tracking System
+
+        // Global attention tracking state
+        window.attentionTracker = {
+            modelsLoaded: false,
+            stream: null,
+            video: null,
+            isTracking: false,
+            detectionInterval: null,
+            currentScore: 0,
+            recentScores: [],
+            allScores: [],
+            descriptorSupportLogged: false,
+            sampleCount: 0,
+            distractedCount: 0,
+            ssdLoaded: false
+        };
+
+        const detectionIntervalMs = 1500; // Slightly slower loop for better stability with SSD model
+        let sessionConfig = { duration: 25, cycles: 2 };
+        let currentCycle = 1;
+        let timerPausedByAttention = false;
+        let sessionStarted = false;
+        let userPausedTimer = false;
+
+        // 1️⃣ Load Face-API.js Models from Local Folder (All Available Models! 🔥)
+        async function loadFaceAPIModels() {
+            if (window.attentionTracker.modelsLoaded) return true;
+
+            try {
+                console.log('📦 Loading face-api.js models from local folder...');
+
+                // Use absolute path from server root
+                const MODEL_URL = '/public/models/face-api.js';
+
+                // Load required detector first
+                console.log('  ⏳ Loading Tiny Face Detector...');
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                console.log('  ✅ Tiny Face Detector loaded');
+
+                // Load remaining models
+                console.log('  ⏳ Loading Face Landmarks (68 points)...');
+                await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+                console.log('  ✅ Face Landmarks 68 loaded');
+
+                console.log('  ⏳ Loading Face Landmarks (68 Tiny)...');
+                await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+                console.log('  ✅ Face Landmarks 68 Tiny loaded');
+
+                // Load expression recognition
+                console.log('  ⏳ Loading Face Expression Recognition...');
+                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+                console.log('  ✅ Face Expression Net loaded');
+
+                // Load age and gender detection
+                console.log('  ⏳ Loading Age/Gender Detection...');
+                await faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL);
+                console.log('  ✅ Age/Gender Net loaded');
+
+                // Load face recognition
+                console.log('  ⏳ Loading Face Recognition...');
+                await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+                console.log('  ✅ Face Recognition Net loaded');
+
+                // Load alternative detectors when available in the build
+                if (faceapi.nets.mtcnn && faceapi.nets.mtcnn.loadFromUri) {
+                    console.log('  ⏳ Loading MTCNN Detector...');
+                    await faceapi.nets.mtcnn.loadFromUri(MODEL_URL);
+                    console.log('  ✅ MTCNN Detector loaded');
+                } else {
+                    console.log('  ⚠️ MTCNN Detector not available in this build');
+                }
+
+                if (faceapi.nets.ssdMobilenetv1 && faceapi.nets.ssdMobilenetv1.loadFromUri) {
+                    console.log('  ⏳ Loading SSD MobileNet v1...');
+                    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+                    window.attentionTracker.ssdLoaded = true;
+                    console.log('  ✅ SSD MobileNet v1 loaded');
+                } else {
+                    console.log('  ⚠️ SSD MobileNet v1 not available in this build');
+                }
+
+                window.attentionTracker.modelsLoaded = true;
+                console.log(`✅ All face-api.js models loaded successfully from: ${MODEL_URL}`);
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to load models:', error);
+                alert('⚠️ Could not load face detection models!\n\nPlease check:\n1. Models exist in /public/models/face-api.js/\n2. Server is serving files correctly\n3. Check browser console (F12) for detailed errors\n\nYou can still use the timer without face tracking!');
+                throw error;
+            }
+        }
+
+        // 2️⃣ Update Attention UI
+        function updateAttentionUI(score) {
+            const fillElement = document.getElementById('attentionFill');
+            const percentElement = document.getElementById('attentionPercent');
+            const statusElement = document.getElementById('attentionStatus');
+
+            fillElement.style.width = score + '%';
+            percentElement.textContent = score + '%';
+
+            // 🎯 Attention Status Logic
+            let status = '';
+            fillElement.classList.remove('attention-good', 'attention-mid', 'attention-low');
+            if (score >= 80) {
+                status = '🟢 Focused';
+                fillElement.classList.add('attention-good');
+            } else if (score >= 50) {
+                status = '🟡 Slightly Distracted';
+                fillElement.classList.add('attention-mid');
+            } else {
+                status = '🔴 Looking Away';
+                fillElement.classList.add('attention-low');
+            }
+
+            statusElement.textContent = status;
+
+            // Optional: Log for debugging
+            if (score > 0) {
+                console.log(`Attention Score: ${score}% - ${status}`);
+            }
+        }
+
+        // 3️⃣ Detection Loop (CORE LOGIC 🔥 - Now with Full Model Suite!)
+        async function detectAttention() {
+            if (!window.attentionTracker.isTracking || !window.attentionTracker.video) {
+                return;
+            }
+
+            try {
+                // Detect single face with all available data
+                // Fallback to TinyFaceDetector if SSD failed to load
+                let detectorOptions = window.attentionTracker.ssdLoaded
+                    ? new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 })
+                    : new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+
+                let detectionTask = faceapi
+                    .detectSingleFace(window.attentionTracker.video, detectorOptions)
+                    .withFaceLandmarks()
+                    .withFaceExpressions()
+                    .withAgeAndGender();
+
+                if (faceapi.nets.faceRecognitionNet && typeof detectionTask.withFaceDescriptors === 'function') {
+                    detectionTask = detectionTask.withFaceDescriptors();
+                } else {
+                    if (!window.attentionTracker.descriptorSupportLogged) {
+                        console.log('  ⚠️ Face descriptors not available in this build');
+                        window.attentionTracker.descriptorSupportLogged = true;
+                    }
+                }
+
+                const detection = await detectionTask;
+
+                if (detection) {
+                    // ✅ Face detected - calculate attention using AttentionMonitor with full data
+                    const attentionData = AttentionMonitor.trackAttention(detection);
+                    const score = attentionData.level;
+                    const smoothedScore = smoothAttentionScore(score, 5);
+
+                    // Extract additional insights
+                    const expressions = detection.expressions;
+                    const ageAndGender = {
+                        age: Math.round(detection.age),
+                        gender: detection.gender,
+                        genderProbability: Math.round(detection.genderProbability * 100)
+                    };
+
+                    // Update global data for dashboard
+                    window.attentionTracker.lastDetection = {
+                        score: smoothedScore,
+                        expressions: expressions,
+                        ageAndGender: ageAndGender,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    updateAttentionUI(smoothedScore);
+                    window.attentionTracker.currentScore = smoothedScore;
+                    recordAttentionSample(smoothedScore);
+                    handleAttentionTimer(smoothedScore);
+
+                    // Log detailed info for debugging
+                    if (score > 0) {
+                        const topExpression = Object.keys(expressions).reduce((a, b) =>
+                            expressions[a] > expressions[b] ? a : b
+                        );
+                        console.log(`✨ Score: ${smoothedScore}% | Yaw/Pitch/Expr Ratios used | ${topExpression}`);
+                    }
+                } else {
+                    // ❌ No face detected
+                    const smoothedScore = smoothAttentionScore(0, 5);
+                    updateAttentionUI(smoothedScore);
+                    window.attentionTracker.currentScore = smoothedScore;
+                    recordAttentionSample(smoothedScore);
+                    handleAttentionTimer(smoothedScore);
+                }
+            } catch (error) {
+                console.error('Detection error:', error);
+            }
+        }
+
+        // Smooth attention scores to reduce jitter
+        function smoothAttentionScore(score, maxSamples = 10) { // Increased to 10 for better stability
+            const scores = window.attentionTracker.recentScores;
+            scores.push(score);
+            if (scores.length > maxSamples) {
+                scores.shift();
+            }
+            const sum = scores.reduce((a, b) => a + b, 0);
+            return Math.round(sum / scores.length);
+        }
+
+        function recordAttentionSample(score) {
+            window.attentionTracker.sampleCount += 1;
+            window.attentionTracker.allScores.push(score);
+            if (score < 40) {
+                window.attentionTracker.distractedCount += 1;
+            }
+
+            const avg = Math.round(
+                window.attentionTracker.allScores.reduce((a, b) => a + b, 0) /
+                Math.max(window.attentionTracker.allScores.length, 1)
+            );
+            document.getElementById('sessionInfoFocus').textContent = `${avg}%`;
+        }
+
+        function handleAttentionTimer(score) {
+            // Auto pause/resume disabled by request.
+            return;
+        }
+
+        // 4️⃣ Toggle Attention Tracking (Start/Stop)
+        window.toggleAttentionTracking = async function () {
+            if (!window.attentionTracker.isTracking) {
+                // 🚀 START TRACKING
+                try {
+                    // Load models first
+                    await loadFaceAPIModels();
+
+                    // Request camera access
+                    console.log('📷 Requesting camera access...');
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            facingMode: 'user'
+                        },
+                        audio: false
+                    });
+
+                    // Create hidden video element for stream
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.autoplay = true;
+                    video.muted = true;
+                    video.playsInline = true;
+
+                    // Wait for video to be ready
+                    await new Promise((resolve) => {
+                        video.onloadedmetadata = () => {
+                            video.play();
+                            resolve();
+                        };
+                    });
+
+                    window.attentionTracker.stream = stream;
+                    window.attentionTracker.video = video;
+                    window.attentionTracker.isTracking = true;
+
+                    // Update UI
+                    document.getElementById('toggleAttentionBtn').textContent = 'Stop Tracking';
+                    document.getElementById('attentionStatus').textContent = '🎥 Tracking started...';
+
+                    console.log('✅ Attention tracking started');
+
+                    // Start detection loop (every 800ms for performance)
+                    window.attentionTracker.detectionInterval = setInterval(detectAttention, detectionIntervalMs);
+
+                } catch (error) {
+                    console.error('❌ Error starting attention tracking:', error);
+                    alert('⚠️ Could not start tracking:\n\n' + error.message + '\n\nPlease check:\n1. Camera permissions\n2. Model files in /models folder\n3. Browser compatibility\n\nYou can still study without face tracking!');
+                }
+            } else {
+                // 🛑 STOP TRACKING
+                window.attentionTracker.isTracking = false;
+
+                // Stop camera stream
+                if (window.attentionTracker.stream) {
+                    window.attentionTracker.stream.getTracks().forEach(track => track.stop());
+                    window.attentionTracker.stream = null;
+                }
+
+                // Remove video element
+                if (window.attentionTracker.video) {
+                    window.attentionTracker.video.pause();
+                    window.attentionTracker.video.srcObject = null;
+                    window.attentionTracker.video = null;
+                }
+
+                // Clear detection interval
+                if (window.attentionTracker.detectionInterval) {
+                    clearInterval(window.attentionTracker.detectionInterval);
+                    window.attentionTracker.detectionInterval = null;
+                }
+
+                // Reset UI
+                document.getElementById('toggleAttentionBtn').textContent = 'Start Attention Tracking';
+                updateAttentionUI(0);
+
+                console.log('🛑 Attention tracking stopped');
+            }
+        };
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (window.attentionTracker.detectionInterval) {
+                    clearInterval(window.attentionTracker.detectionInterval);
+                    window.attentionTracker.detectionInterval = null;
+                }
+                return;
+            }
+
+            if (window.attentionTracker.isTracking && !window.attentionTracker.detectionInterval) {
+                window.attentionTracker.detectionInterval = setInterval(detectAttention, detectionIntervalMs);
+            }
+        });
+    </script>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/pomodoro.js"></script>
+    <script>
+        // Check authentication
+        if (!User.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Get playlist from URL
+        const params = new URLSearchParams(window.location.search);
+        const playlistId = params.get('playlist');
+
+        if (!playlistId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        let playlist = null;
+        let studySession = null;
+
+        async function initPlayer() {
+            try {
+                playlist = await Playlist.getById(playlistId);
+
+                console.log('Playlist loaded:', {
+                    id: playlistId,
+                    playlist: playlist,
+                    videos: playlist?.videos,
+                    firstVideoId: playlist?.videos?.[0]?.id
+                });
+
+                studySession = await StudySession.create({
+                    playlistId: playlistId,
+                    videoId: playlist?.videos?.[0]?.id || '',
+                    focusTime: 25
+                });
+                console.log('Study session created:', studySession.sessionId);
+
+                loadPlaylist();
+                hydratePlaylistTitles();
+                updateSessionInfo();
+            } catch (error) {
+                console.error('Error initializing player:', error);
+                alert('Failed to load playlist. Please try again.');
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        // Load playlist videos
+        function loadPlaylist() {
+            const items = document.getElementById('playlistItems');
+            if (!playlist || !playlist.videos) {
+                items.innerHTML = '<p style="padding: 1rem; color: var(--text-secondary);">No videos found</p>';
+                return;
+            }
+
+            items.innerHTML = playlist.videos.map((video, idx) => {
+                const isPlaylistItem = video.kind === 'playlist';
+                const thumbSrc = isPlaylistItem
+                    ? 'https://i.ytimg.com/vi/DEFAULT.jpg'
+                    : `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+                const subtitle = getPlaylistItemSubtitle(video);
+
+                return `
+                    <div class="playlist-item ${idx === 0 ? 'active' : ''}" onclick="playVideo(${idx})">
+                        <div class="playlist-row">
+                            <div class="playlist-index">${idx + 1}</div>
+                            <div class="playlist-thumb-small">
+                                <img src="${thumbSrc}" alt="${video.title}">
+                                <span class="playlist-badge">${isPlaylistItem ? 'PL' : 'VID'}</span>
+                            </div>
+                            <div class="playlist-text">
+                                <div class="playlist-title">${video.title}</div>
+                                <div class="playlist-meta">${isPlaylistItem ? 'Playlist' : 'Video'}</div>
+                                <div class="playlist-subtitle">${subtitle}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getPlaylistItemSubtitle(video) {
+            if (video.subtitle) {
+                return video.subtitle;
+            }
+
+            if (video.kind === 'playlist') {
+                return `Playlist ID: ${video.id}`;
+            }
+
+            return `Video ID: ${video.id}`;
+        }
+
+        async function hydratePlaylistTitles() {
+            if (!playlist || !playlist.videos) {
+                return;
+            }
+
+            const candidates = playlist.videos.filter(video => {
+                if (video.kind === 'playlist') return false;
+                if (!video.title) return true;
+                return /^Video\s+\d+$/i.test(video.title.trim());
+            });
+
+            if (candidates.length === 0) {
+                return;
+            }
+
+            const updates = await Promise.all(candidates.map(async video => {
+                const data = await fetchYouTubeMeta(video.id);
+                return {
+                    id: video.id,
+                    title: data?.title || video.title,
+                    subtitle: data?.author || video.subtitle || '',
+                    kind: video.kind || 'video'
+                };
+            }));
+
+            let changed = false;
+            playlist.videos = playlist.videos.map(video => {
+                const update = updates.find(item => item.id === video.id);
+                if (!update) {
+                    return video;
+                }
+                if (update.title !== video.title || update.subtitle !== video.subtitle) {
+                    changed = true;
+                    return { ...video, title: update.title, subtitle: update.subtitle };
+                }
+                return video;
+            });
+
+            if (changed) {
+                await Playlist.update(playlistId, { videos: playlist.videos });
+                loadPlaylist();
+            }
+        }
+
+        async function fetchYouTubeMeta(videoId) {
+            try {
+                const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    return null;
+                }
+                const data = await response.json();
+                return {
+                    title: data.title,
+                    author: data.author_name
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        let currentVideoIdx = 0;
+        let lastLoadedVideoId = null;
+        let isLoadingVideo = false;
+
+        function playVideo(idx) {
+            try {
+                if (!playlist || !playlist.videos || !playlist.videos[idx]) {
+                    console.error('Invalid video index or playlist');
+                    return;
+                }
+
+                const video = playlist.videos[idx];
+
+                // Allow new videos to load, but prevent reloading the same video if already loading
+                if (video.id === lastLoadedVideoId) {
+                    console.log('Same video already loaded:', video.id);
+                    return;
+                }
+
+                // Cancel any pending load and start new one
+                isLoadingVideo = true;
+                currentVideoIdx = idx;
+                lastLoadedVideoId = video.id;
+
+                const frame = document.getElementById('videoFrame');
+                if (!frame) {
+                    console.error('Video frame element not found');
+                    isLoadingVideo = false;
+                    return;
+                }
+
+                const isPlaylistItem = video.kind === 'playlist';
+
+                // Validate video ID format for single videos only
+                if (!isPlaylistItem && !/^[a-zA-Z0-9_-]{11}$/.test(video.id)) {
+                    console.error('Invalid video ID format:', video.id);
+                    isLoadingVideo = false;
+                    return;
+                }
+
+                // Build embed URL
+                const embedUrl = isPlaylistItem
+                    ? `https://www.youtube.com/embed/videoseries?list=${video.id}&autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`
+                    : `https://www.youtube.com/embed/${video.id}?autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`;
+
+                console.log('Switching to video:', {
+                    index: idx,
+                    videoId: video.id,
+                    title: video.title
+                });
+
+                // Update active state immediately
+                document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === idx);
+                });
+
+                // Set iframe src to load new video
+                frame.src = embedUrl;
+
+                // Reset loading flag quickly to allow next video selection
+                setTimeout(() => {
+                    isLoadingVideo = false;
+                }, 300);
+
+            } catch (error) {
+                console.error('Error in playVideo:', error);
+                isLoadingVideo = false;
+            }
+        }
+
+        // Pomodoro timer
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+
+        window.startTimer = function () {
+            if (timerInterval) return;
+
+            userPausedTimer = false;
+            document.getElementById('startTimerBtn').style.display = 'none';
+            document.getElementById('pauseTimerBtn').style.display = 'inline-block';
+            document.getElementById('timerStatus').textContent = 'Focus Time - Keep going!';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    completeSession();
+                }
+            }, 1000);
+        };
+
+        window.pauseTimer = function (autoPause = false) {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                document.getElementById('startTimerBtn').style.display = 'inline-block';
+                document.getElementById('pauseTimerBtn').style.display = 'none';
+                document.getElementById('timerStatus').textContent = autoPause ? '⚠️ Stay focused!' : 'Paused';
+                if (!autoPause) {
+                    userPausedTimer = true;
+                }
+            }
+        };
+
+        window.resetTimer = function () {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            userPausedTimer = false;
+            timeLeft = sessionConfig.duration * 60;
+            updateTimerDisplay();
+            document.getElementById('startTimerBtn').style.display = 'inline-block';
+            document.getElementById('pauseTimerBtn').style.display = 'none';
+            document.getElementById('timerStatus').textContent = 'Ready to start';
+        };
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent =
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
+
+        async function completeSession() {
+            if (currentCycle < sessionConfig.cycles) {
+                currentCycle += 1;
+                updateSessionInfo();
+                timeLeft = sessionConfig.duration * 60;
+                updateTimerDisplay();
+                setTimeout(() => startTimer(), 500);
+                return;
+            }
+
+            showSummaryModal();
+            // Save session data using new UML module
+            const currentSession = StudySession.getCurrentSession();
+            if (currentSession) {
+                await StudySession.end(currentSession.sessionId, sessionConfig.duration);
+
+                if (window.attentionTracker.currentScore > 0) {
+                    await StudySession.addAttentionScore(currentSession.sessionId, window.attentionTracker.currentScore);
+                }
+            }
+            resetTimer();
+        }
+
+        function updateSessionInfo() {
+            document.getElementById('sessionInfoDuration').textContent = `${sessionConfig.duration}m`;
+            document.getElementById('sessionInfoCycles').textContent = `${sessionConfig.cycles}`;
+            document.getElementById('sessionInfoCurrent').textContent = `${currentCycle}`;
+        }
+
+        function showSummaryModal() {
+            const totalSamples = Math.max(window.attentionTracker.allScores.length, 1);
+            const avgScore = Math.round(
+                window.attentionTracker.allScores.reduce((a, b) => a + b, 0) /
+                Math.max(window.attentionTracker.allScores.length, 1)
+            );
+            const distractedSeconds = Math.round(window.attentionTracker.distractedCount * (detectionIntervalMs / 1000));
+            const distractedMinutes = Math.round(distractedSeconds / 60);
+
+            document.getElementById('summaryFocusScore').textContent = `${avgScore}%`;
+            document.getElementById('summaryDistraction').textContent = `${distractedMinutes}m`;
+            document.getElementById('sessionSummaryModal').classList.remove('hidden');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('sessionSummaryModal').classList.add('hidden');
+        }
+
+        function startPreSession() {
+            const duration = parseInt(document.getElementById('sessionDuration').value, 10);
+            const cycles = parseInt(document.getElementById('sessionCycles').value, 10);
+
+            sessionConfig = {
+                duration: Number.isFinite(duration) ? duration : 25,
+                cycles: Number.isFinite(cycles) ? cycles : 2
+            };
+
+            currentCycle = 1;
+            timeLeft = sessionConfig.duration * 60;
+            window.attentionTracker.recentScores = [];
+            window.attentionTracker.allScores = [];
+            window.attentionTracker.sampleCount = 0;
+            window.attentionTracker.distractedCount = 0;
+            updateTimerDisplay();
+            updateSessionInfo();
+            localStorage.setItem('cognelearn_session_config', JSON.stringify(sessionConfig));
+
+            document.getElementById('preSessionModal').classList.add('hidden');
+            document.getElementById('motivationalOverlay').classList.remove('hidden');
+        }
+
+        function cancelPreSession() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function startLearning() {
+            document.getElementById('motivationalOverlay').classList.add('hidden');
+            document.getElementById('studyLayout').classList.remove('hidden');
+            sessionStarted = true;
+            initializePlayback();
+        }
+
+        function logout() {
+            User.logout();
+        }
+
+        function initializePlayback() {
+            if (!playlist || !playlist.videos || playlist.videos.length === 0) {
+                document.getElementById('playlistItems').innerHTML = '<p style="padding: 1rem; color: var(--text-secondary);">No videos found</p>';
+                return;
+            }
+
+            setTimeout(() => {
+                playVideo(0);
+            }, 200);
+        }
+
+        // Initialize
+        updateSessionInfo();
+        initPlayer();
+    </script>
+</body>
+
+</html>

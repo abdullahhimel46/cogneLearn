@@ -1,5 +1,6 @@
 /**
  * SimpleAnalytics Module - Minimal localStorage-based session analytics
+<<<<<<< HEAD
  * Uses userId-based keys so each user has isolated data.
  */
 const SimpleAnalytics = {
@@ -10,12 +11,22 @@ const SimpleAnalytics = {
 
     getSessions: function() {
         return JSON.parse(localStorage.getItem(this._key())) || [];
+=======
+ */
+const SimpleAnalytics = {
+    getSessions: function() {
+        return JSON.parse(localStorage.getItem('sessions')) || [];
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
     },
 
     saveSession: function(session) {
         const sessions = this.getSessions();
         sessions.push(session);
+<<<<<<< HEAD
         localStorage.setItem(this._key(), JSON.stringify(sessions));
+=======
+        localStorage.setItem('sessions', JSON.stringify(sessions));
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
     },
 
     getTotalFocusTime: function() {

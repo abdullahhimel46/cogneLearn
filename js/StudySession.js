@@ -7,7 +7,11 @@ const StudySession = {
      * @param {Object} sessionData - {playlistId, focusTime, videoId}
      * @returns {Object} Study session object with sessionId
      */
+<<<<<<< HEAD
     create: function (sessionData) {
+=======
+    create: function(sessionData) {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const user = User.getCurrentUser();
         if (!user) throw new Error('User not logged in');
 
@@ -32,7 +36,11 @@ const StudySession = {
         localStorage.setItem(key, JSON.stringify(sessions));
 
         // Store current session
+<<<<<<< HEAD
         localStorage.setItem('cognelearn_current_study_session', JSON.stringify(session));
+=======
+        localStorage.setItem('cognelearn_session', JSON.stringify(session));
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
 
         return session;
     },
@@ -41,7 +49,11 @@ const StudySession = {
      * Get all sessions for current user
      * @returns {Array} Array of sessions
      */
+<<<<<<< HEAD
     getAll: function () {
+=======
+    getAll: function() {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const user = User.getCurrentUser();
         if (!user) return [];
 
@@ -54,7 +66,11 @@ const StudySession = {
      * @param {String} sessionId
      * @returns {Object|null}
      */
+<<<<<<< HEAD
     getById: function (sessionId) {
+=======
+    getById: function(sessionId) {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const sessions = this.getAll();
         return sessions.find(s => s.sessionId === sessionId) || null;
     },
@@ -63,8 +79,13 @@ const StudySession = {
      * Get current active session
      * @returns {Object|null}
      */
+<<<<<<< HEAD
     getCurrentSession: function () {
         const session = localStorage.getItem('cognelearn_current_study_session');
+=======
+    getCurrentSession: function() {
+        const session = localStorage.getItem('cognelearn_session');
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         return session ? JSON.parse(session) : null;
     },
 
@@ -72,14 +93,23 @@ const StudySession = {
      * Start the session
      * @param {String} sessionId
      */
+<<<<<<< HEAD
     start: function (sessionId) {
+=======
+    start: function(sessionId) {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const user = User.getCurrentUser();
         if (!user) return;
 
         const key = 'cognelearn_sessions_' + user.userId;
         let sessions = JSON.parse(localStorage.getItem(key)) || [];
+<<<<<<< HEAD
 
         sessions = sessions.map(s =>
+=======
+        
+        sessions = sessions.map(s => 
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
             s.sessionId === sessionId ? { ...s, status: 'active', startTime: new Date().toISOString() } : s
         );
 
@@ -91,12 +121,17 @@ const StudySession = {
      * @param {String} sessionId
      * @param {Number} completedMinutes - Actual time spent
      */
+<<<<<<< HEAD
     end: function (sessionId, completedMinutes = 0) {
+=======
+    end: function(sessionId, completedMinutes = 0) {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const user = User.getCurrentUser();
         if (!user) return;
 
         const key = 'cognelearn_sessions_' + user.userId;
         let sessions = JSON.parse(localStorage.getItem(key)) || [];
+<<<<<<< HEAD
 
         sessions = sessions.map(s =>
             s.sessionId === sessionId
@@ -106,11 +141,26 @@ const StudySession = {
                     endTime: new Date().toISOString(),
                     completedDuration: completedMinutes
                 }
+=======
+        
+        sessions = sessions.map(s => 
+            s.sessionId === sessionId 
+                ? { 
+                    ...s, 
+                    status: 'completed',
+                    endTime: new Date().toISOString(),
+                    completedDuration: completedMinutes
+                } 
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
                 : s
         );
 
         localStorage.setItem(key, JSON.stringify(sessions));
+<<<<<<< HEAD
         localStorage.removeItem('cognelearn_current_study_session');
+=======
+        localStorage.removeItem('cognelearn_session');
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
     },
 
     /**
@@ -118,13 +168,21 @@ const StudySession = {
      * @param {String} sessionId
      * @param {Number} score - 0-100
      */
+<<<<<<< HEAD
     addAttentionScore: function (sessionId, score) {
+=======
+    addAttentionScore: function(sessionId, score) {
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         const user = User.getCurrentUser();
         if (!user) return;
 
         const key = 'cognelearn_sessions_' + user.userId;
         let sessions = JSON.parse(localStorage.getItem(key)) || [];
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 02969bfb1a776114dea2523d765b5c3ef98bf7b2
         sessions = sessions.map(s => {
             if (s.sessionId === sessionId) {
                 return {
