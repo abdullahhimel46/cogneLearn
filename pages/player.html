@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cogneLearn - Study Session</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/theme.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="dashboard.html" class="navbar-brand">cogneLearn</a>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <ul class="navbar-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+                <button class="theme-toggle-btn" onclick="ThemeManager.toggle()" aria-label="Toggle theme">
+                    <span class="theme-icon">☀️</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        /* Remove transition to let YouTube handle loading naturally */
+    </style>
+
+    <div id="preSessionModal" class="modal-overlay">
+        <div class="modal-card card-focus">
+            <h2>◉ Start Focus Session</h2>
+            <p>Set your focus plan before the video starts.</p>
+            <div class="form-group">
+                <label for="sessionDuration">How long do you want to study?</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="number" id="sessionDuration" min="5" step="5" value="25" style="width: 100px;">
+                    <span style="color: var(--text-secondary);">mins</span>
+                </div>
+                <small style="display:block; margin-top:0.25rem; color:#64748b;">Each session = focused study period</small>
+            </div>
+            <div class="form-group">
+                <label for="sessionCycles">How many sessions do you want to complete?</label>
+                <input type="number" id="sessionCycles" min="1" value="2" style="width: 100px;">
+            </div>
+            <!-- Study Plan -->
+            <div id="playerStudyPlan" style="margin-top: 10px; font-size: 14px; color: #94a3b8; background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                Total: ~50 minutes
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="cancelPreSession()">Cancel</button>
+                <button class="btn btn-primary" onclick="startPreSession()">Start Session ⚡</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="motivationalOverlay" class="motivational-overlay hidden">
+        <div class="motivational-card">
+            <div class="motivational-text">✨ Stay focused. Small progress is still progress.</div>
+            <button class="btn btn-primary" onclick="startLearning()">Start Learning ▶️</button>
+        </div>
+    </div>
+
+    <div id="sessionSummaryModal" class="modal-overlay hidden">
+        <div class="modal-card card-analytics">
+            <h2>⌁ Session Summary</h2>
+            <div class="summary-grid">
+                <div>
+                    <div class="summary-label">Focus Score</div>
+                    <div class="summary-value" id="summaryFocusScore">0%</div>
+                </div>
+                <div>
+                    <div class="summary-label">Distraction Time</div>
+                    <div class="summary-value" id="summaryDistraction">0m</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="closeSummaryModal()">Done</button>
+        </div>
+    </div>
+
+    <div class="study-layout hidden" id="studyLayout">
+        <div class="study-top">
+            <div class="video-panel">
+                <div class="video-player" id="videoPlayer">
+                    <!-- YouTube IFrame API player target -->
+                <div id="ytPlayer" style="width:100%;height:100%;"></div>
+                </div>
+            </div>
+
+            <div class="study-side">
+                <div class="timer-section">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-status" id="timerStatus">Ready to start</div>
+                    <div class="timer-buttons">
+                        <button class="btn btn-primary btn-small" id="startTimerBtn"
+                            onclick="SessionController.start()">Start</button>
+                        <button class="btn btn-secondary btn-small" id="pauseTimerBtn"
+                            style="display: none;" onclick="SessionController.pause()">Pause</button>
+                        <button class="btn btn-secondary btn-small" id="resumeTimerBtn"
+                            style="display: none;" onclick="SessionController.resume()">Resume</button>
+                        <button class="btn btn-secondary btn-small" onclick="handleReset()">Reset</button>
+                    </div>
+                </div>
+
+                <div class="attention-bar-container">
+                    <div class="attention-bar-label">Focus Level</div>
+                    <div class="attention-bar">
+                        <div class="attention-fill" id="attentionFill" style="width: 0%;">
+                            <span id="attentionPercent">0%</span>
+                        </div>
+                    </div>
+                    <div class="attention-status" id="attentionStatus">Ready to start</div>
+                    <div id="trackingIndicator" style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary); display: none;">
+                        <span style="color: #22c55e;">●</span> Auto-tracking active
+                    </div>
+                </div>
+
+                <div class="session-info card">
+                    <h3>📊 Session Info</h3>
+                    <div class="session-info-row">
+                        <span>Duration</span>
+                        <span id="sessionInfoDuration">25m</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Cycles</span>
+                        <span id="sessionInfoCycles">2</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Current Cycle</span>
+                        <span id="sessionInfoCurrent">1</span>
+                    </div>
+                    <div class="session-info-row">
+                        <span>Focus Avg</span>
+                        <span id="sessionInfoFocus">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="player-playlist">
+            <div class="sidebar-header">Playlist</div>
+            <div class="playlist-items" id="playlistItems"></div>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API — must be loaded before SessionController -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <!-- Load Face-API.js from CDN (must be available before inline script) -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <script src="../js/User.js"></script>
+    <script src="../js/Playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/ProductivityAnalytics.js"></script>
+    <script src="../js/AttentionMonitor.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/SimpleAnalytics.js"></script>
+    <script src="../js/SessionManager.js"></script>
+    <script src="../js/SessionController.js"></script>
+
+    <script>
+        // ─── Global attention tracking state ─────────────────────────────────
+        // Shared data bus between detectAttention() and AttentionService.
+        // AttentionService manages camera/models; this object holds runtime scores.
+        window.attentionTracker = {
+            modelsLoaded: false,
+            stream: null,
+            video: null,
+            isTracking: false,
+            currentScore: 0,
+            recentScores: [],
+            allScores: [],
+            sampleCount: 0,
+            distractedCount: 0
+        };
+
+        const detectionIntervalMs = 1500;
+        let sessionConfig = { duration: 25, cycles: 2 };
+        let currentCycle = 1;
+        let sessionStarted = false;
+
+
+        // 2️⃣ Update Attention UI
+        function updateAttentionUI(score) {
+            const fillElement = document.getElementById('attentionFill');
+            const percentElement = document.getElementById('attentionPercent');
+            const statusElement = document.getElementById('attentionStatus');
+
+            fillElement.style.width = score + '%';
+            percentElement.textContent = score + '%';
+
+            // 🎯 Attention Status Logic
+            let status = '';
+            fillElement.classList.remove('attention-good', 'attention-mid', 'attention-low');
+            if (score >= 80) {
+                status = '🟢 Focused';
+                fillElement.classList.add('attention-good');
+            } else if (score >= 50) {
+                status = '🟡 Slightly Distracted';
+                fillElement.classList.add('attention-mid');
+            } else {
+                status = '🔴 Looking Away';
+                fillElement.classList.add('attention-low');
+            }
+
+            statusElement.textContent = status;
+
+            // Optional: Log for debugging
+            if (score > 0) {
+                console.log(`Attention Score: ${score}% - ${status}`);
+            }
+        }
+
+        // 3️⃣ Detection Loop (CORE LOGIC 🔥 - Now with Full Model Suite!)
+        async function detectAttention() {
+            if (!window.attentionTracker.isTracking || !window.attentionTracker.video) {
+                return;
+            }
+
+            try {
+                // Detect single face with all available data
+                // Fallback to TinyFaceDetector if SSD failed to load
+                // Always use TinyFaceDetector (lightweight, no extra model needed)
+                // 🔮 FOR FUTURE: switch to SsdMobilenetv1Options for better accuracy
+                // once ssdMobilenetv1 model is re-enabled in loadFaceAPIModels()
+                const detectorOptions = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+
+                // Core detection: only what's needed for attention scoring
+                const detectionTask = faceapi
+                    .detectSingleFace(window.attentionTracker.video, detectorOptions)
+                    .withFaceLandmarks()
+                    .withFaceExpressions();
+
+                // 🔮 FOR FUTURE: add .withAgeAndGender() and .withFaceDescriptor()
+                // once ageGenderNet and faceRecognitionNet are loaded again.
+
+                const detection = await detectionTask;
+
+                if (detection) {
+                    // ✅ Face detected - calculate attention using AttentionMonitor with full data
+                    const attentionData = AttentionMonitor.trackAttention(detection);
+                    const score = attentionData.level;
+                    const smoothedScore = smoothAttentionScore(score, 5);
+
+                    // Extract expression data for logging
+                    const expressions = detection.expressions;
+
+                    // Update global data for dashboard
+                    window.attentionTracker.lastDetection = {
+                        score: smoothedScore,
+                        expressions: expressions,
+                        // 🔮 FOR FUTURE: ageAndGender will go here once models are re-enabled
+                        timestamp: new Date().toISOString()
+                    };
+
+                    updateAttentionUI(smoothedScore);
+                    window.attentionTracker.currentScore = smoothedScore;
+                    recordAttentionSample(smoothedScore);
+                    handleAttentionTimer(smoothedScore);
+
+                    // Log detailed info for debugging
+                    if (score > 0) {
+                        const topExpression = Object.keys(expressions).reduce((a, b) =>
+                            expressions[a] > expressions[b] ? a : b
+                        );
+                        console.log(`✨ Score: ${smoothedScore}% | Yaw/Pitch/Expr Ratios used | ${topExpression}`);
+                    }
+                } else {
+                    // ❌ No face detected
+                    const smoothedScore = smoothAttentionScore(0, 5);
+                    updateAttentionUI(smoothedScore);
+                    window.attentionTracker.currentScore = smoothedScore;
+                    recordAttentionSample(smoothedScore);
+                    handleAttentionTimer(smoothedScore);
+                }
+            } catch (error) {
+                console.error('Detection error:', error);
+            }
+        }
+
+        // Smooth attention scores to reduce jitter
+        function smoothAttentionScore(score, maxSamples = 10) { // Increased to 10 for better stability
+            const scores = window.attentionTracker.recentScores;
+            scores.push(score);
+            if (scores.length > maxSamples) {
+                scores.shift();
+            }
+            const sum = scores.reduce((a, b) => a + b, 0);
+            return Math.round(sum / scores.length);
+        }
+
+        function recordAttentionSample(score) {
+            window.attentionTracker.sampleCount += 1;
+            window.attentionTracker.allScores.push(score);
+            if (score < 40) {
+                window.attentionTracker.distractedCount += 1;
+            }
+
+            const avg = Math.round(
+                window.attentionTracker.allScores.reduce((a, b) => a + b, 0) /
+                Math.max(window.attentionTracker.allScores.length, 1)
+            );
+            document.getElementById('sessionInfoFocus').textContent = `${avg}%`;
+        }
+
+        function handleAttentionTimer(score) {
+            // Auto pause/resume disabled by request.
+            return;
+        }
+
+        // Attention tracking is now fully managed by AttentionService in SessionController.
+        // No manual toggle needed — camera starts/stops automatically with the session.
+    </script>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/pomodoro.js"></script>
+    <script>
+        // Check authentication
+        if (!localStorage.getItem('cognelearn_user')) {
+            window.location.href = 'login.html';
+        }
+
+        // Get playlist from URL
+        const params = new URLSearchParams(window.location.search);
+        const playlistId = params.get('playlist');
+
+        if (!playlistId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        const playlist = Playlist.getById(playlistId);
+
+        // Debug: Log playlist data
+        console.log('Playlist loaded:', {
+            id: playlistId,
+            playlist: playlist,
+            videos: playlist?.videos,
+            firstVideoId: playlist?.videos?.[0]?.id
+        });
+
+        // ============================================================
+        // GLOBAL VARIABLES
+        // ============================================================
+        // timerInterval / timeLeft are now managed by TimerService / sessionState
+        // (kept as thin aliases for legacy functions that may still reference them)
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+        let studySession = null;
+
+        // ============================================================
+        // SESSION RESUME LOGIC
+        // ============================================================
+        const _savedSession = SessionManager.hasActive() ? SessionManager.get() : null;
+        const _isResume = _savedSession && _savedSession.playlistId === playlistId;
+
+        if (_isResume) {
+            // Resume: pre-fill config from saved session and skip straight to motivational overlay
+            sessionConfig = {
+                duration: _savedSession.duration || 25,
+                cycles: _savedSession.cycles || 2
+            };
+            currentCycle = SessionManager.currentCycle();
+            timeLeft = SessionManager.remainingSeconds();
+
+            // Restore SessionController state
+            SessionController.restoreFromSaved({
+                duration: sessionConfig.duration,
+                cycles: sessionConfig.cycles,
+                timeLeft: timeLeft,
+                currentCycle: currentCycle,
+                playlistId: playlistId
+            });
+
+            updateTimerDisplay();
+            updateSessionInfo();
+            // Hide config modal, jump to motivational overlay
+            document.getElementById('preSessionModal').style.display = 'none';
+            document.getElementById('motivationalOverlay').classList.remove('hidden');
+            document.getElementById('motivationalOverlay').style.display = 'flex';
+            console.log(`▶ Resuming session: ${timeLeft}s left in cycle ${currentCycle}/${sessionConfig.cycles}`);
+        }
+
+        // Create a study session for this playlist
+        try {
+            studySession = StudySession.create({
+                playlistId: playlistId,
+                videoId: playlist?.videos?.[0]?.id || '',
+                focusTime: 25
+            });
+            console.log('Study session created:', studySession.sessionId);
+        } catch (error) {
+            console.error('Error creating study session:', error);
+        }
+
+        // Load playlist videos
+        function loadPlaylist() {
+            const items = document.getElementById('playlistItems');
+            if (!playlist || !playlist.videos) {
+                items.innerHTML = '<p style="padding: 1rem; color: var(--text-secondary);">No videos found</p>';
+                return;
+            }
+
+            items.innerHTML = playlist.videos.map((video, idx) => {
+                const isPlaylistItem = video.kind === 'playlist';
+                const thumbSrc = isPlaylistItem
+                    ? 'https://i.ytimg.com/vi/DEFAULT.jpg'
+                    : `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+                const subtitle = getPlaylistItemSubtitle(video);
+
+                return `
+                    <div class="playlist-item ${idx === 0 ? 'active' : ''}" onclick="playVideo(${idx})">
+                        <div class="playlist-row">
+                            <div class="playlist-index">${idx + 1}</div>
+                            <div class="playlist-thumb-small">
+                                <img src="${thumbSrc}" alt="${video.title}">
+                                <span class="playlist-badge">${isPlaylistItem ? 'PL' : 'VID'}</span>
+                            </div>
+                            <div class="playlist-text">
+                                <div class="playlist-title">${video.title}</div>
+                                <div class="playlist-meta">${isPlaylistItem ? 'Playlist' : 'Video'}</div>
+                                <div class="playlist-subtitle">${subtitle}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getPlaylistItemSubtitle(video) {
+            if (video.subtitle) {
+                return video.subtitle;
+            }
+
+            if (video.kind === 'playlist') {
+                return `Playlist ID: ${video.id}`;
+            }
+
+            return `Video ID: ${video.id}`;
+        }
+
+        async function hydratePlaylistTitles() {
+            if (!playlist || !playlist.videos) {
+                return;
+            }
+
+            const candidates = playlist.videos.filter(video => {
+                if (video.kind === 'playlist') return false;
+                if (!video.title) return true;
+                return /^Video\s+\d+$/i.test(video.title.trim());
+            });
+
+            if (candidates.length === 0) {
+                return;
+            }
+
+            const updates = await Promise.all(candidates.map(async video => {
+                const data = await fetchYouTubeMeta(video.id);
+                return {
+                    id: video.id,
+                    title: data?.title || video.title,
+                    subtitle: data?.author || video.subtitle || '',
+                    kind: video.kind || 'video'
+                };
+            }));
+
+            let changed = false;
+            playlist.videos = playlist.videos.map(video => {
+                const update = updates.find(item => item.id === video.id);
+                if (!update) {
+                    return video;
+                }
+                if (update.title !== video.title || update.subtitle !== video.subtitle) {
+                    changed = true;
+                    return { ...video, title: update.title, subtitle: update.subtitle };
+                }
+                return video;
+            });
+
+            if (changed) {
+                Playlist.update(playlistId, { videos: playlist.videos });
+                loadPlaylist();
+            }
+        }
+
+        async function fetchYouTubeMeta(videoId) {
+            try {
+                const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    return null;
+                }
+                const data = await response.json();
+                return {
+                    title: data.title,
+                    author: data.author_name
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        let currentVideoIdx = 0;
+
+        // playVideo — switches the active YT player to the given playlist index
+        function playVideo(idx) {
+            if (!playlist || !playlist.videos || !playlist.videos[idx]) {
+                console.error('Invalid video index or playlist');
+                return;
+            }
+            const video = playlist.videos[idx];
+            currentVideoIdx = idx;
+
+            // Update sidebar active state
+            document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                item.classList.toggle('active', i === idx);
+            });
+
+            if (_ytPlayer && typeof _ytPlayer.loadVideoById === 'function') {
+                if (video.kind === 'playlist') {
+                    _ytPlayer.loadPlaylist({ list: video.id, listType: 'playlist' });
+                } else {
+                    _ytPlayer.loadVideoById(video.id);
+                }
+                // If session is running, keep playing after video switch
+                if (sessionState.status === 'running') {
+                    setTimeout(() => VideoService.play(), 500);
+                }
+            }
+        }
+
+        // ============================================================
+        // LEGACY TIMER WRAPPERS — now delegating to SessionController
+        // ============================================================
+        window.startTimer = function () {
+            SessionController.start();
+        };
+
+        window.pauseTimer = function () {
+            SessionController.pause();
+        };
+
+        window.resetTimer = function () {
+            handleReset();
+        };
+
+        // Full reset (stop controller + reload timer from config)
+        window.handleReset = function () {
+            SessionController.stop();
+            sessionState.timeLeft  = sessionConfig.duration * 60;
+            sessionState.status    = 'idle';
+            timeLeft = sessionState.timeLeft;
+            updateTimerDisplay();
+            updateSessionInfo();
+            document.getElementById('timerStatus').textContent = 'Ready to start';
+        };
+
+        function updateTimerDisplay() {
+            // Always mirror sessionState so both legacy code and TimerService stay in sync
+            const t = sessionState.timeLeft;
+            const mins = Math.floor(t / 60);
+            const secs = t % 60;
+            document.getElementById('timerDisplay').textContent =
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            // Keep legacy timeLeft alias in sync
+            timeLeft = t;
+        }
+
+        // Legacy completeSession() is now fully handled by SessionController.onCycleComplete().
+        // Kept as a no-op stub to avoid errors from any lingering references.
+        function completeSession() {
+            SessionController.onCycleComplete();
+        }
+
+        function updateSessionInfo() {
+            document.getElementById('sessionInfoDuration').textContent = `${sessionConfig.duration}m`;
+            document.getElementById('sessionInfoCycles').textContent = `${sessionConfig.cycles}`;
+            document.getElementById('sessionInfoCurrent').textContent = `${currentCycle}`;
+        }
+
+        function showSummaryModal() {
+            const totalSamples = Math.max(window.attentionTracker.allScores.length, 1);
+            const avgScore = Math.round(
+                window.attentionTracker.allScores.reduce((a, b) => a + b, 0) /
+                Math.max(window.attentionTracker.allScores.length, 1)
+            );
+            const distractedSeconds = Math.round(window.attentionTracker.distractedCount * (detectionIntervalMs / 1000));
+            const distractedMinutes = Math.round(distractedSeconds / 60);
+
+            document.getElementById('summaryFocusScore').textContent = `${avgScore}%`;
+            document.getElementById('summaryDistraction').textContent = `${distractedMinutes}m`;
+            document.getElementById('sessionSummaryModal').classList.remove('hidden');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('sessionSummaryModal').classList.add('hidden');
+        }
+
+        function updatePlayerStudyPlan() {
+            const duration = parseInt(document.getElementById('sessionDuration').value, 10);
+            const sessions = parseInt(document.getElementById('sessionCycles').value, 10);
+            const planEl = document.getElementById('playerStudyPlan');
+
+            if (!duration || duration < 5) {
+                planEl.textContent = "Enter valid duration (min 5 min)";
+                return;
+            }
+            if (!sessions || sessions < 1) {
+                planEl.textContent = "Enter valid number of sessions";
+                return;
+            }
+
+            const totalTime = duration * sessions;
+
+            let text = `Total: ~${totalTime} minutes (${sessions} × ${duration} min)`;
+            if (duration > 60) {
+                text += " ⚠️ Long sessions may reduce focus";
+            }
+            planEl.textContent = text;
+        }
+
+        // Must run inside the window scope or DOMContentLoaded depending on script placement
+        document.addEventListener('DOMContentLoaded', () => {
+            const drInput = document.getElementById('sessionDuration');
+            const cyInput = document.getElementById('sessionCycles');
+            if (drInput) drInput.addEventListener('input', updatePlayerStudyPlan);
+            if (cyInput) cyInput.addEventListener('input', updatePlayerStudyPlan);
+            updatePlayerStudyPlan();
+        });
+
+        function startPreSession() {
+            try {
+                const duration = parseInt(document.getElementById('sessionDuration').value, 10);
+                const cycles = parseInt(document.getElementById('sessionCycles').value, 10);
+                if (!duration || duration < 5) {
+                    alert("Enter valid duration");
+                    return;
+                }
+                if (!cycles || cycles < 1) {
+                    alert("Enter valid number of sessions");
+                    return;
+                }
+
+                sessionConfig = {
+                    duration: duration,
+                    cycles: cycles
+                };
+
+                currentCycle = 1;
+                timeLeft = sessionConfig.duration * 60;
+                window.attentionTracker.recentScores = [];
+                window.attentionTracker.allScores = [];
+                window.attentionTracker.sampleCount = 0;
+                window.attentionTracker.distractedCount = 0;
+
+                // Configure the centralized SessionController
+                SessionController.configure({
+                    duration: sessionConfig.duration,
+                    cycles: sessionConfig.cycles,
+                    playlistId: playlistId
+                });
+
+                updateTimerDisplay();
+                updateSessionInfo();
+                localStorage.setItem('cognelearn_session_config', JSON.stringify(sessionConfig));
+
+                SessionManager.start(playlistId, sessionConfig.duration, sessionConfig.cycles);
+
+                document.getElementById('preSessionModal').style.display = 'none';
+                document.getElementById('motivationalOverlay').classList.remove('hidden');
+                document.getElementById('motivationalOverlay').style.display = 'flex';
+            } catch (err) {
+                alert('Error starting session: ' + err.message);
+                console.error(err);
+            }
+        }
+
+        function cancelPreSession() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function startLearning() {
+            document.getElementById('motivationalOverlay').classList.add('hidden');
+            document.getElementById('studyLayout').classList.remove('hidden');
+            sessionStarted = true;
+            initializePlayback();
+            // Auto-start the synchronized session via controller
+            // Small delay so the YT player has time to mount
+            setTimeout(() => SessionController.start(), 800);
+        }
+
+        function logout() {
+            User.logout();
+            window.location.href = 'login.html';
+        }
+
+        function initializePlayback() {
+            if (!playlist || !playlist.videos || playlist.videos.length === 0) {
+                document.getElementById('playlistItems').innerHTML = '<p style="padding: 1rem; color: var(--text-secondary);">No videos found</p>';
+                return;
+            }
+
+            loadPlaylist();
+            hydratePlaylistTitles();
+            // Initialize the YouTube IFrame API player (sets up VideoService)
+            initYouTubePlayer(playlist.videos[0]);
+        }
+
+        // ─── YouTube IFrame API ───────────────────────────────────────────────
+        let _ytPlayer = null;
+        let _pendingFirstVideo = null; // queued until YT API is ready
+
+        function initYouTubePlayer(firstVideo) {
+            if (!firstVideo) return;
+
+            // If the YT API hasn't fired yet, queue the video and wait
+            if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+                _pendingFirstVideo = firstVideo;
+                console.log('⏳ YT API not ready yet — queued player init');
+                return;
+            }
+
+            _createYTPlayer(firstVideo);
+        }
+
+        function _createYTPlayer(firstVideo) {
+            const isPlaylist = firstVideo.kind === 'playlist';
+            const videoId    = isPlaylist ? null : firstVideo.id;
+            const listId     = isPlaylist ? firstVideo.id : null;
+
+            const playerVars = {
+                autoplay: 0, // SessionController will call play()
+                controls: 1,
+                modestbranding: 1,
+                rel: 0,
+                fs: 1
+            };
+            if (listId) {
+                playerVars.listType = 'playlist';
+                playerVars.list     = listId;
+            }
+
+            _ytPlayer = new YT.Player('ytPlayer', {
+                height: '100%',
+                width:  '100%',
+                videoId: videoId || '',
+                playerVars: playerVars,
+                events: {
+                    onReady(e) {
+                        VideoService.setPlayer(e.target);
+                        console.log('✅ YouTube player ready');
+                        document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                            item.classList.toggle('active', i === 0);
+                        });
+                    },
+                    onError(e) {
+                        console.error('YouTube player error:', e.data);
+                    }
+                }
+            });
+        }
+
+        // IFrame API calls this when ready — also processes any queued init
+        window.onYouTubeIframeAPIReady = function () {
+            console.log('📺 YouTube IFrame API ready');
+            if (_pendingFirstVideo) {
+                _createYTPlayer(_pendingFirstVideo);
+                _pendingFirstVideo = null;
+            }
+        };
+
+        // Initialize
+        updateSessionInfo();
+    </script>
+</body>
+
+</html>

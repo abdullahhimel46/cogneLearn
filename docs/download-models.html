@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Face-API Models</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .step {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .step-title {
+            font-size: 1.2rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .download-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 500;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        
+        .file-size {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .success-box {
+            background: #48bb78;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .success-box.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .folder-structure {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            white-space: pre;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #92400e;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Download Face-API.js Models</h1>
+        <p class="subtitle">Required for attention tracking in cogneLearn</p>
+        
+        <div class="warning">
+            ⚠️ <strong>Important:</strong> Download all 4 files and save them in: <code>Phase 1/models/</code>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                Create Models Folder
+            </div>
+            <p style="margin-left: 3rem; color: #4a5568;">
+                Create a folder named <strong>models</strong> inside your <code>Phase 1</code> directory
+            </p>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                Download Model Files
+            </div>
+            <p style="margin-left: 3rem; color: #4a5568; margin-bottom: 1rem;">
+                Click each button below to download (Save all files in the <code>models</code> folder):
+            </p>
+            
+            <div class="download-grid" style="margin-left: 3rem;">
+                <a href="https://github.com/justadudewhohacks/face-api.js/raw/master/weights/tiny_face_detector_model-weights_manifest.json" 
+                   class="download-btn" 
+                   download="tiny_face_detector_model-weights_manifest.json"
+                   onclick="trackDownload(1)">
+                    <span>📄 tiny_face_detector_model-weights_manifest.json</span>
+                    <span class="file-size">1 KB</span>
+                </a>
+                
+                <a href="https://github.com/justadudewhohacks/face-api.js/raw/master/weights/tiny_face_detector_model-shard1" 
+                   class="download-btn" 
+                   download="tiny_face_detector_model-shard1"
+                   onclick="trackDownload(2)">
+                    <span>📦 tiny_face_detector_model-shard1</span>
+                    <span class="file-size">170 KB</span>
+                </a>
+                
+                <a href="https://github.com/justadudewhohacks/face-api.js/raw/master/weights/face_landmark_68_model-weights_manifest.json" 
+                   class="download-btn" 
+                   download="face_landmark_68_model-weights_manifest.json"
+                   onclick="trackDownload(3)">
+                    <span>📄 face_landmark_68_model-weights_manifest.json</span>
+                    <span class="file-size">1 KB</span>
+                </a>
+                
+                <a href="https://github.com/justadudewhohacks/face-api.js/raw/master/weights/face_landmark_68_model-shard1" 
+                   class="download-btn" 
+                   download="face_landmark_68_model-shard1"
+                   onclick="trackDownload(4)">
+                    <span>📦 face_landmark_68_model-shard1</span>
+                    <span class="file-size">350 KB</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">3</span>
+                Verify Installation
+            </div>
+            <p style="margin-left: 3rem; color: #4a5568; margin-bottom: 0.5rem;">
+                Your folder structure should look like:
+            </p>
+            <div class="folder-structure" style="margin-left: 3rem;">Phase 1/
+└── models/
+    ├── tiny_face_detector_model-weights_manifest.json
+    ├── tiny_face_detector_model-shard1
+    ├── face_landmark_68_model-weights_manifest.json
+    └── face_landmark_68_model-shard1</div>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">4</span>
+                Test It!
+            </div>
+            <p style="margin-left: 3rem; color: #4a5568;">
+                1. Start server: <code>python -m http.server 8000</code><br>
+                2. Open: <a href="http://localhost:8000" style="color: #667eea;">http://localhost:8000</a><br>
+                3. Go to Player page and click <strong>"Start Attention Tracking"</strong><br>
+                4. Check console (F12) for: <span style="color: #48bb78;">✅ Face-API.js models loaded successfully</span>
+            </p>
+        </div>
+        
+        <div id="successBox" class="success-box">
+            ✅ Downloads tracking: <span id="downloadCount">0</span>/4 files clicked
+        </div>
+    </div>
+    
+    <script>
+        let downloadedCount = 0;
+        const successBox = document.getElementById('successBox');
+        const downloadCountSpan = document.getElementById('downloadCount');
+        
+        function trackDownload(fileNumber) {
+            downloadedCount++;
+            downloadCountSpan.textContent = downloadedCount;
+            successBox.classList.add('show');
+            
+            if (downloadedCount === 4) {
+                successBox.innerHTML = '🎉 All files downloaded! Now move them to the <code>models</code> folder.';
+                successBox.style.background = '#48bb78';
+            }
+        }
+    </script>
+</body>
+</html>

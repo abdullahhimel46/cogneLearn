@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cogneLearn - Dashboard</title>
+    <meta name="description" content="Track your learning progress, manage playlists, and boost your focus with cogneLearn's intelligent dashboard.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dark-app">
+
+    <!-- Mobile Top Bar -->
+    <header class="mobile-topbar">
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="mobile-brand">cogneLearn</span>
+        <button class="theme-toggle-btn" onclick="ThemeManager.toggle()" aria-label="Toggle theme" style="margin-left: auto;">
+            <span class="theme-icon">☀️</span>
+        </button>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div class="app-layout">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">CL</div>
+                <span class="brand-name">cogneLearn</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active" id="nav-dashboard">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-session" onclick="startFocusSession(event)">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                    <span class="nav-label">Focus Session</span>
+                </a>
+                <a href="#playlists" class="nav-item" id="nav-playlists">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    <span class="nav-label">Playlists</span>
+                </a>
+                <a href="#analytics" class="nav-item" id="nav-analytics">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span class="nav-label">Analytics</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="nav-item" onclick="ThemeManager.toggle()" aria-label="Toggle theme" style="width:100%;">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <span class="nav-label" id="themeNavLabel">Light Mode</span>
+                </button>
+                <a href="#" class="nav-item nav-item-danger" onclick="logout()">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="dashboard-content">
+
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div>
+                    <h1>Welcome back, <span id="userName">User</span> 👋</h1>
+                    <p class="welcome-sub">Here's your learning journey at a glance</p>
+                </div>
+                <div class="banner-time" id="currentDateTime"></div>
+            </div>
+
+            <!-- ===== ROW 1: FocusCTA + TodayProgress ===== -->
+            <div class="top-row">
+
+                <!-- FocusCTA -->
+                <div class="focus-cta glass-card card-focus" id="section-cta">
+                    <div class="cta-icon" style="color: var(--primary);">◉</div>
+                    <h2>Ready to focus?</h2>
+                    <p class="cta-sub">Let's get into deep work mode ⚡</p>
+                    <div class="cta-actions">
+                        <button class="btn-cta-primary" id="ctaStartBtn" onclick="openFocusConfigModal(null, event)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Start Focus Session
+                        </button>
+                        <button class="btn-cta-secondary" id="ctaResumeBtn" onclick="resumeActiveSession()" style="display:none;">
+                            ▶ Resume Active Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TodayProgress -->
+                <div class="today-progress glass-card card-analytics" id="section-progress">
+                    <div class="section-header">
+                        <h3>⌁ Today's Progress</h3>
+                        <span class="badge-today">Today</span>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="prog-item">
+                            <span class="prog-label">Sessions</span>
+                            <span class="prog-value" id="todaySessions">0</span>
+                            <span class="prog-goal">/ 3 goal</span>
+                        </div>
+                        <div class="prog-item">
+                            <span class="prog-label">Focus Time</span>
+                            <span class="prog-value" id="todayFocusDisplay">0m</span>
+                            <span class="prog-goal">/ 60m goal</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-label-row">
+                            <span>Focus Goal Progress</span>
+                            <span id="todayProgressPct">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="todayProgressBar"></div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-wrap" style="margin-top: 0.75rem;">
+                        <div class="progress-label-row">
+                            <span>Session Goal</span>
+                            <span id="todaySessionPct">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-fill-cyan" id="todaySessionBar"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ===== ROW 2: InsightPanel ===== -->
+            <div class="insight-row" id="section-insight">
+                <div class="insight-card glass-card card-insight">
+                    <div class="insight-icon" style="color: var(--accent-insight);">✦</div>
+                    <div class="insight-body">
+                        <h3 id="insightTitle">Analyzing your sessions...</h3>
+                        <p id="insightMessage">Loading your personalized insight.</p>
+                        <small id="insightTip"></small>
+                    </div>
+                    <div class="insight-badge" id="insightBadge">—</div>
+                </div>
+            </div>
+
+            <!-- ===== ROW 3: Analytics Chart ===== -->
+            <div class="analytics-section glass-card card-analytics" id="analytics">
+                <div class="section-header">
+                    <h3>⌁ Focus Analytics</h3>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" onclick="switchChart('week', this)">This Week</button>
+                        <button class="chart-tab" onclick="switchChart('month', this)">This Month</button>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="focusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- ===== ROW 4: StatsGrid ===== -->
+            <div class="stats-grid" id="section-stats">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="color: var(--primary);">⏱️</div>
+                    <div class="stat-body">
+                        <div class="stat-value" id="statTotalFocus">0m</div>
+                        <div class="stat-label">Total Focus Time</div>
+                        <div class="stat-indicator" id="indTotalFocus"></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="color: var(--accent-ai);">🧠</div>
+                    <div class="stat-body">
+                        <div class="stat-value" id="statAvgAttention">0%</div>
+                        <div class="stat-label">Avg. Attention</div>
+                        <div class="stat-indicator" id="indAvgAttention"></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="color: var(--accent-focus);">◉</div>
+                    <div class="stat-body">
+                        <div class="stat-value" id="statSessions">0</div>
+                        <div class="stat-label">Sessions Completed</div>
+                        <div class="stat-indicator" id="indSessions"></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon" style="color: var(--accent-insight);">🔥</div>
+                    <div class="stat-body">
+                        <div class="stat-value" id="statStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-indicator" id="indStreak"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ROW 5: RecentSessions ===== -->
+            <div class="recent-section">
+                <div class="section-header">
+                    <h3>🕒 Recent Sessions</h3>
+                </div>
+                <div class="session-cards" id="recentSessionsContainer">
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <p>No sessions yet. Start your first focus session!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ROW 6: PlaylistGrid ===== -->
+            <div class="playlists-section" id="playlists">
+                <div class="section-header">
+                    <h3>🎬 Your Playlists</h3>
+                    <button class="btn-add-playlist" onclick="showAddPlaylistModal()">+ Add Playlist</button>
+                </div>
+                <div class="playlist-grid" id="playlistGrid">
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="empty-icon">🎵</span>
+                        <p>No playlists yet. <button class="link-btn" onclick="showAddPlaylistModal()">Add one</button> to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ===== FOCUS SESSION CONFIG MODAL ===== -->
+    <div id="focusConfigModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card card-focus">
+            <div class="modal-header">
+                <h2>◉ Start Focus Session</h2>
+                <button class="modal-close" onclick="closeFocusConfigModal()">✕</button>
+            </div>
+            <p class="modal-subtitle" id="focusConfigSubtitle">Set your focus plan before the video starts.</p>
+            <div class="form-group">
+                <label for="focusDuration">How long do you want to study?</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="number" id="focusDuration" min="5" step="5" value="25" style="width: 100px;">
+                    <span style="color: var(--text-secondary);">mins</span>
+                </div>
+                <small style="display:block; margin-top:0.25rem; color:#64748b;">Each session = focused study period</small>
+            </div>
+            <div class="form-group">
+                <label for="focusCycles">How many sessions do you want to complete?</label>
+                <input type="number" id="focusCycles" min="1" value="2" style="width: 100px;">
+            </div>
+            <!-- Study Plan -->
+            <div id="dashboardStudyPlan" style="margin-top: 10px; font-size: 14px; color: #94a3b8; background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                Total: ~50 minutes
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-primary" onclick="confirmFocusSession()">Start Session 🚀</button>
+                <button class="btn-modal-secondary" onclick="closeFocusConfigModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADD PLAYLIST MODAL ===== -->
+    <div id="playlistModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Add Playlist</h2>
+                <button class="modal-close" onclick="closePlaylistModal()">✕</button>
+            </div>
+            <div class="form-group">
+                <label for="playlistName">Playlist Name</label>
+                <input type="text" id="playlistName" placeholder="e.g., DSA Basics">
+            </div>
+            <div class="form-group">
+                <label for="videoIds">YouTube Links or IDs (one per line)</label>
+                <textarea id="videoIds"
+                    placeholder="https://youtu.be/jNQXAC9IVRw&#10;https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    rows="5"></textarea>
+                <small>Paste full YouTube links or raw video IDs. One per line.</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-primary" onclick="addPlaylist()">Add Playlist</button>
+                <button class="btn-modal-secondary" onclick="closePlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EDIT PLAYLIST MODAL ===== -->
+    <div id="editPlaylistModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Edit Playlist</h2>
+                <button class="modal-close" onclick="closeEditPlaylistModal()">✕</button>
+            </div>
+            <p id="editPlaylistTitle" class="modal-subtitle"></p>
+            <div class="form-group">
+                <label for="addVideoLinks">Add Videos (links or IDs, one per line)</label>
+                <textarea id="addVideoLinks"
+                    placeholder="https://youtu.be/jNQXAC9IVRw"
+                    rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="removeVideoLinks">Remove Videos (links or IDs, one per line)</label>
+                <textarea id="removeVideoLinks" placeholder="https://youtu.be/jNQXAC9IVRw" rows="3"></textarea>
+                <small>Only individual videos can be removed.</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-primary" onclick="updatePlaylistVideos()">Save Changes</button>
+                <button class="btn-modal-secondary" onclick="closeEditPlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../js/User.js"></script>
+    <script src="../js/Playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/ProductivityAnalytics.js"></script>
+    <script src="../js/AttentionMonitor.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/SimpleAnalytics.js"></script>
+    <script src="../js/SessionManager.js"></script>
+
+    <script>
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (!User.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = User.getCurrentUser();
+        document.getElementById('userName').textContent = user.name.split(' ')[0];
+
+        // Keep sidebar theme label in sync
+        function syncThemeLabel() {
+            const el = document.getElementById('themeNavLabel');
+            if (el) el.textContent = ThemeManager.get() === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+        syncThemeLabel();
+        const _origToggle = ThemeManager.toggle.bind(ThemeManager);
+        ThemeManager.toggle = function() { _origToggle(); syncThemeLabel(); };
+
+
+        const PLAYLIST_PROXY_BASE = getPlaylistProxyBase();
+
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateClock();
+        setInterval(updateClock, 60000);
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('visible');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('visible');
+        }
+
+        // ============================================================
+        // FOCUS SESSION — modal-based config
+        // ============================================================
+        let _focusTargetPlaylistId = null; // playlist chosen for the new session
+
+        function openFocusConfigModal(playlistId, e) {
+            if (e) e.preventDefault();
+            const playlists = Playlist.getAll();
+            if (playlists.length === 0) {
+                showAddPlaylistModal();
+                return;
+            }
+            // Use provided playlist or default to first
+            _focusTargetPlaylistId = playlistId || (playlists[0].playlistId || playlists[0].id);
+            const pl = playlists.find(p => (p.playlistId || p.id) === _focusTargetPlaylistId);
+            const subtitle = document.getElementById('focusConfigSubtitle');
+            subtitle.textContent = pl ? `Playlist: ${pl.title || pl.name}` : 'Set your focus plan before the video starts.';
+            document.getElementById('focusDuration').value = 25;
+            document.getElementById('focusCycles').value = 2;
+            updateDashboardStudyPlan();
+            document.getElementById('focusConfigModal').style.display = 'flex';
+        }
+
+        function updateDashboardStudyPlan() {
+            const duration = parseInt(document.getElementById('focusDuration').value, 10);
+            const sessions = parseInt(document.getElementById('focusCycles').value, 10);
+            const planEl = document.getElementById('dashboardStudyPlan');
+
+            if (!duration || duration < 5) {
+                planEl.textContent = "Enter valid duration (min 5 min)";
+                return;
+            }
+            if (!sessions || sessions < 1) {
+                planEl.textContent = "Enter valid number of sessions";
+                return;
+            }
+
+            const totalTime = duration * sessions;
+
+            let text = `Total: ~${totalTime} minutes (${sessions} × ${duration} min)`;
+            if (duration > 60) {
+                text += " ⚠️ Long sessions may reduce focus";
+            }
+            planEl.textContent = text;
+        }
+
+        document.getElementById('focusDuration').addEventListener('input', updateDashboardStudyPlan);
+        document.getElementById('focusCycles').addEventListener('input', updateDashboardStudyPlan);
+
+        function closeFocusConfigModal() {
+            document.getElementById('focusConfigModal').style.display = 'none';
+            _focusTargetPlaylistId = null;
+        }
+
+        function confirmFocusSession() {
+            const duration = parseInt(document.getElementById('focusDuration').value, 10);
+            const cycles = parseInt(document.getElementById('focusCycles').value, 10);
+            if (!duration || duration < 5) {
+                alert("Enter valid duration");
+                return;
+            }
+            if (!cycles || cycles < 1) {
+                alert("Enter valid number of sessions");
+                return;
+            }
+            if (!_focusTargetPlaylistId) return;
+            // Save to SessionManager and go to player
+            SessionManager.start(_focusTargetPlaylistId, duration, cycles);
+            window.location.href = `player.html?playlist=${_focusTargetPlaylistId}`;
+        }
+
+        function resumeActiveSession() {
+            const session = SessionManager.get();
+            if (!session) return;
+            window.location.href = `player.html?playlist=${session.playlistId}`;
+        }
+
+        // ============================================================
+        // LOAD DASHBOARD
+        // ============================================================
+        function loadDashboardData() {
+            const sessions = SimpleAnalytics.getSessions();
+            const avgAttention = SimpleAnalytics.getAverageFocus();
+            const totalFocus = SimpleAnalytics.getTotalFocusTime();
+            const sessionCount = SimpleAnalytics.getSessionCount();
+            const todayFocus = SimpleAnalytics.getTodayFocus();
+
+            // CTA: show Resume only when a real active session exists
+            if (SessionManager.hasActive()) {
+                document.getElementById('ctaResumeBtn').style.display = 'flex';
+            } else {
+                document.getElementById('ctaResumeBtn').style.display = 'none';
+            }
+
+            // Today progress
+            const todaySession = sessions.filter(s => s.date === new Date().toISOString().split('T')[0]).length;
+            document.getElementById('todaySessions').textContent = todaySession;
+            document.getElementById('todayFocusDisplay').textContent = todayFocus + 'm';
+
+            const focusPct = Math.min(100, Math.round((todayFocus / 60) * 100));
+            const sessPct = Math.min(100, Math.round((todaySession / 3) * 100));
+            document.getElementById('todayProgressPct').textContent = focusPct + '%';
+            document.getElementById('todaySessionPct').textContent = sessPct + '%';
+            document.getElementById('todayProgressBar').style.width = focusPct + '%';
+            document.getElementById('todaySessionBar').style.width = sessPct + '%';
+
+            // Stats grid
+            document.getElementById('statTotalFocus').textContent = formatDuration(totalFocus);
+            document.getElementById('statAvgAttention').textContent = avgAttention + '%';
+            document.getElementById('statSessions').textContent = sessionCount;
+            document.getElementById('statStreak').textContent = calcStreak(sessions);
+
+            setIndicator('indTotalFocus', totalFocus, 60, 120);
+            setIndicator('indAvgAttention', avgAttention, 50, 70);
+            setIndicator('indSessions', sessionCount, 5, 15);
+
+            // Insight panel
+            renderInsight(sessions, avgAttention, todayFocus);
+
+            // Chart
+            renderChart(sessions, 'week');
+
+            // Recent sessions
+            renderRecentSessions();
+
+            // Playlists
+            loadPlaylists();
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function formatDuration(mins) {
+            if (mins < 60) return mins + 'm';
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            return m > 0 ? `${h}h ${m}m` : `${h}h`;
+        }
+
+        function setIndicator(elId, value, midThreshold, highThreshold) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            if (value >= highThreshold) {
+                el.textContent = '↑ Great';
+                el.className = 'stat-indicator good';
+            } else if (value >= midThreshold) {
+                el.textContent = '→ Decent';
+                el.className = 'stat-indicator mid';
+            } else {
+                el.textContent = '↓ Needs Work';
+                el.className = 'stat-indicator low';
+            }
+        }
+
+        function calcStreak(sessions) {
+            if (sessions.length === 0) return 0;
+            const dates = [...new Set(sessions.map(s => s.date))].sort().reverse();
+            if (!dates.length) return 0;
+            let streak = 1;
+            for (let i = 0; i < dates.length - 1; i++) {
+                const curr = new Date(dates[i]);
+                const prev = new Date(dates[i + 1]);
+                const diff = (curr - prev) / (1000 * 60 * 60 * 24);
+                if (diff === 1) streak++;
+                else break;
+            }
+            return streak;
+        }
+
+        // ============================================================
+        // INSIGHT PANEL
+        // ============================================================
+        function renderInsight(sessions, avgAttention, todayFocus) {
+            const titleEl = document.getElementById('insightTitle');
+            const msgEl = document.getElementById('insightMessage');
+            const tipEl = document.getElementById('insightTip');
+            const badgeEl = document.getElementById('insightBadge');
+
+            if (sessions.length === 0) {
+                titleEl.textContent = '🚀 Start Your Journey';
+                msgEl.textContent = 'You haven\'t started any sessions yet.';
+                tipEl.textContent = 'Click "Start Focus Session" above to begin!';
+                badgeEl.textContent = 'New';
+                badgeEl.className = 'insight-badge badge-blue';
+                return;
+            }
+
+            const avgDuration = sessions.reduce((s, x) => s + (x.duration || 0), 0) / sessions.length;
+
+            if (avgAttention < 40) {
+                titleEl.textContent = '👀 Finding your focus?';
+                msgEl.textContent = `Your attention is averaging around ${avgAttention}%. Let's try 5-10 minute micro-sessions to build that muscle.`;
+                tipEl.textContent = '💡 Try removing your phone from the room.';
+                badgeEl.textContent = 'Building Habits';
+                badgeEl.className = 'insight-badge badge-red';
+            } else if (avgAttention < 60) {
+                titleEl.textContent = '🌱 You are getting there';
+                msgEl.textContent = `You're holding about ${avgAttention}% attention. This is a solid foundation!`;
+                tipEl.textContent = '💡 Make sure your room is well-lit so the tracker sees you clearly.';
+                badgeEl.textContent = 'Good Start';
+                badgeEl.className = 'insight-badge badge-yellow';
+            } else if (avgDuration < 5) {
+                titleEl.textContent = '🏃‍♂️ Great focus, short sprints';
+                msgEl.textContent = `You're laser-focused (${avgAttention}%), but your sessions are quick (~${Math.round(avgDuration)}m).`;
+                tipEl.textContent = '💡 Try bumping your duration up to 20-25 minutes to enter "Deep Work" territory.';
+                badgeEl.textContent = 'Level Up';
+                badgeEl.className = 'insight-badge badge-blue';
+            } else {
+                titleEl.textContent = '✨ Absolute flow state';
+                msgEl.textContent = `Incredible focus marks (${avgAttention}%) across your recent sessions. You're crushing it!`;
+                tipEl.textContent = '💡 Use this momentum to tackle your hardest subjects right now.';
+                badgeEl.textContent = 'On Fire 🔥';
+                badgeEl.className = 'insight-badge badge-green';
+            }
+        }
+
+        // ============================================================
+        // CHART
+        // ============================================================
+        let focusChartInstance = null;
+
+        function renderChart(sessions, period) {
+            const ctx = document.getElementById('focusChart');
+            if (!ctx) return;
+
+            const labels = [];
+            const focusData = [];
+            const attentionData = [];
+
+            const days = period === 'week' ? 7 : 30;
+            for (let i = days - 1; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const iso = d.toISOString().split('T')[0];
+                const dayLabel = period === 'week'
+                    ? d.toLocaleDateString('en-US', { weekday: 'short' })
+                    : d.getDate().toString();
+
+                labels.push(dayLabel);
+
+                const daySessions = sessions.filter(s => s.date === iso);
+                const focusTime = daySessions.reduce((s, x) => s + (x.duration || 0), 0);
+                const attnAvg = daySessions.length > 0
+                    ? Math.round(daySessions.reduce((s, x) => s + (x.avgFocus || 0), 0) / daySessions.length)
+                    : 0;
+
+                focusData.push(focusTime);
+                attentionData.push(attnAvg);
+            }
+
+            if (focusChartInstance) focusChartInstance.destroy();
+
+            // Create gradients
+            const gradientBlue = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+            gradientBlue.addColorStop(0, 'rgba(37, 99, 235, 0.4)');
+            gradientBlue.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+            const gradientGreen = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+            gradientGreen.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
+            gradientGreen.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
+
+            focusChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Focus Time (min)',
+                            data: focusData,
+                            borderColor: '#2563eb', // Electric Blue
+                            backgroundColor: gradientBlue,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#2563eb',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Attention %',
+                            data: attentionData,
+                            borderColor: '#22c55e', // Success Green
+                            backgroundColor: gradientGreen,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#22c55e',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y1',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#e2e8f0',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b', font: { family: 'Inter' } }
+                        },
+                        y: {
+                            type: 'linear', position: 'left',
+                            grid: { display: false },
+                            ticks: { color: '#64748b', font: { family: 'Inter' } },
+                            title: { display: true, text: 'Minutes', color: '#64748b', font: { family: 'Inter' } }
+                        },
+                        y1: {
+                            type: 'linear', position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#64748b', font: { family: 'Inter' } },
+                            title: { display: true, text: 'Attention %', color: '#64748b', font: { family: 'Inter' } },
+                            max: 100,
+                        }
+                    }
+                }
+            });
+        }
+
+        function switchChart(period, btn) {
+            document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const sessions = SimpleAnalytics.getSessions();
+            renderChart(sessions, period);
+        }
+
+        // ============================================================
+        // RECENT SESSIONS
+        // ============================================================
+        function renderRecentSessions() {
+            const container = document.getElementById('recentSessionsContainer');
+            const sessions = SimpleAnalytics.getRecentSessions(6);
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <p>No sessions yet. Start your first focus session!</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => {
+                const dateLabel = formatShortDate(session.date);
+                const duration = (session.duration || 0);
+                const focus = (session.avgFocus || 0);
+                const status = session.completed;
+                const focusClass = focus >= 70 ? 'good' : focus >= 50 ? 'mid' : 'low';
+                const fillColor = focus >= 70 ? '#22c55e' : focus >= 50 ? '#f59e0b' : '#ef4444';
+
+                return `
+                <div class="session-card glass-card">
+                    <div class="session-top">
+                        <span class="session-date">${dateLabel}</span>
+                        <span class="session-status-icon">${status ? '✅' : '⚠️'}</span>
+                    </div>
+                    <div class="session-meta">
+                        <span class="session-duration">⏱ ${formatDuration(duration)}</span>
+                        <span class="session-focus focus-${focusClass}">${focus}% focus</span>
+                    </div>
+                    <div class="progress-track slim">
+                        <div class="progress-fill" style="width:${focus}%; background:${fillColor};"></div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function formatShortDate(isoDate) {
+            if (!isoDate) return '-';
+            const date = new Date(isoDate);
+            if (Number.isNaN(date.getTime())) return '-';
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // ============================================================
+        // PLAYLISTS
+        // ============================================================
+        function loadPlaylists() {
+            const playlists = Playlist.getAll();
+            const grid = document.getElementById('playlistGrid');
+            const activeSession = SessionManager.hasActive() ? SessionManager.get() : null;
+
+            if (playlists.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="empty-icon">🎵</span>
+                        <p>No playlists yet. <button class="link-btn" onclick="showAddPlaylistModal()">Add one</button> to get started!</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = playlists.map(p => {
+                const pid = p.playlistId || p.id;
+                const firstVideoId = p.videos && p.videos.length > 0 ? p.videos[0].id : null;
+                const thumbUrl = firstVideoId
+                    ? `https://img.youtube.com/vi/${firstVideoId}/mqdefault.jpg`
+                    : null;
+
+                // Continue button: show ONLY if this playlist has an active session
+                const isActivePlaylist = activeSession && activeSession.playlistId === pid;
+                // Remaining time label for Continue button
+                let continueLabel = '► Continue';
+                if (isActivePlaylist) {
+                    const rem = SessionManager.remainingSeconds();
+                    const mins = Math.floor(rem / 60);
+                    const secs = rem % 60;
+                    continueLabel = `► Continue (${mins}:${String(secs).padStart(2,'0')} left)`;
+                }
+
+                const continueBtn = isActivePlaylist
+                    ? `<button class="btn-pl-continue" onclick="goToPlayer('${pid}')">${continueLabel}</button>`
+                    : '';
+
+                const focusBtnLabel = '🎯 Focus Session';
+
+                const focusBtn = !isActivePlaylist
+                    ? `<button class="btn-pl-session" onclick="openFocusConfigModal('${pid}', event)">${focusBtnLabel}</button>`
+                    : '';
+
+                return `
+                <div class="playlist-card-new glass-card" style="padding: 1rem;">
+                    <div class="pl-thumb" onclick="goToPlayer('${pid}')" style="cursor:pointer; position: relative;">
+                        ${thumbUrl
+                            ? `<img src="${thumbUrl}" alt="${p.title || p.name}" onerror="this.parentElement.innerHTML='<div class=\\'pl-thumb-placeholder\\'>\ud83d\udcf9</div>'">`
+                            : `<div class="pl-thumb-placeholder">📹</div>`
+                        }
+                        <div class="pl-overlay">
+                            ${isActivePlaylist 
+                                ? `<span style="font-weight: 600; padding: 0.5rem 1rem; background: var(--primary); border-radius: 99px; box-shadow: 0 4px 12px var(--primary-glow);">► Continue</span>`
+                                : `<span style="font-weight: 600; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 99px; backdrop-filter: blur(4px);">► Play</span>`
+                            }
+                        </div>
+                    </div>
+                    <div class="pl-body">
+                        <h4 class="pl-title">${p.title || p.name}</h4>
+                        <p class="pl-meta">${p.videos.length} video${p.videos.length !== 1 ? 's' : ''}</p>
+                        <div class="pl-actions">
+                            ${continueBtn}
+                            ${focusBtn}
+                        </div>
+                        <div class="pl-edit-actions">
+                            <button class="pl-btn-sm" onclick="showEditPlaylistModal('${pid}', '${p.title || p.name}')">Edit</button>
+                            <button class="pl-btn-sm pl-btn-danger" onclick="deletePlaylist('${pid}', '${p.title || p.name}')">Delete</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function goToPlayer(playlistId) {
+            // If no active session → go straight to player (player.html will show its own modal)
+            window.location.href = `player.html?playlist=${playlistId}`;
+        }
+
+        function deletePlaylist(playlistId, playlistName) {
+            if (confirm(`Delete "${playlistName}"? This cannot be undone.`)) {
+                Playlist.delete(playlistId);
+                loadPlaylists();
+            }
+        }
+
+        // ============================================================
+        // MODALS
+        // ============================================================
+        function showAddPlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'flex';
+        }
+
+        function closePlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'none';
+            document.getElementById('videoIds').value = '';
+            document.getElementById('playlistName').value = '';
+        }
+
+        let editingPlaylistId = null;
+
+        function showEditPlaylistModal(playlistId, playlistName) {
+            editingPlaylistId = playlistId;
+            document.getElementById('editPlaylistTitle').textContent = `Editing: ${playlistName}`;
+            document.getElementById('addVideoLinks').value = '';
+            document.getElementById('removeVideoLinks').value = '';
+            document.getElementById('editPlaylistModal').style.display = 'flex';
+        }
+
+        function closeEditPlaylistModal() {
+            editingPlaylistId = null;
+            document.getElementById('editPlaylistModal').style.display = 'none';
+        }
+
+        // Ripple effect for buttons
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = btn.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left) + 'px';
+            ripple.style.top = (e.clientY - rect.top) + 'px';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+
+        // ============================================================
+        // ADD / UPDATE PLAYLIST LOGIC (preserved from original)
+        // ============================================================
+        async function addPlaylist() {
+            const videoIdsText = document.getElementById('videoIds').value.trim();
+            const name = document.getElementById('playlistName').value.trim() || 'Untitled Playlist';
+            if (!videoIdsText) { alert('Please enter at least one video link or ID'); return; }
+
+            const lines = videoIdsText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const videoIdSet = new Set();
+            const playlistIdSet = new Set();
+
+            lines.forEach(line => {
+                const normalized = normalizeYouTubeInput(line);
+                if (normalized.videoId) videoIdSet.add(normalized.videoId);
+                if (normalized.playlistId) playlistIdSet.add(normalized.playlistId);
+            });
+
+            if (videoIdSet.size === 0 && playlistIdSet.size === 0) {
+                alert('Please enter at least one valid YouTube link or video ID');
+                return;
+            }
+
+            const playlistFallbacks = [];
+            if (playlistIdSet.size > 0) {
+                const playlistIds = Array.from(playlistIdSet);
+                if (shouldExpandPlaylistLinks()) {
+                    for (const pid of playlistIds) {
+                        try {
+                            const ids = await fetchPlaylistVideoIds(pid);
+                            ids.forEach(id => videoIdSet.add(id));
+                        } catch { playlistFallbacks.push(pid); }
+                    }
+                } else { playlistFallbacks.push(...playlistIds); }
+            }
+
+            const validIds = Array.from(videoIdSet).filter(id => Video.isValidYouTubeId(id));
+            if (validIds.length === 0 && playlistFallbacks.length === 0) {
+                alert('No valid video IDs found.');
+                return;
+            }
+
+            const videos = validIds.map((id, idx) => ({ id, title: `Video ${idx + 1}`, kind: 'video' }));
+            playlistFallbacks.forEach((pid, idx) => videos.push({ id: pid, title: `Playlist ${idx + 1}`, kind: 'playlist' }));
+
+            Playlist.create({ title: name, description: '', videos });
+            alert(`Playlist added with ${videos.length} item(s)!`);
+            closePlaylistModal();
+            loadPlaylists();
+        }
+
+        async function updatePlaylistVideos() {
+            if (!editingPlaylistId) { alert('No playlist selected.'); return; }
+            const addText = document.getElementById('addVideoLinks').value.trim();
+            const removeText = document.getElementById('removeVideoLinks').value.trim();
+            if (!addText && !removeText) { alert('Please add or remove at least one video.'); return; }
+
+            const addLines = addText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const removeLines = removeText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const addVideoIdSet = new Set();
+            const addPlaylistIdSet = new Set();
+            const removeVideoIdSet = new Set();
+
+            addLines.forEach(line => {
+                const n = normalizeYouTubeInput(line);
+                if (n.videoId) addVideoIdSet.add(n.videoId);
+                if (n.playlistId) addPlaylistIdSet.add(n.playlistId);
+            });
+            removeLines.forEach(line => {
+                const n = normalizeYouTubeInput(line);
+                if (n.videoId) removeVideoIdSet.add(n.videoId);
+            });
+
+            const playlistFallbacks = [];
+            if (addPlaylistIdSet.size > 0) {
+                for (const pid of addPlaylistIdSet) {
+                    try {
+                        const ids = await fetchPlaylistVideoIds(pid);
+                        ids.forEach(id => addVideoIdSet.add(id));
+                    } catch { playlistFallbacks.push(pid); }
+                }
+            }
+
+            const addIds = Array.from(addVideoIdSet).filter(id => Video.isValidYouTubeId(id));
+            const removeIds = Array.from(removeVideoIdSet).filter(id => Video.isValidYouTubeId(id));
+
+            addIds.forEach((id, idx) => Playlist.addVideo(editingPlaylistId, { id, title: `Video ${idx + 1}`, kind: 'video' }));
+            playlistFallbacks.forEach((pid, idx) => Playlist.addVideo(editingPlaylistId, { id: pid, title: `Playlist ${idx + 1}`, kind: 'playlist' }));
+            removeIds.forEach(id => Playlist.removeVideo(editingPlaylistId, id));
+
+            const addedCount = addIds.length + playlistFallbacks.length;
+            alert(`Updated: ${addedCount} added, ${removeIds.length} removed.`);
+            closeEditPlaylistModal();
+            loadPlaylists();
+        }
+
+        // ============================================================
+        // YOUTUBE UTILS (preserved)
+        // ============================================================
+        function normalizeYouTubeInput(input) {
+            if (!input) return { videoId: null, playlistId: null };
+            if (Video.isValidYouTubeId(input)) return { videoId: input, playlistId: null };
+            const url = toValidUrl(input);
+            if (!url) return { videoId: null, playlistId: null };
+            return { videoId: extractYouTubeVideoId(url), playlistId: extractYouTubePlaylistId(url) };
+        }
+
+        function toValidUrl(input) {
+            try { return new URL(input); } catch {
+                try { return new URL('https://' + input); } catch { return null; }
+            }
+        }
+
+        function extractYouTubeVideoId(url) {
+            const host = url.hostname.replace('www.', '');
+            if (host === 'youtu.be') {
+                const id = url.pathname.split('/').filter(Boolean)[0];
+                return Video.isValidYouTubeId(id) ? id : null;
+            }
+            if (host === 'youtube.com' || host === 'm.youtube.com') {
+                if (url.pathname === '/watch') { const id = url.searchParams.get('v'); return Video.isValidYouTubeId(id) ? id : null; }
+                if (url.pathname.startsWith('/shorts/')) { const id = url.pathname.split('/')[2]; return Video.isValidYouTubeId(id) ? id : null; }
+                if (url.pathname.startsWith('/embed/')) { const id = url.pathname.split('/')[2]; return Video.isValidYouTubeId(id) ? id : null; }
+            }
+            return null;
+        }
+
+        function extractYouTubePlaylistId(url) {
+            const host = url.hostname.replace('www.', '');
+            if (['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)) {
+                return url.searchParams.get('list') || null;
+            }
+            return null;
+        }
+
+        async function fetchPlaylistVideoIds(playlistId) {
+            if (!PLAYLIST_PROXY_BASE) throw new Error('Proxy not configured');
+            const response = await fetch(`${PLAYLIST_PROXY_BASE}/api/playlist?playlistId=${encodeURIComponent(playlistId)}`);
+            if (!response.ok) throw new Error(`Proxy error: ${response.status}`);
+            const data = await response.json();
+            return Array.isArray(data.videoIds) ? data.videoIds : [];
+        }
+
+        function shouldExpandPlaylistLinks() { return Boolean(PLAYLIST_PROXY_BASE); }
+
+        function getPlaylistProxyBase() {
+            const stored = localStorage.getItem('cognelearn_playlist_proxy');
+            if (!stored) return 'http://localhost:3001';
+            if (stored === 'disabled') return '';
+            return stored.replace(/\/+$/, '');
+        }
+
+        function logout() {
+            User.logout();
+            window.location.href = 'login.html';
+        }
+
+        // Init
+        loadDashboardData();
+    </script>
+</body>
+
+</html>
