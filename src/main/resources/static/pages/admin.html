@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — cogneLearn</title>
+  <meta name="description" content="cogneLearn system control panel for administrators.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+
+  <!-- ══ App Shell ══════════════════════════════════════════════ -->
+  <div class="shell">
+
+    <!-- ── Sidebar ──────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+
+      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="sidebar__brand">
+        <span class="sidebar__mark" aria-hidden="true">CL</span>
+        <div class="sidebar__brand-text">
+          <span class="sidebar__name">cogneLearn</span>
+          <span class="sidebar__role">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav" aria-label="Primary navigation">
+
+        <a href="#overview" class="nav-item is-active" id="nav-overview" data-page="overview" aria-current="page">
+          <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+          <span>Overview</span>
+        </a>
+
+        <a href="#users" class="nav-item" id="nav-users" data-page="users">
+          <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Users</span>
+        </a>
+
+        <a href="#feedback" class="nav-item" id="nav-feedback" data-page="feedback">
+          <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Feedback</span>
+        </a>
+
+        <a href="#settings" class="nav-item" id="nav-settings" data-page="settings">
+          <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
+          </svg>
+          <span>Settings</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar__footer">
+        <button class="sidebar__theme-toggle" id="adminThemeToggle" type="button" aria-pressed="false"
+          title="Toggle Dark Mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+          </svg>
+          <span>Dark Mode</span>
+        </button>
+        <a href="dashboard.html" class="sidebar__back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            aria-hidden="true">
+            <path d="M19 12H5"></path>
+            <path d="m12 5-7 7 7 7"></path>
+          </svg>
+          Back to App
+        </a>
+      </div>
+
+    </aside>
+
+    <!-- ── Main Content ──────────────────────────────────────── -->
+    <main class="main" id="main">
+
+      <!-- PAGE: Overview -->
+      <section class="page" id="page-overview" aria-labelledby="heading-overview">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">System</p>
+            <h1 class="page__title" id="heading-overview">Overview</h1>
+          </div>
+          <time class="page__timestamp" id="adminTimestamp" datetime=""></time>
+        </header>
+
+        <div class="stats-row" role="list" aria-label="Key metrics">
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Total Users</p>
+            <p class="stat-card__value" id="statTotalUsers">—</p>
+          </article>
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Active Sessions</p>
+            <p class="stat-card__value" id="statActiveSessions">—</p>
+          </article>
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Total Playlists</p>
+            <p class="stat-card__value" id="statTotalPlaylists">—</p>
+          </article>
+          <article class="stat-card stat-card--status" role="listitem">
+            <p class="stat-card__label">System Status</p>
+            <p class="stat-card__value" id="statSystemStatus">—</p>
+          </article>
+        </div>
+
+        <section class="panel" aria-labelledby="heading-activity">
+          <h2 class="panel__title" id="heading-activity">Recent Activity</h2>
+          <ul class="activity-list" id="activityList" aria-live="polite"></ul>
+        </section>
+
+        <section class="panel" aria-labelledby="heading-sysinfo">
+          <h2 class="panel__title" id="heading-sysinfo">System Info</h2>
+          <dl class="info-grid">
+            <div class="info-row">
+              <dt class="info-row__key">Server Status</dt>
+              <dd class="info-row__val" id="sysServerStatus">—</dd>
+            </div>
+            <div class="info-row">
+              <dt class="info-row__key">API Latency</dt>
+              <dd class="info-row__val" id="sysApiLatency">—</dd>
+            </div>
+            <div class="info-row">
+              <dt class="info-row__key">Error Count (24 h)</dt>
+              <dd class="info-row__val" id="sysErrorCount">—</dd>
+            </div>
+          </dl>
+        </section>
+
+      </section>
+
+      <!-- PAGE: Users -->
+      <section class="page hidden" id="page-users" aria-labelledby="heading-users">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Management</p>
+            <h1 class="page__title" id="heading-users">Users</h1>
+          </div>
+          <input class="search-input" id="userSearchInput" type="search" placeholder="Search by name or email…"
+            aria-label="Search users">
+        </header>
+
+        <section class="panel panel--flush" aria-label="User table">
+          <div class="table-wrap">
+            <table class="data-table" id="usersTable" aria-label="Registered users">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Joined</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- PAGE: Feedback -->
+      <section class="page hidden" id="page-feedback" aria-labelledby="heading-feedback">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Community</p>
+            <h1 class="page__title" id="heading-feedback">Feedback</h1>
+          </div>
+        </header>
+
+        <div class="feedback-list" id="feedbackList" role="list" aria-label="User feedback"></div>
+
+      </section>
+
+      <!-- PAGE: Settings -->
+      <section class="page hidden" id="page-settings" aria-labelledby="heading-settings">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Configuration</p>
+            <h1 class="page__title" id="heading-settings">Settings</h1>
+          </div>
+        </header>
+
+        <section class="panel" aria-labelledby="heading-system-settings">
+          <h2 class="panel__title" id="heading-system-settings">System Controls</h2>
+
+          <div class="setting-row">
+            <div class="setting-row__info">
+              <p class="setting-row__name">Maintenance Mode</p>
+              <p class="setting-row__desc">Prevents users from logging in while maintenance is in progress.</p>
+            </div>
+            <button class="toggle" id="maintenanceToggle" role="switch" aria-checked="false"
+              aria-label="Toggle maintenance mode" type="button">
+              <span class="toggle__knob"></span>
+            </button>
+          </div>
+
+          <div class="setting-row setting-row--form">
+            <div class="setting-row__info">
+              <label class="setting-row__name" for="appNameInput">App Name</label>
+              <p class="setting-row__desc">Display name shown in the navigation and emails.</p>
+            </div>
+            <div class="setting-row__control">
+              <input class="field" id="appNameInput" type="text" value="cogneLearn" maxlength="64"
+                aria-label="Application display name">
+              <button class="btn-save" id="saveAppNameBtn" type="button">Save</button>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+  </div>
+  <!-- /.shell -->
+
+  <!-- ══ Footer (full-width, outside shell) ═════════════════════ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-main-grid">
+        <!-- Brand Section -->
+        <div class="footer-brand-section">
+          <div class="footer-light__brand-lockup">
+            <div class="footer-light__mark">CL</div>
+            <span class="footer-light__title">cogneLearn</span>
+          </div>
+          <p class="footer-light__tagline">Combining YouTube learning with distraction-free tracking and AI attention insights.</p>
+          <div class="footer-contact-details">
+            <span class="contact-item">abdullahhimel46@gamil.com</span>
+            <span class="contact-item">Helpline: +8801890986804</span>
+            <span class="contact-item small">(Available: 10AM-5PM)</span>
+          </div>
+        </div>
+
+        <!-- Useful Links -->
+        <div class="footer-links-section">
+          <h3 class="footer-section-title">Useful Links</h3>
+          <nav class="footer-section-links">
+            <a href="#" class="footer-light__link">User Guidelines</a>
+            <a href="#" class="footer-light__link">Privacy Policy</a>
+            <a href="#" class="footer-light__link">Terms and Conditions</a>
+            <a href="#" class="footer-light__link">About us</a>
+          </nav>
+        </div>
+
+        <!-- Social Links -->
+        <div class="footer-social-section">
+          <h3 class="footer-section-title">Social Media Link</h3>
+          <div class="social-icons-row">
+            <a href="#" class="social-circle-btn facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03.73-1.25 1.5-1.25H17V2.5c-.5-.07-1.4-.2-2.5-.2-2.85 0-4.5 1.7-4.5 4.5v2.7H7.5v4H10V22h4v-8.5Z"/></svg>
+            </a>
+            <a href="#" class="social-circle-btn instagram" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.05.41 2.22.06 1.28.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.05.36-2.22.41-1.28.06-1.65.07-4.86.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.05-.41-2.22-.06-1.28-.07-1.65-.07-4.86s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.05-.36 2.22-.41 1.28-.06 1.65-.07 4.86-.07m0-2c-3.26 0-3.67.01-4.95.07-1.28.06-2.15.26-2.91.56-.78.3-1.44.71-2.1 1.37-.66.66-1.07 1.32-1.37 2.1-.3.76-.5 1.63-.56 2.91-.06 1.28-.07 1.69-.07 4.95s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.3.78.71 1.44 1.37 2.1.66.66 1.32 1.07 2.1 1.37.76.3 1.63.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.78-.3 1.44-.71 2.1-1.37.66-.66 1.07-1.32 2.1-2.1.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.78-.71-1.44-1.37-2.1-.66-.66-1.32-1.07-2.1-1.37-.76-.3-1.63-.5-2.91-.56-1.28-.06-1.69-.07-4.95-.07z"/><path d="M12 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/><circle cx="18.41" cy="5.59" r="1.44"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/its-abdullah-himel/" target="_blank" rel="noreferrer" class="social-circle-btn linkedin" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            </a>
+            <a href="https://github.com/abdullahhimel46" target="_blank" rel="noreferrer" class="social-circle-btn github" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.341-3.369-1.341-.454-1.152-1.11-1.459-1.11-1.459-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-divider"></div>
+      <div class="footer-bottom-content">
+        <div class="footer-copyright">&copy; 2026 cogneLearn Admin. Engineered for Deep Work.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/admin.js"></script>
+</body>
+
+</html>

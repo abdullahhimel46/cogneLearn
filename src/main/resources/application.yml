@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: cogneLearn
+  datasource:
+    url: jdbc:h2:file:./data/cognelearn;AUTO_SERVER=TRUE
+    # Database files are stored in the data folder
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+  session:
+    timeout: 8h
+
+# ─── Authentication ──────────────────────────────────────────────────────────
+# We used Spring Security session-based authentication (no JWT).
+# After login, Spring sets a JSESSIONID cookie automatically.
+# The session timeout is set to 8 hours for better user experience.
+# spring.session.timeout: 8h (configured above)
+
+
+playlistProxy:
+  cacheTtlMs: 600000
