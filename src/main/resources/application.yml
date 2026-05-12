@@ -21,6 +21,17 @@ spring:
       enabled: true
   session:
     timeout: 8h
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:abdullahhimel46@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # ─── Authentication ──────────────────────────────────────────────────────────
 # We used Spring Security session-based authentication (no JWT).

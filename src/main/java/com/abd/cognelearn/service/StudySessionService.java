@@ -1,16 +1,16 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.dto.session.AttentionScoreRequest;
-import com.cognelearn.dto.session.SessionCompleteRequest;
-import com.cognelearn.dto.session.SessionCreateRequest;
-import com.cognelearn.dto.session.SessionResponse;
-import com.cognelearn.model.AttentionScoreEntity;
-import com.cognelearn.model.PlaylistEntity;
-import com.cognelearn.model.SessionStatus;
-import com.cognelearn.model.StudySessionEntity;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.PlaylistRepository;
-import com.cognelearn.repository.StudySessionRepository;
+import com.abd.cognelearn.dto.session.AttentionScoreRequest;
+import com.abd.cognelearn.dto.session.SessionCompleteRequest;
+import com.abd.cognelearn.dto.session.SessionCreateRequest;
+import com.abd.cognelearn.dto.session.SessionResponse;
+import com.abd.cognelearn.model.AttentionScoreEntity;
+import com.abd.cognelearn.model.PlaylistEntity;
+import com.abd.cognelearn.model.SessionStatus;
+import com.abd.cognelearn.model.StudySessionEntity;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.PlaylistRepository;
+import com.abd.cognelearn.repository.StudySessionRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -18,19 +18,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * StudySessionService — manages all study session operations.
+ * StudySessionService â€” manages all study session operations.
  *
  * <p>A "study session" represents one timed focus period (like a Pomodoro block).
  * This service maps to multiple JavaScript modules:
  * <ul>
- *   <li>{@code StudySession.js} — create, get, end sessions</li>
- *   <li>{@code SessionManager.js} — active session tracking</li>
- *   <li>{@code SessionController.js} — timer lifecycle (start, pause, resume, complete)</li>
+ *   <li>{@code StudySession.js} â€” create, get, end sessions</li>
+ *   <li>{@code SessionManager.js} â€” active session tracking</li>
+ *   <li>{@code SessionController.js} â€” timer lifecycle (start, pause, resume, complete)</li>
  * </ul>
  *
  * <p>{@code @Service} tells Spring this is a service bean to manage automatically.
  * {@code @Transactional} on methods tells JPA to wrap the database operations in a
- * transaction — if anything fails, ALL changes are rolled back (all-or-nothing).
+ * transaction â€” if anything fails, ALL changes are rolled back (all-or-nothing).
  */
 @Service
 public class StudySessionService {
@@ -40,7 +40,7 @@ public class StudySessionService {
     private final CurrentUserService currentUserService;
 
     /**
-     * Constructor — Spring injects all required dependencies automatically.
+     * Constructor â€” Spring injects all required dependencies automatically.
      *
      * @param studySessionRepository repository for session DB operations
      * @param playlistRepository     repository for playlist lookups
@@ -101,7 +101,7 @@ public class StudySessionService {
         UserEntity user = currentUserService.requireUser();
 
         // Step 1: Look up the playlist if a playlistId was provided
-        // (playlist is optional — user can study without selecting one)
+        // (playlist is optional â€” user can study without selecting one)
         PlaylistEntity playlist = null;
         if (request.playlistId() != null && !request.playlistId().isBlank()) {
             playlist = playlistRepository.findByIdAndUser(UUID.fromString(request.playlistId()), user)
@@ -180,7 +180,7 @@ public class StudySessionService {
     /**
      * Mark a session as completed and record how long the user actually studied.
      *
-     * <p>Maps to JS: {@code SessionController.stop()} → {@code StudySession.end(sessionId, completedMinutes)}
+     * <p>Maps to JS: {@code SessionController.stop()} â†’ {@code StudySession.end(sessionId, completedMinutes)}
      * and updates {@code playlist.totalFocusMinutes} like {@code Playlist.addSession()}.
      *
      * @param sessionId the UUID of the session to complete
@@ -218,7 +218,7 @@ public class StudySessionService {
      * The browser calls this endpoint periodically while the session is running.
      *
      * @param sessionId the UUID of the active session
-     * @param request   contains the score (0–100)
+     * @param request   contains the score (0â€“100)
      * @return the updated session with the new score appended to attentionScores
      */
     @Transactional
@@ -280,7 +280,7 @@ public class StudySessionService {
                 session.getEndTime(),
                 session.getDuration(),
                 session.getCompletedDuration(),
-                session.getStatus().name().toLowerCase(),  // "ACTIVE" → "active" (matches JS)
+                session.getStatus().name().toLowerCase(),  // "ACTIVE" â†’ "active" (matches JS)
                 session.getCreatedAt(),
                 scores
         );

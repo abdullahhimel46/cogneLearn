@@ -1,7 +1,7 @@
-package com.cognelearn.dto.playlist;
+package com.abd.cognelearn.dto.playlist;
 
 /**
- * VideoItemResponse — a video item sent back to the browser in playlist responses.
+ * VideoItemResponse â€” a video item sent back to the browser in playlist responses.
  *
  * <p>Maps to the JavaScript video object stored in {@code playlist.videos}:
  * <pre>

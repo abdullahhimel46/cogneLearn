@@ -1,4 +1,4 @@
-package com.cognelearn.dto.admin;
+package com.abd.cognelearn.dto.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,12 +1,12 @@
-package com.cognelearn.dto.user;
+package com.abd.cognelearn.dto.user;
 
 import java.time.Instant;
 import java.util.UUID;
 
 /**
- * UserResponse — the user data sent back to the browser in API responses.
+ * UserResponse â€” the user data sent back to the browser in API responses.
  *
- * <p>This is a "safe" view of a user — it deliberately EXCLUDES the password hash.
+ * <p>This is a "safe" view of a user â€” it deliberately EXCLUDES the password hash.
  * We should NEVER include {@code passwordHash} in any API response.
  *
  * <p>Maps to the JavaScript user object displayed in the UI:

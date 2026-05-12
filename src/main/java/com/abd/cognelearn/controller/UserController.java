@@ -1,21 +1,21 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.user.UserResponse;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.service.CurrentUserService;
+import com.abd.cognelearn.dto.user.UserResponse;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.service.CurrentUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * UserController — REST API endpoints for user profile information.
+ * UserController â€” REST API endpoints for user profile information.
  *
  * <p>Base path: {@code /api/v1/users}
  *
  * <p>Maps to the JavaScript {@code User.js} module:
  * <pre>
- *   GET /api/v1/users/me → User.getCurrentUser()
+ *   GET /api/v1/users/me â†’ User.getCurrentUser()
  * </pre>
  *
  * <p>All endpoints require the user to be logged in (session cookie required).
@@ -28,7 +28,7 @@ public class UserController {
     private final CurrentUserService currentUserService;
 
     /**
-     * Constructor — Spring injects CurrentUserService.
+     * Constructor â€” Spring injects CurrentUserService.
      *
      * @param currentUserService helper that reads the logged-in user from the session
      */

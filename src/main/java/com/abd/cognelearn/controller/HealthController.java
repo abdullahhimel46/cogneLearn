@@ -1,4 +1,4 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * HealthController — a simple health check endpoint.
+ * HealthController â€” a simple health check endpoint.
  *
  * <p>Returns {@code { "status": "ok" }} when the server is running.
  *
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  *   <li>Monitoring scripts that need a simple ping endpoint</li>
  * </ul>
  *
- * <p>This endpoint is PUBLIC — no login required (configured in {@link com.cognelearn.config.SecurityConfig}).
+ * <p>This endpoint is PUBLIC â€” no login required (configured in {@link com.cognelearn.config.SecurityConfig}).
  */
 @RestController
 public class HealthController {

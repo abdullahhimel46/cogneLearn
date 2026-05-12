@@ -1,15 +1,15 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.dto.playlist.PlaylistRequest;
-import com.cognelearn.dto.playlist.PlaylistResponse;
-import com.cognelearn.dto.playlist.PlaylistUpdateRequest;
-import com.cognelearn.dto.playlist.VideoItemRequest;
-import com.cognelearn.dto.playlist.VideoItemResponse;
-import com.cognelearn.model.PlaylistEntity;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.model.VideoItemEntity;
-import com.cognelearn.repository.PlaylistRepository;
-import com.cognelearn.repository.StudySessionRepository;
+import com.abd.cognelearn.dto.playlist.PlaylistRequest;
+import com.abd.cognelearn.dto.playlist.PlaylistResponse;
+import com.abd.cognelearn.dto.playlist.PlaylistUpdateRequest;
+import com.abd.cognelearn.dto.playlist.VideoItemRequest;
+import com.abd.cognelearn.dto.playlist.VideoItemResponse;
+import com.abd.cognelearn.model.PlaylistEntity;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.model.VideoItemEntity;
+import com.abd.cognelearn.repository.PlaylistRepository;
+import com.abd.cognelearn.repository.StudySessionRepository;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * PlaylistService — manages all playlist and video operations.
+ * PlaylistService â€” manages all playlist and video operations.
  *
  * <p>Maps to the JavaScript {@code playlist.js} module. All CRUD operations
  * (Create, Read, Update, Delete) for playlists and their videos are handled here.
@@ -35,7 +35,7 @@ public class PlaylistService {
     private final CurrentUserService currentUserService;
 
     /**
-     * Constructor — Spring injects required dependencies.
+     * Constructor â€” Spring injects required dependencies.
      *
      * @param playlistRepository     the JPA repository for playlist operations
      * @param studySessionRepository the JPA repository for study session operations
@@ -223,7 +223,7 @@ public class PlaylistService {
         playlistRepository.delete(playlist);
     }
 
-    // ── Internal helpers ──────────────────────────────────────────────────────
+    // â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Convert a list of {@link VideoItemRequest} DTOs to {@link VideoItemEntity} objects.

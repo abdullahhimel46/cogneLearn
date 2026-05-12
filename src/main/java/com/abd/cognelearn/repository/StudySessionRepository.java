@@ -1,8 +1,8 @@
-package com.cognelearn.repository;
+package com.abd.cognelearn.repository;
 
-import com.cognelearn.model.SessionStatus;
-import com.cognelearn.model.StudySessionEntity;
-import com.cognelearn.model.UserEntity;
+import com.abd.cognelearn.model.SessionStatus;
+import com.abd.cognelearn.model.StudySessionEntity;
+import com.abd.cognelearn.model.UserEntity;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +10,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * StudySessionRepository — handles all database operations for {@link StudySessionEntity}.
+ * StudySessionRepository â€” handles all database operations for {@link StudySessionEntity}.
  *
  * <p>Extends {@link JpaRepository} for free CRUD. Custom query methods below are derived
- * automatically by Spring Data from their names — no SQL needed.
+ * automatically by Spring Data from their names â€” no SQL needed.
  *
  * <p>Maps to JS: {@code StudySession.getAll()}, {@code StudySession.getById()},
  * {@code SessionManager.hasActive()}, and other methods in {@code StudySession.js}.

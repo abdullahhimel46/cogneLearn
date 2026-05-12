@@ -1,20 +1,20 @@
-package com.cognelearn.repository;
+package com.abd.cognelearn.repository;
 
-import com.cognelearn.model.UserEntity;
+import com.abd.cognelearn.model.UserEntity;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * UserRepository — handles all database operations for {@link UserEntity}.
+ * UserRepository â€” handles all database operations for {@link UserEntity}.
  *
  * <p>By extending {@link JpaRepository}, Spring Data JPA automatically provides:
  * <ul>
- *   <li>{@code save(user)} — INSERT or UPDATE a user row</li>
- *   <li>{@code findById(id)} — SELECT a user by primary key</li>
- *   <li>{@code findAll()} — SELECT all users</li>
- *   <li>{@code delete(user)} — DELETE a user row</li>
- *   <li>{@code count()} — COUNT total users</li>
+ *   <li>{@code save(user)} â€” INSERT or UPDATE a user row</li>
+ *   <li>{@code findById(id)} â€” SELECT a user by primary key</li>
+ *   <li>{@code findAll()} â€” SELECT all users</li>
+ *   <li>{@code delete(user)} â€” DELETE a user row</li>
+ *   <li>{@code count()} â€” COUNT total users</li>
  *   <li>...and many more standard operations</li>
  * </ul>
  *

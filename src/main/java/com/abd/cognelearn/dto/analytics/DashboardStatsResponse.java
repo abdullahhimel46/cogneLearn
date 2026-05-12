@@ -1,9 +1,9 @@
-package com.cognelearn.dto.analytics;
+package com.abd.cognelearn.dto.analytics;
 
 import java.util.List;
 
 /**
- * DashboardStatsResponse — all statistics and metrics shown on the user's dashboard.
+ * DashboardStatsResponse â€” all statistics and metrics shown on the user's dashboard.
  *
  * <p>Maps to the JavaScript {@code ProductivityAnalytics.calculateMetrics()} and
  * {@code ProductivityAnalytics.generateReport()} return values in {@code ProductivityAnalytics.js}.

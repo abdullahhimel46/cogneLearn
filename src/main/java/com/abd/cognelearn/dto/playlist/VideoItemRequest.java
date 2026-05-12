@@ -1,9 +1,9 @@
-package com.cognelearn.dto.playlist;
+package com.abd.cognelearn.dto.playlist;
 
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * VideoItemRequest — the data the browser sends when adding a video to a playlist.
+ * VideoItemRequest â€” the data the browser sends when adding a video to a playlist.
  *
  * <p>Maps to the JavaScript {@code Playlist.addVideo(playlistId, videoData)} call in
  * {@code playlist.js} and {@code Video.js}.
@@ -20,7 +20,7 @@ import jakarta.validation.constraints.NotBlank;
  *
  * @param id       the YouTube video ID (11-character string after ?v= in URL)
  * @param title    the human-readable video title
- * @param kind     the media type — usually "video" (kept for future types like "short")
+ * @param kind     the media type â€” usually "video" (kept for future types like "short")
  * @param subtitle optional channel name or description (can be null)
  */
 public record VideoItemRequest(

@@ -1,15 +1,15 @@
-package com.cognelearn.dto.auth;
+package com.abd.cognelearn.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * LoginRequest — the data the browser sends when a user tries to log in.
+ * LoginRequest â€” the data the browser sends when a user tries to log in.
  *
  * <p>Maps to the JavaScript {@code Auth.login(email, password)} call in {@code auth.js}.
  *
- * <p>This is a Java "record" — a special class that is:
+ * <p>This is a Java "record" â€” a special class that is:
  * <ul>
  *   <li>Immutable (fields cannot be changed after creation)</li>
  *   <li>Compact (no boilerplate getters/setters needed)</li>
@@ -32,8 +32,8 @@ public record LoginRequest(
         /**
          * The user's email address.
          *
-         * <p>{@code @NotBlank} — rejects null, empty string, or whitespace-only input.
-         * {@code @Email} — validates the email format (must contain @ and a domain).
+         * <p>{@code @NotBlank} â€” rejects null, empty string, or whitespace-only input.
+         * {@code @Email} â€” validates the email format (must contain @ and a domain).
          */
         @NotBlank(message = "Email is required")
         @Email(message = "Please provide a valid email address")
@@ -42,7 +42,7 @@ public record LoginRequest(
         /**
          * The user's plain-text password (sent over HTTPS, never stored as-is).
          *
-         * <p>{@code @NotBlank} — rejects empty passwords. Minimum length is checked
+         * <p>{@code @NotBlank} â€” rejects empty passwords. Minimum length is checked
          * at signup, not login (wrong password will fail authentication instead).
          */
         @NotBlank(message = "Password is required")

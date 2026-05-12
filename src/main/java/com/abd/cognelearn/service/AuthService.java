@@ -1,11 +1,11 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.dto.auth.AuthResponse;
-import com.cognelearn.dto.auth.LoginRequest;
-import com.cognelearn.dto.auth.SignupRequest;
-import com.cognelearn.dto.user.UserResponse;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.UserRepository;
+import com.abd.cognelearn.dto.auth.AuthResponse;
+import com.abd.cognelearn.dto.auth.LoginRequest;
+import com.abd.cognelearn.dto.auth.SignupRequest;
+import com.abd.cognelearn.dto.user.UserResponse;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.UserRepository;
 import java.time.Instant;
 import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,19 +20,19 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 /**
- * AuthService — handles user registration (signup) and login.
+ * AuthService â€” handles user registration (signup) and login.
  *
  * <p>This class maps to the JavaScript {@code auth.js} module:
  * <pre>
- *   JS: Auth.signup(email, password, name)  → Java: AuthService.signup(SignupRequest)
- *   JS: Auth.login(email, password)          → Java: AuthService.login(LoginRequest, session)
+ *   JS: Auth.signup(email, password, name)  â†’ Java: AuthService.signup(SignupRequest)
+ *   JS: Auth.login(email, password)          â†’ Java: AuthService.login(LoginRequest, session)
  * </pre>
  *
  * <p>Key difference from the old JS version:
  * <ul>
  *   <li>JS stored the user object directly in localStorage (anyone can read/edit it!)</li>
  *   <li>Java stores only a session ID cookie; the real user data stays in the database</li>
- *   <li>Passwords are NEVER stored in plain text — BCrypt creates a one-way hash</li>
+ *   <li>Passwords are NEVER stored in plain text â€” BCrypt creates a one-way hash</li>
  * </ul>
  */
 @Service
@@ -41,17 +41,17 @@ public class AuthService {
     // Loads users from the database and hashes/checks passwords
     private final UserRepository userRepository;
 
-    // BCryptPasswordEncoder — hashes passwords before saving, verifies on login
+    // BCryptPasswordEncoder â€” hashes passwords before saving, verifies on login
     private final PasswordEncoder passwordEncoder;
 
-    // AuthenticationManager — Spring Security's central authenticator
+    // AuthenticationManager â€” Spring Security's central authenticator
     private final AuthenticationManager authenticationManager;
 
     // Persists the authenticated SecurityContext into the HTTP session.
     private final SecurityContextRepository securityContextRepository;
 
     /**
-     * Constructor — Spring automatically injects all required beans.
+     * Constructor â€” Spring automatically injects all required beans.
      *
      * @param userRepository       the JPA repository for User records
      * @param passwordEncoder      the BCrypt password encoder
@@ -79,7 +79,7 @@ public class AuthService {
      *   <li>Check that the email is not already taken</li>
      *   <li>Hash the password with BCrypt (never store plain text!)</li>
      *   <li>Save the new user to the database</li>
-     *   <li>Return the user's profile data (no token — session is managed by Spring)</li>
+     *   <li>Return the user's profile data (no token â€” session is managed by Spring)</li>
      * </ol>
      *
      * @param request the signup form data (name, email, password)
@@ -89,14 +89,14 @@ public class AuthService {
         String normalizedEmail = normalizeEmail(request.email());
         String normalizedName = request.name().trim();
 
-        // Step 1: Reject duplicate emails (same as JS: email → userId mapping)
+        // Step 1: Reject duplicate emails (same as JS: email â†’ userId mapping)
         if (userRepository.findByEmailIgnoreCase(normalizedEmail).isPresent()) {
             throw new IllegalArgumentException("An account with this email already exists.");
         }
 
         // Step 2: Hash the password before saving.
         // BCrypt turns "myPassword123" into something like "$2a$10$abc..."
-        // You CANNOT reverse this hash — it is one-way by design.
+        // You CANNOT reverse this hash â€” it is one-way by design.
         String hashedPassword = passwordEncoder.encode(request.password());
 
         // Step 3: Build and save the new user record
@@ -118,7 +118,7 @@ public class AuthService {
         );
         saveAuthentication(authentication, httpRequest, httpResponse);
 
-        // Step 4: Return the user profile (no JWT token — login is session-based)
+        // Step 4: Return the user profile (no JWT token â€” login is session-based)
         return new AuthResponse(toUserResponse(newUser));
     }
 
@@ -142,7 +142,7 @@ public class AuthService {
         String normalizedEmail = normalizeEmail(request.email());
 
         // Step 1: Build an "unauthenticated" token from the submitted credentials.
-        // This is NOT yet verified — it is just a holder for the email and password.
+        // This is NOT yet verified â€” it is just a holder for the email and password.
         UsernamePasswordAuthenticationToken credentials =
                 new UsernamePasswordAuthenticationToken(
                         normalizedEmail,    // the "username" (we use email)
@@ -171,7 +171,7 @@ public class AuthService {
     /**
      * Convert a UserEntity to a UserResponse DTO (safe to send over the network).
      *
-     * <p>This deliberately EXCLUDES the password hash — we never send passwords in responses.
+     * <p>This deliberately EXCLUDES the password hash â€” we never send passwords in responses.
      *
      * @param user the database entity
      * @return a UserResponse record safe for API responses

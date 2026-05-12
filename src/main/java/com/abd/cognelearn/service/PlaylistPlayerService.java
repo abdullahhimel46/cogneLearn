@@ -1,11 +1,11 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.dto.player.PlaylistPlayerResponse;
-import com.cognelearn.dto.player.PlaylistPlayerVideoResponse;
-import com.cognelearn.model.PlaylistEntity;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.model.VideoItemEntity;
-import com.cognelearn.repository.PlaylistRepository;
+import com.abd.cognelearn.dto.player.PlaylistPlayerResponse;
+import com.abd.cognelearn.dto.player.PlaylistPlayerVideoResponse;
+import com.abd.cognelearn.model.PlaylistEntity;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.model.VideoItemEntity;
+import com.abd.cognelearn.repository.PlaylistRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * PlaylistPlayerService — prepares playlist data for the custom Video.js player page.
+ * PlaylistPlayerService â€” prepares playlist data for the custom Video.js player page.
  */
 @Service
 public class PlaylistPlayerService {

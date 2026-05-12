@@ -1,7 +1,7 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.UserRepository;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * CogneLearnUserDetailsService — bridges Spring Security and our database.
+ * CogneLearnUserDetailsService â€” bridges Spring Security and our database.
  *
  * <p>Spring Security does NOT know how to load users from our database by default.
  * It needs us to provide an implementation of {@link UserDetailsService} that tells it
@@ -32,7 +32,7 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     /**
-     * Constructor injection — Spring automatically provides the UserRepository bean.
+     * Constructor injection â€” Spring automatically provides the UserRepository bean.
      *
      * @param userRepository the JPA repository for loading user records
      */
@@ -59,7 +59,7 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() ->
                     // Step 2: If not found, throw this standard Spring Security exception
-                    // NOTE: Spring Security will catch this and show "Bad credentials" — never
+                    // NOTE: Spring Security will catch this and show "Bad credentials" â€” never
                     // reveal whether the email or the password was wrong (security best practice)
                     new UsernameNotFoundException("No account found with email: " + normalizedEmail)
                 );
@@ -71,7 +71,7 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
         //   - roles/authorities = empty list (we don't use roles in this app yet)
         return User.builder()
                 .username(user.getEmail())       // Spring Security uses this as the principal name
-                .password(user.getPasswordHash()) // The BCrypt hash — Spring will compare it for us
+                .password(user.getPasswordHash()) // The BCrypt hash â€” Spring will compare it for us
                 .roles("USER")                    // Basic role, required by Spring Security
                 .build();
     }

@@ -1,15 +1,15 @@
-package com.cognelearn.repository;
+package com.abd.cognelearn.repository;
 
-import com.cognelearn.model.PlaylistEntity;
-import com.cognelearn.model.VideoItemEntity;
+import com.abd.cognelearn.model.PlaylistEntity;
+import com.abd.cognelearn.model.VideoItemEntity;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * VideoItemRepository — handles database operations for {@link VideoItemEntity}.
+ * VideoItemRepository â€” handles database operations for {@link VideoItemEntity}.
  *
- * <p>Usually not queried directly — most video operations go through the parent
+ * <p>Usually not queried directly â€” most video operations go through the parent
  * {@link PlaylistEntity}'s {@code videos} collection (managed via JPA cascade).
  * This repository is provided for direct queries when needed.
  *
@@ -22,7 +22,7 @@ public interface VideoItemRepository extends JpaRepository<VideoItemEntity, UUID
      *
      * <p>Generated SQL: {@code SELECT * FROM video_items WHERE playlist_id = ?}
      *
-     * <p>Maps to JS: {@code playlist.videos} — the list of videos in a playlist.
+     * <p>Maps to JS: {@code playlist.videos} â€” the list of videos in a playlist.
      *
      * @param playlist the playlist to get videos for
      * @return list of video items in the playlist

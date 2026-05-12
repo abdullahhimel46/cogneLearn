@@ -1,4 +1,4 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * VideoItemEntity — represents a single YouTube video inside a playlist.
+ * VideoItemEntity â€” represents a single YouTube video inside a playlist.
  *
  * <p>Maps to the JavaScript {@code Video.js} module and the {@code playlist.addVideo()} method.
  * Each VideoItemEntity is one row in the {@code video_items} table and belongs to exactly
@@ -29,7 +29,7 @@ import java.util.UUID;
 @Table(name = "video_items")
 public class VideoItemEntity {
 
-    /** Primary key — uniquely identifies this video item row. */
+    /** Primary key â€” uniquely identifies this video item row. */
     @Id
     private UUID id;
 
@@ -106,7 +106,7 @@ public class VideoItemEntity {
     }
 
     /**
-     * Helper method — checks that a YouTube video ID has the correct format.
+     * Helper method â€” checks that a YouTube video ID has the correct format.
      * YouTube IDs are always exactly 11 characters: letters, numbers, hyphens, or underscores.
      *
      * <p>Maps to JS: {@code Video.isValidYouTubeId(id)}
@@ -119,7 +119,7 @@ public class VideoItemEntity {
         return youtubeId != null && youtubeId.matches("[a-zA-Z0-9_-]{11}");
     }
 
-    // ── Getters and Setters ───────────────────────────────────────────────────
+    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }

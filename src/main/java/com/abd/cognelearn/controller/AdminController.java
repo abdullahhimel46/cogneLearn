@@ -1,16 +1,18 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.admin.AdminActivityDTO;
-import com.cognelearn.dto.admin.AdminStatsDTO;
-import com.cognelearn.dto.admin.AdminUserDTO;
-import com.cognelearn.model.FeedbackEntity;
-import com.cognelearn.model.SessionStatus;
-import com.cognelearn.model.StudySessionEntity;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.FeedbackRepository;
-import com.cognelearn.repository.PlaylistRepository;
-import com.cognelearn.repository.StudySessionRepository;
-import com.cognelearn.repository.UserRepository;
+import com.abd.cognelearn.dto.admin.AdminActivityDTO;
+import com.abd.cognelearn.dto.admin.AdminStatsDTO;
+import com.abd.cognelearn.dto.admin.AdminUserDTO;
+import com.abd.cognelearn.dto.admin.MilestoneDTO;
+import com.abd.cognelearn.model.FeedbackEntity;
+import com.abd.cognelearn.model.SessionStatus;
+import com.abd.cognelearn.model.StudySessionEntity;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.FeedbackRepository;
+import com.abd.cognelearn.repository.PlaylistRepository;
+import com.abd.cognelearn.repository.StudySessionRepository;
+import com.abd.cognelearn.repository.UserEventRepository;
+import com.abd.cognelearn.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * AdminController — provides real-time statistics and management capabilities
+ * AdminController â€” provides real-time statistics and management capabilities
  * for the Admin Panel. Fetches data directly from the H2 database.
  */
 @RestController
@@ -36,6 +38,7 @@ public class AdminController {
     private final PlaylistRepository playlistRepository;
     private final StudySessionRepository studySessionRepository;
     private final FeedbackRepository feedbackRepository;
+    private final UserEventRepository userEventRepository;
 
     /**
      * Fetch global dashboard statistics.
@@ -55,6 +58,23 @@ public class AdminController {
     @GetMapping("/feedback")
     public List<FeedbackEntity> getFeedback() {
         return feedbackRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    /**
+     * Fetch all streak milestones.
+     */
+    @GetMapping("/milestones")
+    public List<MilestoneDTO> getMilestones() {
+        return userEventRepository.findAll(Sort.by(Sort.Direction.DESC, "timestamp")).stream()
+                .filter(e -> e.getEventType().startsWith("STREAK_"))
+                .map(e -> {
+                    String name = userRepository.findById(e.getUserId())
+                            .map(UserEntity::getName)
+                            .orElse("Unknown User");
+                    String desc = translateEventType(e.getEventType());
+                    return new MilestoneDTO(name, desc, formatTimeAgo(e.getTimestamp()));
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -79,7 +99,7 @@ public class AdminController {
     }
 
     /**
-     * Fetch recent system activity (registrations and sessions).
+     * Fetch recent system activity (registrations, sessions, and milestones).
      */
     @GetMapping("/activity")
     public List<AdminActivityDTO> getActivity() {
@@ -95,8 +115,29 @@ public class AdminController {
                     String statusText = (s.getStatus() == SessionStatus.COMPLETED) ? "Session completed" : "Session active";
                     activities.add(new AdminActivityDTO(statusText + " (User: " + s.getUser().getName() + ")", formatTimeAgo(s.getStartTime())));
                 });
+
+        // 3. Privacy-First Milestone Events
+        userEventRepository.findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "timestamp")))
+                .forEach(e -> {
+                    userRepository.findById(e.getUserId()).ifPresent(u -> {
+                        String eventDescription = translateEventType(e.getEventType());
+                        activities.add(new AdminActivityDTO(u.getName() + " " + eventDescription, formatTimeAgo(e.getTimestamp())));
+                    });
+                });
         
-        return activities;
+        return activities.stream()
+                .limit(15)
+                .collect(Collectors.toList());
+    }
+
+    private String translateEventType(String type) {
+        return switch (type) {
+            case "STREAK_7" -> "achieved a 7-day focus streak!";
+            case "STREAK_30" -> "reached a massive 30-day focus streak!";
+            case "LOW_FOCUS" -> "received a focus health tip.";
+            case "INACTIVE_USER" -> "was sent a re-engagement reminder.";
+            default -> "triggered an event: " + type;
+        };
     }
 
     /**

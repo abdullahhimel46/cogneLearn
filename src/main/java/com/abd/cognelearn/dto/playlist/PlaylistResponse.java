@@ -1,11 +1,11 @@
-package com.cognelearn.dto.playlist;
+package com.abd.cognelearn.dto.playlist;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * PlaylistResponse — the playlist data sent back to the browser in API responses.
+ * PlaylistResponse â€” the playlist data sent back to the browser in API responses.
  *
  * <p>Maps to the JavaScript playlist object structure in {@code playlist.js}:
  * <pre>

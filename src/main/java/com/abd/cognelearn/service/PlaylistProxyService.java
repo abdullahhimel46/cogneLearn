@@ -1,4 +1,4 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * PlaylistProxyService — fetches YouTube playlist data on behalf of the browser.
+ * PlaylistProxyService â€” fetches YouTube playlist data on behalf of the browser.
  *
  * <p>Maps to the YouTube API proxy in {@code server/index.js}:
  * <pre>
@@ -55,11 +55,11 @@ public class PlaylistProxyService {
     /** How long to cache results in milliseconds (default 10 minutes = 600,000ms). */
     private final long cacheTtlMs;
 
-    /** Jackson's JSON parser — used to read the YouTube API response. */
+    /** Jackson's JSON parser â€” used to read the YouTube API response. */
     private final ObjectMapper objectMapper;
 
     /**
-     * A thread-safe in-memory cache: playlistId → list of video IDs.
+     * A thread-safe in-memory cache: playlistId â†’ list of video IDs.
      * {@code ConcurrentHashMap} is safe for multi-threaded use (multiple requests at once).
      */
     private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
@@ -68,7 +68,7 @@ public class PlaylistProxyService {
     private final HttpClient httpClient;
 
     /**
-     * Constructor — Spring injects config values from {@code application.yml} using {@code @Value}.
+     * Constructor â€” Spring injects config values from {@code application.yml} using {@code @Value}.
      *
      * <p>{@code @Value("${YOUTUBE_API_KEY:}")} reads from the environment variable {@code YOUTUBE_API_KEY}.
      * The {@code :} after the variable name means "use empty string as default if not set".
@@ -120,7 +120,7 @@ public class PlaylistProxyService {
         // Step 2: Check the cache first (avoid unnecessary API calls)
         CacheEntry cached = cache.get(playlistId);
         if (cached != null && !cached.isExpired(cacheTtlMs)) {
-            // Cache hit — return the stored result immediately
+            // Cache hit â€” return the stored result immediately
             return cached.videoIds();
         }
 
@@ -129,7 +129,7 @@ public class PlaylistProxyService {
         String pageToken = "";  // empty string = first page
 
         try {
-            // YouTube paginates results — loop until there are no more pages
+            // YouTube paginates results â€” loop until there are no more pages
             do {
                 // Step 3a: Build the YouTube API URL
                 String url = "https://www.googleapis.com/youtube/v3/playlistItems"
@@ -185,7 +185,7 @@ public class PlaylistProxyService {
     }
 
     /**
-     * CacheEntry — stores a list of video IDs with the timestamp they were fetched.
+     * CacheEntry â€” stores a list of video IDs with the timestamp they were fetched.
      *
      * <p>This is a private record (only used inside PlaylistProxyService).
      * Records automatically generate {@code equals()}, {@code hashCode()}, and {@code toString()}.

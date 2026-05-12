@@ -1,13 +1,13 @@
-package com.cognelearn.repository;
+package com.abd.cognelearn.repository;
 
-import com.cognelearn.model.AttentionScoreEntity;
-import com.cognelearn.model.StudySessionEntity;
+import com.abd.cognelearn.model.AttentionScoreEntity;
+import com.abd.cognelearn.model.StudySessionEntity;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * AttentionScoreRepository — handles database operations for {@link AttentionScoreEntity}.
+ * AttentionScoreRepository â€” handles database operations for {@link AttentionScoreEntity}.
  *
  * <p>Each attention score is one measurement from the face-api.js attention tracker,
  * recorded approximately every 1.5 seconds during an active study session.

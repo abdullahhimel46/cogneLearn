@@ -1,4 +1,4 @@
-package com.cognelearn.web;
+package com.abd.cognelearn.web;
 
 import jakarta.validation.ConstraintViolationException;
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
- * RestExceptionHandler — a global error handler for ALL REST controllers.
+ * RestExceptionHandler â€” a global error handler for ALL REST controllers.
  *
  * <p>{@code @RestControllerAdvice} means Spring intercepts every exception thrown in any
  * {@code @RestController} and lets us decide what HTTP response to send.
@@ -27,19 +27,19 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * <p>This class replaces the old JavaScript try/catch blocks:
  * <pre>
  *   JS: catch (error) { alert(error.message); }
- *   Java: → RestExceptionHandler sends a JSON error response instead
+ *   Java: â†’ RestExceptionHandler sends a JSON error response instead
  * </pre>
  *
  * <p>Common HTTP status codes:
  * <ul>
- *   <li>200 OK — success</li>
- *   <li>201 Created — resource successfully created</li>
- *   <li>204 No Content — success, nothing to return (e.g., after DELETE)</li>
- *   <li>400 Bad Request — the client sent invalid data</li>
- *   <li>401 Unauthorized — the client is NOT logged in</li>
- *   <li>403 Forbidden — the client IS logged in but doesn't have permission</li>
- *   <li>404 Not Found — the requested resource doesn't exist</li>
- *   <li>500 Internal Server Error — something unexpected went wrong on the server</li>
+ *   <li>200 OK â€” success</li>
+ *   <li>201 Created â€” resource successfully created</li>
+ *   <li>204 No Content â€” success, nothing to return (e.g., after DELETE)</li>
+ *   <li>400 Bad Request â€” the client sent invalid data</li>
+ *   <li>401 Unauthorized â€” the client is NOT logged in</li>
+ *   <li>403 Forbidden â€” the client IS logged in but doesn't have permission</li>
+ *   <li>404 Not Found â€” the requested resource doesn't exist</li>
+ *   <li>500 Internal Server Error â€” something unexpected went wrong on the server</li>
  * </ul>
  */
 @RestControllerAdvice
@@ -58,7 +58,7 @@ public class RestExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
-        // 400 Bad Request — the client sent something logically wrong
+        // 400 Bad Request â€” the client sent something logically wrong
         return ResponseEntity
                 .badRequest()
                 .body(new ApiError(ex.getMessage(), Instant.now()));

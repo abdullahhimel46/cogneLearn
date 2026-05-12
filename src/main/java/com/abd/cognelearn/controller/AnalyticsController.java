@@ -1,8 +1,8 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.analytics.DashboardStatsResponse;
-import com.cognelearn.dto.analytics.RecentSessionResponse;
-import com.cognelearn.service.AnalyticsService;
+import com.abd.cognelearn.dto.analytics.DashboardStatsResponse;
+import com.abd.cognelearn.dto.analytics.RecentSessionResponse;
+import com.abd.cognelearn.service.AnalyticsService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * AnalyticsController — REST API endpoints for productivity analytics.
+ * AnalyticsController â€” REST API endpoints for productivity analytics.
  *
  * <p>Base path: {@code /api/v1/analytics}
  *
  * <p>Maps to the JavaScript analytics modules:
  * <pre>
- *   GET /api/v1/analytics/dashboard      → ProductivityAnalytics.generateReport()
- *   GET /api/v1/analytics/recent         → SimpleAnalytics.getRecentSessions(limit)
+ *   GET /api/v1/analytics/dashboard      â†’ ProductivityAnalytics.generateReport()
+ *   GET /api/v1/analytics/recent         â†’ SimpleAnalytics.getRecentSessions(limit)
  * </pre>
  *
- * <p>All endpoints are GET requests (read-only — no data is modified).
+ * <p>All endpoints are GET requests (read-only â€” no data is modified).
  * Spring Security requires login to access these.
  */
 @RestController
@@ -31,7 +31,7 @@ public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
     /**
-     * Constructor — Spring injects AnalyticsService.
+     * Constructor â€” Spring injects AnalyticsService.
      *
      * @param analyticsService the service that calculates all metrics
      */

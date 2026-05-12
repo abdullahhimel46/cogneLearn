@@ -1,10 +1,10 @@
-package com.cognelearn.dto.session;
+package com.abd.cognelearn.dto.session;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 /**
- * SessionCreateRequest — the data the browser sends when starting a new study session.
+ * SessionCreateRequest â€” the data the browser sends when starting a new study session.
  *
  * <p>Maps to the JavaScript {@code StudySession.create(sessionData)} and
  * {@code SessionManager.start(playlistId, duration, cycles)} calls.
@@ -19,8 +19,8 @@ import jakarta.validation.constraints.Positive;
  * }
  * </pre>
  *
- * @param playlistId the UUID string of the playlist being studied (optional — can be null)
- * @param videoId    the YouTube video ID currently playing (optional — can be null)
+ * @param playlistId the UUID string of the playlist being studied (optional â€” can be null)
+ * @param videoId    the YouTube video ID currently playing (optional â€” can be null)
  * @param duration   the planned session length in minutes (required, must be positive)
  * @param cycles     the number of Pomodoro cycles planned (defaults to 1 if null)
  */
@@ -44,7 +44,7 @@ public record SessionCreateRequest(
 
         /**
          * Number of Pomodoro cycles to run back-to-back.
-         * Optional — if null, treated as 1 cycle in the service.
+         * Optional â€” if null, treated as 1 cycle in the service.
          *
          * <p>Maps to JS: {@code SessionManager.start(playlistId, duration, cycles)}
          */

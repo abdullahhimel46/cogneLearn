@@ -1,4 +1,4 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * StudySessionEntity — represents a single timed study session.
+ * StudySessionEntity â€” represents a single timed study session.
  *
  * <p>Maps to the JavaScript {@code StudySession.js} and {@code SessionManager.js} modules.
  * In JS, sessions were stored in {@code localStorage}. Here, each session is a row in the
@@ -28,7 +28,7 @@ import java.util.UUID;
  * <ul>
  *   <li>Belongs to exactly ONE user</li>
  *   <li>Optionally belongs to ONE playlist (user may start a free session without a playlist)</li>
- *   <li>Has a lifecycle: ACTIVE → PAUSED → COMPLETED (see {@link SessionStatus})</li>
+ *   <li>Has a lifecycle: ACTIVE â†’ PAUSED â†’ COMPLETED (see {@link SessionStatus})</li>
  *   <li>Collects multiple attention scores during the session (from the face-api.js tracker)</li>
  * </ul>
  *
@@ -47,7 +47,7 @@ import java.util.UUID;
 @Table(name = "study_sessions")
 public class StudySessionEntity {
 
-    /** Primary key — uniquely identifies each study session. */
+    /** Primary key â€” uniquely identifies each study session. */
     @Id
     private UUID id;
 
@@ -67,7 +67,7 @@ public class StudySessionEntity {
      * <p>In JS: {@code session.playlistId} (stored as a string; here it's a full object reference)
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "playlist_id")   // nullable — playlist is optional
+    @JoinColumn(name = "playlist_id")   // nullable â€” playlist is optional
     private PlaylistEntity playlist;
 
     /**
@@ -168,7 +168,7 @@ public class StudySessionEntity {
         this.createdAt = createdAt;
     }
 
-    // ── Getters and Setters ───────────────────────────────────────────────────
+    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }

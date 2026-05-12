@@ -1,7 +1,7 @@
-package com.cognelearn.dto.player;
+package com.abd.cognelearn.dto.player;
 
 /**
- * PlaylistPlayerVideoResponse — one gallery item for the custom player.
+ * PlaylistPlayerVideoResponse â€” one gallery item for the custom player.
  *
  * @param id        internal video item id
  * @param title     display title

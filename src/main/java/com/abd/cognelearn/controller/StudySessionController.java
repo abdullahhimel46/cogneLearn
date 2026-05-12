@@ -1,10 +1,10 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.session.AttentionScoreRequest;
-import com.cognelearn.dto.session.SessionCompleteRequest;
-import com.cognelearn.dto.session.SessionCreateRequest;
-import com.cognelearn.dto.session.SessionResponse;
-import com.cognelearn.service.StudySessionService;
+import com.abd.cognelearn.dto.session.AttentionScoreRequest;
+import com.abd.cognelearn.dto.session.SessionCompleteRequest;
+import com.abd.cognelearn.dto.session.SessionCreateRequest;
+import com.abd.cognelearn.dto.session.SessionResponse;
+import com.abd.cognelearn.service.StudySessionService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -20,20 +20,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * StudySessionController — REST API endpoints for study session management.
+ * StudySessionController â€” REST API endpoints for study session management.
  *
  * <p>Base path: {@code /api/v1/sessions}
  *
  * <p>Maps to the JavaScript session modules:
  * <pre>
- *   POST   /api/v1/sessions                         → StudySession.create() + SessionManager.start()
- *   GET    /api/v1/sessions                         → StudySession.getAll()
- *   GET    /api/v1/sessions/{id}                    → StudySession.getById(id)
- *   PATCH  /api/v1/sessions/{id}/pause              → SessionController.pause()
- *   PATCH  /api/v1/sessions/{id}/resume             → SessionController.resume()
- *   PATCH  /api/v1/sessions/{id}/complete           → StudySession.end() + SessionController.stop()
- *   POST   /api/v1/sessions/{id}/attention          → StudySession.addAttentionScore()
- *   GET    /api/v1/sessions/active                  → SessionManager.hasActive()
+ *   POST   /api/v1/sessions                         â†’ StudySession.create() + SessionManager.start()
+ *   GET    /api/v1/sessions                         â†’ StudySession.getAll()
+ *   GET    /api/v1/sessions/{id}                    â†’ StudySession.getById(id)
+ *   PATCH  /api/v1/sessions/{id}/pause              â†’ SessionController.pause()
+ *   PATCH  /api/v1/sessions/{id}/resume             â†’ SessionController.resume()
+ *   PATCH  /api/v1/sessions/{id}/complete           â†’ StudySession.end() + SessionController.stop()
+ *   POST   /api/v1/sessions/{id}/attention          â†’ StudySession.addAttentionScore()
+ *   GET    /api/v1/sessions/active                  â†’ SessionManager.hasActive()
  * </pre>
  *
  * <p>All endpoints require the user to be logged in (session cookie required).
@@ -45,7 +45,7 @@ public class StudySessionController {
     private final StudySessionService studySessionService;
 
     /**
-     * Constructor — Spring injects StudySessionService.
+     * Constructor â€” Spring injects StudySessionService.
      *
      * @param studySessionService the service with all session business logic
      */
@@ -56,7 +56,7 @@ public class StudySessionController {
     /**
      * Get all study sessions for the logged-in user.
      *
-     * <p>GET /api/v1/sessions — Maps to JS: {@code StudySession.getAll()}
+     * <p>GET /api/v1/sessions â€” Maps to JS: {@code StudySession.getAll()}
      *
      * @return 200 OK with list of all sessions
      */
@@ -68,7 +68,7 @@ public class StudySessionController {
     /**
      * Check if the current user has an active running session.
      *
-     * <p>GET /api/v1/sessions/active — Maps to JS: {@code SessionManager.hasActive()}
+     * <p>GET /api/v1/sessions/active â€” Maps to JS: {@code SessionManager.hasActive()}
      *
      * <p>IMPORTANT: This endpoint must be declared BEFORE {@code /{sessionId}} or Spring
      * will try to parse "active" as a UUID and fail. /active is a more specific path.
@@ -84,7 +84,7 @@ public class StudySessionController {
     /**
      * Get a specific session by its UUID.
      *
-     * <p>GET /api/v1/sessions/{sessionId} — Maps to JS: {@code StudySession.getById(sessionId)}
+     * <p>GET /api/v1/sessions/{sessionId} â€” Maps to JS: {@code StudySession.getById(sessionId)}
      *
      * @param sessionId the UUID of the session
      * @return 200 OK with the session data
@@ -141,7 +141,7 @@ public class StudySessionController {
      * Complete a session and record the actual time studied.
      *
      * <p>PATCH /api/v1/sessions/{sessionId}/complete
-     * Maps to JS: {@code SessionController.stop()} → {@code StudySession.end(sessionId, completedMins)}
+     * Maps to JS: {@code SessionController.stop()} â†’ {@code StudySession.end(sessionId, completedMins)}
      *
      * @param sessionId the UUID of the session to complete
      * @param request   contains the actual minutes completed
@@ -163,7 +163,7 @@ public class StudySessionController {
      * The browser calls this endpoint approximately every 1.5 seconds during a session.
      *
      * @param sessionId the UUID of the active session
-     * @param request   the attention score (0–100)
+     * @param request   the attention score (0â€“100)
      * @return 200 OK with the updated session including the new score
      */
     @PostMapping("/{sessionId}/attention")

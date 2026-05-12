@@ -1,21 +1,21 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 /**
- * SessionStatus — the lifecycle states of a study session.
+ * SessionStatus â€” the lifecycle states of a study session.
  *
  * <p>Maps to the string values used in the JavaScript {@code StudySession.js} module:
  * <pre>
- *   JS: session.status = 'active'    → Java: SessionStatus.ACTIVE
- *   JS: session.status = 'paused'    → Java: SessionStatus.PAUSED
- *   JS: session.status = 'completed' → Java: SessionStatus.COMPLETED
+ *   JS: session.status = 'active'    â†’ Java: SessionStatus.ACTIVE
+ *   JS: session.status = 'paused'    â†’ Java: SessionStatus.PAUSED
+ *   JS: session.status = 'completed' â†’ Java: SessionStatus.COMPLETED
  * </pre>
  *
  * <p>The valid transitions are:
  * <pre>
- *   ACTIVE → PAUSED    (user clicks Pause)
- *   PAUSED → ACTIVE    (user clicks Resume)
- *   ACTIVE → COMPLETED (timer runs out or user clicks Stop)
- *   PAUSED → COMPLETED (user clicks Stop while paused)
+ *   ACTIVE â†’ PAUSED    (user clicks Pause)
+ *   PAUSED â†’ ACTIVE    (user clicks Resume)
+ *   ACTIVE â†’ COMPLETED (timer runs out or user clicks Stop)
+ *   PAUSED â†’ COMPLETED (user clicks Stop while paused)
  * </pre>
  *
  * <p>We use an enum instead of a plain String to prevent typos.
@@ -28,19 +28,19 @@ package com.cognelearn.model;
 public enum SessionStatus {
 
     /**
-     * The session is running — the timer is counting down and the video is playing.
+     * The session is running â€” the timer is counting down and the video is playing.
      * Maps to JS: {@code 'active'}
      */
     ACTIVE,
 
     /**
-     * The session is temporarily stopped — the timer and video are paused.
+     * The session is temporarily stopped â€” the timer and video are paused.
      * Maps to JS: {@code 'paused'}
      */
     PAUSED,
 
     /**
-     * The session is finished — no further updates are allowed.
+     * The session is finished â€” no further updates are allowed.
      * Maps to JS: {@code 'completed'}
      */
     COMPLETED

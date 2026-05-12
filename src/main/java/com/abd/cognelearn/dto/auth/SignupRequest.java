@@ -1,11 +1,11 @@
-package com.cognelearn.dto.auth;
+package com.abd.cognelearn.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * SignupRequest — the data the browser sends when creating a new account.
+ * SignupRequest â€” the data the browser sends when creating a new account.
  *
  * <p>Maps to the JavaScript {@code Auth.signup(email, password, name)} call in {@code auth.js}.
  *
@@ -20,7 +20,7 @@ import jakarta.validation.constraints.Size;
  *
  * <p>Validation annotations are checked automatically by Spring when the controller
  * method uses {@code @Valid}. If any field fails validation, Spring returns a
- * 400 Bad Request response automatically — no manual if-statements needed!
+ * 400 Bad Request response automatically â€” no manual if-statements needed!
  *
  * @param name     the user's display name
  * @param email    the user's email (must be unique and correctly formatted)

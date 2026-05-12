@@ -1,17 +1,17 @@
-package com.cognelearn.repository;
+package com.abd.cognelearn.repository;
 
-import com.cognelearn.model.PlaylistEntity;
-import com.cognelearn.model.UserEntity;
+import com.abd.cognelearn.model.PlaylistEntity;
+import com.abd.cognelearn.model.UserEntity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * PlaylistRepository — handles all database operations for {@link PlaylistEntity}.
+ * PlaylistRepository â€” handles all database operations for {@link PlaylistEntity}.
  *
  * <p>Extends {@link JpaRepository} to get free CRUD operations (save, find, delete, count, etc.).
- * The custom methods below are generated automatically by Spring Data from their names —
+ * The custom methods below are generated automatically by Spring Data from their names â€”
  * no SQL or implementation needed.
  *
  * <p>Maps to JS: all {@code localStorage} reads/writes in {@code playlist.js}.
@@ -35,7 +35,7 @@ public interface PlaylistRepository extends JpaRepository<PlaylistEntity, UUID> 
      *
      * <p>Generated SQL: {@code SELECT * FROM playlists WHERE id = ? AND user_id = ?}
      *
-     * <p>The user check is CRITICAL for security — without it, a logged-in user could
+     * <p>The user check is CRITICAL for security â€” without it, a logged-in user could
      * read another user's private playlist by guessing its UUID.
      *
      * <p>Maps to JS: {@code Playlist.getById(playlistId)} (JS had no ownership check!).

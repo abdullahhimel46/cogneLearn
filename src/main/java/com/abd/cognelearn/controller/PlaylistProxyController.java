@@ -1,6 +1,6 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.service.PlaylistProxyService;
+import com.abd.cognelearn.service.PlaylistProxyService;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -10,24 +10,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * PlaylistProxyController — proxies YouTube API requests to avoid exposing the API key.
+ * PlaylistProxyController â€” proxies YouTube API requests to avoid exposing the API key.
  *
  * <p>Base path: {@code /api/v1/proxy}
  *
  * <p>Maps to the JavaScript YouTube proxy in {@code server/index.js}:
  * <pre>
- *   GET /api?playlistId=PLxxxxxx → fetchPlaylistItems() in server/index.js
+ *   GET /api?playlistId=PLxxxxxx â†’ fetchPlaylistItems() in server/index.js
  * </pre>
  * In the Java version:
  * <pre>
- *   GET /api/v1/proxy/playlist?playlistId=PLxxxxxx → PlaylistProxyService.fetchPlaylistVideoIds()
+ *   GET /api/v1/proxy/playlist?playlistId=PLxxxxxx â†’ PlaylistProxyService.fetchPlaylistVideoIds()
  * </pre>
  *
  * <p>WHY do we need a proxy?
  * The YouTube Data API key is a secret. If we call YouTube directly from the browser,
- * the API key would be visible to anyone who opens the browser DevTools → Network tab.
+ * the API key would be visible to anyone who opens the browser DevTools â†’ Network tab.
  * Instead, the browser calls OUR backend (which has the key as an environment variable),
- * and our backend calls YouTube on the browser's behalf — the key is never exposed.
+ * and our backend calls YouTube on the browser's behalf â€” the key is never exposed.
  *
  * <p>This endpoint is public (no login required) because the JS app loads YouTube data
  * before the user logs in (e.g., on the discover/search page).
@@ -39,7 +39,7 @@ public class PlaylistProxyController {
     private final PlaylistProxyService playlistProxyService;
 
     /**
-     * Constructor — Spring injects the proxy service.
+     * Constructor â€” Spring injects the proxy service.
      *
      * @param playlistProxyService the service that calls YouTube's API
      */

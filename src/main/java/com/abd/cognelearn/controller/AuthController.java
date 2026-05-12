@@ -1,11 +1,11 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.auth.AuthResponse;
-import com.cognelearn.dto.auth.LoginRequest;
-import com.cognelearn.dto.auth.SignupRequest;
-import com.cognelearn.dto.user.UserResponse;
-import com.cognelearn.service.AuthService;
-import com.cognelearn.service.CurrentUserService;
+import com.abd.cognelearn.dto.auth.AuthResponse;
+import com.abd.cognelearn.dto.auth.LoginRequest;
+import com.abd.cognelearn.dto.auth.SignupRequest;
+import com.abd.cognelearn.dto.user.UserResponse;
+import com.abd.cognelearn.service.AuthService;
+import com.abd.cognelearn.service.CurrentUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * AuthController — handles user registration, login, and logout.
+ * AuthController â€” handles user registration, login, and logout.
  *
  * <p>Base path: {@code /api/v1/auth}
  *
  * <p>Maps to the old JavaScript {@code auth.js} module:
  * <pre>
- *   JS: Auth.signup(email, password, name)  → POST /api/v1/auth/signup
- *   JS: Auth.login(email, password)          → POST /api/v1/auth/login
- *   JS: Auth.logout()                        → POST /api/v1/auth/logout  (handled by Spring Security)
- *   JS: Auth.isLoggedIn() / getCurrentUser() → GET  /api/v1/auth/me
+ *   JS: Auth.signup(email, password, name)  â†’ POST /api/v1/auth/signup
+ *   JS: Auth.login(email, password)          â†’ POST /api/v1/auth/login
+ *   JS: Auth.logout()                        â†’ POST /api/v1/auth/logout  (handled by Spring Security)
+ *   JS: Auth.isLoggedIn() / getCurrentUser() â†’ GET  /api/v1/auth/me
  * </pre>
  *
  * <p>Most endpoints in this class are PUBLIC (no login required) except {@code /me},
@@ -48,7 +48,7 @@ public class AuthController {
     private final CurrentUserService currentUserService;
 
     /**
-     * Constructor — Spring automatically injects the required service beans.
+     * Constructor â€” Spring automatically injects the required service beans.
      *
      * @param authService        the service that handles signup and login logic
      * @param currentUserService the service that reads the logged-in user from the session
@@ -92,7 +92,7 @@ public class AuthController {
      * <p>Maps to {@code Auth.login(email, password)} in {@code auth.js}.
      *
      * <p>On success, Spring Security sets the JSESSIONID cookie automatically.
-     * The frontend does NOT need to store a token — the cookie handles everything.
+     * The frontend does NOT need to store a token â€” the cookie handles everything.
      *
      * @param request the JSON body with {email, password}
      * @return 200 OK with the logged-in user's profile data
@@ -113,7 +113,7 @@ public class AuthController {
      * <p>GET /api/v1/auth/me
      *
      * <p>Maps to {@code Auth.getCurrentUser()} and {@code Auth.isLoggedIn()} in {@code auth.js}.
-     * Spring Security automatically protects this endpoint — if no valid session exists,
+     * Spring Security automatically protects this endpoint â€” if no valid session exists,
      * the request is rejected before this method is even called.
      *
      * @return 200 OK with the current user's profile data
@@ -131,11 +131,11 @@ public class AuthController {
     }
 
     /**
-     * Logout note — this endpoint is handled directly by Spring Security.
+     * Logout note â€” this endpoint is handled directly by Spring Security.
      *
      * <p>POST /api/v1/auth/logout
      *
-     * <p>This method does NOT exist in this controller — Spring Security intercepts
+     * <p>This method does NOT exist in this controller â€” Spring Security intercepts
      * POST requests to {@code /api/v1/auth/logout} before they reach any controller.
      * It automatically:
      * <ol>
@@ -147,5 +147,5 @@ public class AuthController {
      * <p>This is configured in {@link com.cognelearn.config.SecurityConfig#securityFilterChain}.
      * Maps to {@code Auth.logout()} in {@code auth.js}.
      */
-    // logout is wired in SecurityConfig — no method needed here
+    // logout is wired in SecurityConfig â€” no method needed here
 }

@@ -1,11 +1,11 @@
-package com.cognelearn.dto.session;
+package com.abd.cognelearn.dto.session;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * AttentionScoreRequest — a single attention score reading sent from the browser.
+ * AttentionScoreRequest â€” a single attention score reading sent from the browser.
  *
  * <p>The browser's face-api.js attention tracker calls this endpoint approximately
  * every 1.5 seconds during an active study session.
@@ -28,9 +28,9 @@ public record AttentionScoreRequest(
          *
          * <p>Score ranges (from JS {@code AttentionMonitor.trackAttention()}):
          * <ul>
-         *   <li>70–100: "focused"</li>
-         *   <li>40–69: "moderate"</li>
-         *   <li>0–39: "distracted"</li>
+         *   <li>70â€“100: "focused"</li>
+         *   <li>40â€“69: "moderate"</li>
+         *   <li>0â€“39: "distracted"</li>
          * </ul>
          */
         @NotNull(message = "Score is required")

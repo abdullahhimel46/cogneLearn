@@ -1,10 +1,10 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.playlist.PlaylistRequest;
-import com.cognelearn.dto.playlist.PlaylistResponse;
-import com.cognelearn.dto.playlist.PlaylistUpdateRequest;
-import com.cognelearn.dto.playlist.VideoItemRequest;
-import com.cognelearn.service.PlaylistService;
+import com.abd.cognelearn.dto.playlist.PlaylistRequest;
+import com.abd.cognelearn.dto.playlist.PlaylistResponse;
+import com.abd.cognelearn.dto.playlist.PlaylistUpdateRequest;
+import com.abd.cognelearn.dto.playlist.VideoItemRequest;
+import com.abd.cognelearn.service.PlaylistService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * PlaylistController — REST API endpoints for playlist management.
+ * PlaylistController â€” REST API endpoints for playlist management.
  *
  * <p>Base path: {@code /api/v1/playlists}
  *
@@ -28,13 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
  * corresponds to one (or more) JS methods:
  *
  * <pre>
- *   GET    /api/v1/playlists                      → Playlist.getAll()
- *   GET    /api/v1/playlists/{id}                 → Playlist.getById(id)
- *   POST   /api/v1/playlists                      → Playlist.create(data)
- *   PATCH  /api/v1/playlists/{id}                 → Playlist.update(id, data)
- *   DELETE /api/v1/playlists/{id}                 → Playlist.delete(id)
- *   POST   /api/v1/playlists/{id}/videos          → Playlist.addVideo(id, video)
- *   DELETE /api/v1/playlists/{id}/videos/{videoId}→ Playlist.removeVideo(id, videoId)
+ *   GET    /api/v1/playlists                      â†’ Playlist.getAll()
+ *   GET    /api/v1/playlists/{id}                 â†’ Playlist.getById(id)
+ *   POST   /api/v1/playlists                      â†’ Playlist.create(data)
+ *   PATCH  /api/v1/playlists/{id}                 â†’ Playlist.update(id, data)
+ *   DELETE /api/v1/playlists/{id}                 â†’ Playlist.delete(id)
+ *   POST   /api/v1/playlists/{id}/videos          â†’ Playlist.addVideo(id, video)
+ *   DELETE /api/v1/playlists/{id}/videos/{videoId}â†’ Playlist.removeVideo(id, videoId)
  * </pre>
  *
  * <p>All endpoints require the user to be logged in (enforced by Spring Security).
@@ -47,15 +47,15 @@ import org.springframework.web.bind.annotation.RestController;
  *   <li>DELETE = remove a resource</li>
  * </ul>
  */
-@RestController                          // Marks this as a REST controller — returns JSON
+@RestController                          // Marks this as a REST controller â€” returns JSON
 @RequestMapping("/api/v1/playlists")     // All methods are under /api/v1/playlists
 public class PlaylistController {
 
-    // The service handles all the actual work — the controller just routes requests
+    // The service handles all the actual work â€” the controller just routes requests
     private final PlaylistService playlistService;
 
     /**
-     * Constructor — Spring injects PlaylistService automatically.
+     * Constructor â€” Spring injects PlaylistService automatically.
      *
      * @param playlistService the service with all playlist business logic
      */
@@ -107,7 +107,7 @@ public class PlaylistController {
      * Update an existing playlist (title, description, or videos).
      *
      * <p>PATCH /api/v1/playlists/{playlistId}
-     * PATCH means partial update — only fields you send are updated.
+     * PATCH means partial update â€” only fields you send are updated.
      *
      * @param playlistId the UUID of the playlist to update
      * @param request    the fields to change (null = keep existing)
@@ -159,7 +159,7 @@ public class PlaylistController {
      * Delete an entire playlist (and all its videos).
      *
      * <p>DELETE /api/v1/playlists/{playlistId}
-     * Returns 204 No Content — successful delete has no response body.
+     * Returns 204 No Content â€” successful delete has no response body.
      *
      * @param playlistId the UUID of the playlist to delete
      * @return 204 No Content
@@ -167,6 +167,6 @@ public class PlaylistController {
     @DeleteMapping("/{playlistId}")
     public ResponseEntity<Void> delete(@PathVariable UUID playlistId) {
         playlistService.deletePlaylist(playlistId);
-        return ResponseEntity.noContent().build();  // 204 No Content — standard for DELETE
+        return ResponseEntity.noContent().build();  // 204 No Content â€” standard for DELETE
     }
 }

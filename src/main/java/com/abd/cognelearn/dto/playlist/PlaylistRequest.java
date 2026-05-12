@@ -1,10 +1,10 @@
-package com.cognelearn.dto.playlist;
+package com.abd.cognelearn.dto.playlist;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- * PlaylistRequest — the data the browser sends when creating a new playlist.
+ * PlaylistRequest â€” the data the browser sends when creating a new playlist.
  *
  * <p>Maps to the JavaScript {@code Playlist.create(playlistData)} call in {@code playlist.js}.
  *

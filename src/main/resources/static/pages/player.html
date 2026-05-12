@@ -5,52 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cogneLearn - Playlist Player</title>
     <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/player.css">
 </head>
-<body>
-    <nav class="top-navbar">
-        <div class="nav-inner">
-            <a class="brand" href="dashboard.html">cogneLearn</a>
-            <div class="nav-links">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="#" id="logoutLink">Logout</a>
-            </div>
-        </div>
-    </nav>
+<body class="dashboard-body sidebar-collapsed player-body">
+    <div class="app-shell">
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-top">
+                <button class="mobile-menu-btn drawer-toggle-btn" id="menuToggle" type="button" aria-label="Toggle drawer">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-    <main class="player-page">
-        <section class="main-grid">
-            <div class="video-card">
-                <div class="video-shell">
-                    <video id="mainVideo" preload="metadata" controls playsinline></video>
-                    <button id="centerPlayButton" class="center-play" type="button" aria-label="Play video">▶</button>
+                <div class="brand-lockup">
+                    <div class="brand-mark">CL</div>
+                    <div class="brand-copy">
+                        <span class="brand-title">cogneLearn</span>
+                        <span class="brand-tag">Focus better every day</span>
+                    </div>
                 </div>
+
+                <nav class="sidebar-nav" aria-label="Primary navigation">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                            </svg>
+                        </span>
+                        <span>Dashboard</span>
+                    </a>
+                    <button type="button" class="nav-link is-active" aria-current="page">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
+                            </svg>
+                        </span>
+                        <span>Focus Session</span>
+                    </button>
+                    <a href="playlists.html" class="nav-link">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                                <path d="M8 6h13"></path>
+                                <path d="M8 12h13"></path>
+                                <path d="M8 18h13"></path>
+                                <path d="M3 6h.01"></path>
+                                <path d="M3 12h.01"></path>
+                                <path d="M3 18h.01"></path>
+                            </svg>
+                        </span>
+                        <span>Playlists</span>
+                    </a>
+                </nav>
             </div>
 
-            <aside class="right-sidebar">
-                <section class="timer-card">
-                    <div id="timerDisplay" class="timer-display">24:13</div>
-                    <div class="timer-label">FOCUS TIME - KEEP GOING!</div>
-                    <div class="timer-actions">
-                        <button id="pauseButton" type="button">Pause</button>
-                        <button id="resetButton" type="button">Reset</button>
+            <div class="sidebar-footer">
+                <button class="sidebar-control" id="themeToggle" type="button" aria-pressed="false">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                        </svg>
+                    </span>
+                    <span>Dark Mode</span>
+                </button>
+                <button class="sidebar-control" type="button" id="logoutLink">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <path d="m16 17 5-5-5-5"></path>
+                            <path d="M21 12H9"></path>
+                        </svg>
+                    </span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="app-overlay" id="appOverlay"></div>
+
+        <main class="app-main">
+            <header class="mobile-header">
+                <div class="mobile-brand">cogneLearn</div>
+            </header>
+
+            <div class="dashboard-page player-page">
+                <section class="hero-header">
+                    <div>
+                        <p class="eyebrow">Focus Session</p>
+                        <h1>Stay in the zone</h1>
+<!--                        <p class="hero-subtitle">Timer + attention monitoring + playlist playback in one place.</p>-->
+                    </div>
+                    <div class="header-actions">
+                        <a class="btn btn-secondary btn-small" href="dashboard.html">Back to Dashboard</a>
                     </div>
                 </section>
 
-                <section class="attention-card">
-                    <h3>Focus Level</h3>
-                    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                        <div id="focusFill" class="progress-fill" style="width: 0%;"></div>
-                    </div>
-                    <div id="focusLabel" class="focus-label">Initializing Camera...</div>
-                </section>
-            </aside>
-        </section>
+                <section class="main-grid">
+                    <article class="panel video-card">
+                        <div class="video-shell">
+                            <video id="mainVideo" preload="metadata" controls playsinline></video>
+                            <button id="centerPlayButton" class="center-play" type="button" aria-label="Play video">▶</button>
+                        </div>
+                    </article>
 
-        <section class="playlist-bottom">
-            <div id="playlistContainer" class="playlist-list"></div>
-        </section>
-    </main>
+                    <aside class="right-sidebar">
+                        <section class="panel timer-card">
+                            <div id="timerDisplay" class="timer-display">24:13</div>
+                            <div class="timer-label">FOCUS TIME - KEEP GOING!</div>
+                            <div class="timer-actions">
+                                <button id="pauseButton" class="btn btn-secondary btn-small" type="button">Pause</button>
+                                <button id="resetButton" class="btn btn-secondary btn-small" type="button">Reset</button>
+                            </div>
+                        </section>
+
+                        <section class="panel attention-card">
+                            <h3>Focus Level</h3>
+                            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                <div id="focusFill" class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <div id="focusLabel" class="focus-label">Initializing Camera...</div>
+                        </section>
+                    </aside>
+                </section>
+
+                <section class="panel playlist-bottom">
+                    <div class="section-heading player-playlist-heading">
+                        <div>
+                            <p class="section-kicker">Playlist</p>
+                            <h2>Up next</h2>
+                        </div>
+                    </div>
+                    <div id="playlistContainer" class="playlist-list"></div>
+                </section>
+            </div>
+        </main>
+    </div>
 
     <div id="playerSessionModal" class="player-modal-overlay hidden" aria-hidden="true">
         <div class="player-modal-card">
@@ -95,6 +190,32 @@
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="../js/AttentionMonitor.js"></script>
     <script src="../js/player.js"></script>
+
+    <script>
+        (function () {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('appSidebar');
+            const overlay = document.getElementById('appOverlay');
+
+            if (!menuToggle || !sidebar || !overlay) {
+                return;
+            }
+
+            const close = () => {
+                sidebar.classList.remove('is-open');
+                overlay.classList.remove('is-visible');
+            };
+
+            const toggle = () => {
+                const next = !sidebar.classList.contains('is-open');
+                sidebar.classList.toggle('is-open', next);
+                overlay.classList.toggle('is-visible', next);
+            };
+
+            menuToggle.addEventListener('click', toggle);
+            overlay.addEventListener('click', close);
+        })();
+    </script>
 
     <!-- Footer -->
     <footer class="site-footer footer-light">

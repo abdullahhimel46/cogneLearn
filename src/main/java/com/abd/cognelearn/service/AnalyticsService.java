@@ -1,12 +1,12 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.dto.analytics.DashboardStatsResponse;
-import com.cognelearn.dto.analytics.RecentSessionResponse;
-import com.cognelearn.model.SessionStatus;
-import com.cognelearn.model.StudySessionEntity;
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.PlaylistRepository;
-import com.cognelearn.repository.StudySessionRepository;
+import com.abd.cognelearn.dto.analytics.DashboardStatsResponse;
+import com.abd.cognelearn.dto.analytics.RecentSessionResponse;
+import com.abd.cognelearn.model.SessionStatus;
+import com.abd.cognelearn.model.StudySessionEntity;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.PlaylistRepository;
+import com.abd.cognelearn.repository.StudySessionRepository;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,12 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * AnalyticsService — calculates productivity statistics for the dashboard.
+ * AnalyticsService â€” calculates productivity statistics for the dashboard.
  *
  * <p>Maps to two JavaScript modules:
  * <ul>
- *   <li>{@code ProductivityAnalytics.js} — focus score, completion rate, streak, recommendations</li>
- *   <li>{@code SimpleAnalytics.js} — total focus time, today's focus, recent sessions</li>
+ *   <li>{@code ProductivityAnalytics.js} â€” focus score, completion rate, streak, recommendations</li>
+ *   <li>{@code SimpleAnalytics.js} â€” total focus time, today's focus, recent sessions</li>
  * </ul>
  *
  * <p>All methods are read-only (no data modification) so they are annotated with
@@ -39,7 +39,7 @@ public class AnalyticsService {
     private final CurrentUserService currentUserService;
 
     /**
-     * Constructor — Spring injects all required dependencies.
+     * Constructor â€” Spring injects all required dependencies.
      *
      * @param studySessionRepository for loading all user sessions
      * @param playlistRepository     for counting user's playlists
@@ -102,15 +102,15 @@ public class AnalyticsService {
         // (Maps to JS: Playlist.getAll().length)
         int totalPlaylists = (int) playlistRepository.countByUser(user);
 
-        // Step 6: Focus score — avg completion rate (completedDuration / duration * 100)
+        // Step 6: Focus score â€” avg completion rate (completedDuration / duration * 100)
         // (Maps to JS: ProductivityAnalytics.calculateFocusScore())
         int focusScore = calculateFocusScore(sessions);
 
-        // Step 7: Completion rate — percentage of sessions that reached their planned time
+        // Step 7: Completion rate â€” percentage of sessions that reached their planned time
         // (Maps to JS: ProductivityAnalytics.getCompletionRate())
         int completionRate = calculateCompletionRate(sessions);
 
-        // Step 8: Max streak — longest run of consecutive days with at least one session
+        // Step 8: Max streak â€” longest run of consecutive days with at least one session
         // (Maps to JS: the streak loop in ProductivityAnalytics.calculateMetrics())
         int maxStreak = calculateMaxStreak(sessions);
 
@@ -159,8 +159,8 @@ public class AnalyticsService {
                 .toList();
     }
 
-    // ── Private calculation helpers ───────────────────────────────────────────
-    // These are internal methods — they are not exposed as API endpoints.
+    // â”€â”€ Private calculation helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // These are internal methods â€” they are not exposed as API endpoints.
     // Each one maps directly to a JS method in ProductivityAnalytics.js
 
     /**
@@ -170,7 +170,7 @@ public class AnalyticsService {
      * <p>Maps to JS: the inline average calculation in the dashboard rendering code.
      *
      * @param session the session to calculate the average for
-     * @return average attention score (0–100)
+     * @return average attention score (0â€“100)
      */
     private int averageAttentionForSession(StudySessionEntity session) {
         if (session.getAttentionScores().isEmpty()) {
@@ -191,13 +191,13 @@ public class AnalyticsService {
      * <p>Maps to JS: {@code ProductivityAnalytics.calculateFocusScore()}
      *
      * @param sessions all sessions for the user
-     * @return focus score 0–100
+     * @return focus score 0â€“100
      */
     private int calculateFocusScore(List<StudySessionEntity> sessions) {
         if (sessions.isEmpty()) {
             return 0;
         }
-        // For each session: completedDuration / plannedDuration * 100 → then average
+        // For each session: completedDuration / plannedDuration * 100 â†’ then average
         double avgCompletionPercent = sessions.stream()
                 .mapToDouble(s -> s.getDuration() > 0
                         ? ((double) s.getCompletedDuration() / s.getDuration()) * 100.0
@@ -214,7 +214,7 @@ public class AnalyticsService {
      * <p>Maps to JS: {@code ProductivityAnalytics.getCompletionRate()}
      *
      * @param sessions all sessions for the user
-     * @return completion rate 0–100
+     * @return completion rate 0â€“100
      */
     private int calculateCompletionRate(List<StudySessionEntity> sessions) {
         if (sessions.isEmpty()) {
@@ -269,11 +269,11 @@ public class AnalyticsService {
             long daysBetween = ChronoUnit.DAYS.between(previousDate, currentDate);
 
             if (daysBetween == 1) {
-                // Consecutive day — extend the streak
+                // Consecutive day â€” extend the streak
                 currentStreak++;
                 maxStreak = Math.max(maxStreak, currentStreak);
             } else {
-                // Gap detected — streak is broken, reset counter
+                // Gap detected â€” streak is broken, reset counter
                 currentStreak = 1;
             }
         }
@@ -286,10 +286,10 @@ public class AnalyticsService {
      *
      * <p>Maps to JS: {@code ProductivityAnalytics.generateRecommendations(metrics)}
      *
-     * @param focusScore      the user's focus/completion score (0–100)
+     * @param focusScore      the user's focus/completion score (0â€“100)
      * @param totalSessions   how many sessions they've done
-     * @param avgAttention    their average attention score (0–100)
-     * @param completionRate  percentage of sessions completed (0–100)
+     * @param avgAttention    their average attention score (0â€“100)
+     * @param completionRate  percentage of sessions completed (0â€“100)
      * @return a list of recommendation strings
      */
     private List<String> generateRecommendations(

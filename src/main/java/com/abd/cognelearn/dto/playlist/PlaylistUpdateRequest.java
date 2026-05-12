@@ -1,12 +1,12 @@
-package com.cognelearn.dto.playlist;
+package com.abd.cognelearn.dto.playlist;
 
 import java.util.List;
 
 /**
- * PlaylistUpdateRequest — the data the browser sends when updating an existing playlist.
+ * PlaylistUpdateRequest â€” the data the browser sends when updating an existing playlist.
  *
  * <p>All fields are optional (null means "don't change this field"). This allows partial
- * updates — the frontend only sends the fields it wants to change.
+ * updates â€” the frontend only sends the fields it wants to change.
  *
  * <p>Maps to the JavaScript {@code Playlist.update(playlistId, updates)} call in {@code playlist.js}.
  *

@@ -1,4 +1,4 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * UserEntity — represents a registered user in the database.
+ * UserEntity â€” represents a registered user in the database.
  *
  * <p>Maps to the JavaScript {@code User.js} module. In the old JS version, users
  * were stored directly in {@code localStorage}. Here, they are stored in the
@@ -30,7 +30,7 @@ import java.util.UUID;
 public class UserEntity {
 
     /**
-     * Primary key — uniquely identifies each user.
+     * Primary key â€” uniquely identifies each user.
      *
      * <p>We use UUID (Universally Unique Identifier) instead of auto-incrementing numbers.
      * UUIDs look like "550e8400-e29b-41d4-a716-446655440000" and are generated randomly,
@@ -51,7 +51,7 @@ public class UserEntity {
     private String name;
 
     /**
-     * The user's email address — also used as their login username.
+     * The user's email address â€” also used as their login username.
      *
      * <p>{@code unique = true} ensures no two users can have the same email.
      * This is enforced at the database level, not just in our Java code.
@@ -62,7 +62,7 @@ public class UserEntity {
     /**
      * The BCrypt-hashed password. NEVER store plain-text passwords!
      *
-     * <p>BCrypt transforms "mypassword" into something like "$2a$10$abc..." — a one-way hash.
+     * <p>BCrypt transforms "mypassword" into something like "$2a$10$abc..." â€” a one-way hash.
      * You can never reverse it. To check a password, you hash it again and compare hashes.
      */
     @Column(nullable = false)
@@ -83,7 +83,7 @@ public class UserEntity {
     /**
      * No-argument constructor required by JPA.
      * JPA uses this to reconstruct objects from database rows.
-     * You shouldn't call this directly in your code — use the other constructor.
+     * You shouldn't call this directly in your code â€” use the other constructor.
      */
     public UserEntity() {
     }
@@ -106,7 +106,7 @@ public class UserEntity {
         this.active = active;
     }
 
-    // ── Getters and Setters ───────────────────────────────────────────────────
+    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Getters let other classes READ the fields.
     // Setters let other classes UPDATE the fields.
     // JPA also needs these to load data from the database back into objects.

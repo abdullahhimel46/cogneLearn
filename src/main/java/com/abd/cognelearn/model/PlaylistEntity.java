@@ -1,4 +1,4 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,15 +16,15 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * PlaylistEntity — represents a study playlist owned by a user.
+ * PlaylistEntity â€” represents a study playlist owned by a user.
  *
  * <p>Maps to the JavaScript {@code playlist.js} module. In JS, playlists were stored
  * in {@code localStorage}. Here, each playlist is a row in the {@code playlists} table.
  *
  * <p>A playlist:
  * <ul>
- *   <li>Belongs to exactly ONE user ({@code @ManyToOne} → many playlists per user)</li>
- *   <li>Contains ZERO or MORE videos ({@code @OneToMany} → one playlist, many videos)</li>
+ *   <li>Belongs to exactly ONE user ({@code @ManyToOne} â†’ many playlists per user)</li>
+ *   <li>Contains ZERO or MORE videos ({@code @OneToMany} â†’ one playlist, many videos)</li>
  * </ul>
  *
  * <p>Database table: {@code playlists}
@@ -40,7 +40,7 @@ import java.util.UUID;
 public class PlaylistEntity {
 
     /**
-     * Primary key — uniquely identifies each playlist.
+     * Primary key â€” uniquely identifies each playlist.
      */
     @Id
     private UUID id;
@@ -119,7 +119,7 @@ public class PlaylistEntity {
         this.totalFocusMinutes = 0;  // starts at zero
     }
 
-    // ── Getters and Setters ───────────────────────────────────────────────────
+    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }

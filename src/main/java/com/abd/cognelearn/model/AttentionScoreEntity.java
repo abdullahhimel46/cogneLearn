@@ -1,4 +1,4 @@
-package com.cognelearn.model;
+package com.abd.cognelearn.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * AttentionScoreEntity — stores a single attention measurement from the face-api.js tracker.
+ * AttentionScoreEntity â€” stores a single attention measurement from the face-api.js tracker.
  *
  * <p>Maps to the JavaScript {@code StudySession.addAttentionScore()} method and the
  * {@code AttentionMonitor.js} module. In JS, scores were stored inside the session object
@@ -32,7 +32,7 @@ import java.util.UUID;
 @Table(name = "attention_scores")
 public class AttentionScoreEntity {
 
-    /** Primary key — uniquely identifies this measurement. */
+    /** Primary key â€” uniquely identifies this measurement. */
     @Id
     private UUID id;
 
@@ -72,7 +72,7 @@ public class AttentionScoreEntity {
      *
      * @param id        a new random UUID
      * @param session   the session this score belongs to
-     * @param score     the attention level (0–100)
+     * @param score     the attention level (0â€“100)
      * @param createdAt {@code Instant.now()} when the score was received
      */
     public AttentionScoreEntity(UUID id, StudySessionEntity session, int score, Instant createdAt) {
@@ -82,7 +82,7 @@ public class AttentionScoreEntity {
         this.createdAt = createdAt;
     }
 
-    // ── Getters and Setters ───────────────────────────────────────────────────
+    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }

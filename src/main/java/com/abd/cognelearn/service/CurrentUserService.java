@@ -1,14 +1,14 @@
-package com.cognelearn.service;
+package com.abd.cognelearn.service;
 
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.UserRepository;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
- * CurrentUserService — a helper that tells you "who is currently logged in?"
+ * CurrentUserService â€” a helper that tells you "who is currently logged in?"
  *
  * <p>Maps to the old JavaScript {@code User.getCurrentUser()} method:
  * <pre>
@@ -30,7 +30,7 @@ public class CurrentUserService {
     private final UserRepository userRepository;
 
     /**
-     * Constructor — Spring injects the UserRepository automatically.
+     * Constructor â€” Spring injects the UserRepository automatically.
      *
      * @param userRepository the JPA repository for fetching user records
      */
@@ -46,7 +46,7 @@ public class CurrentUserService {
      *   <li>The browser sends the JSESSIONID cookie with every request</li>
      *   <li>Spring Security middleware reads the cookie, finds the session, and puts the
      *       {@link Authentication} object into {@link SecurityContextHolder}</li>
-     *   <li>We read the Authentication here — the principal is the user's EMAIL
+     *   <li>We read the Authentication here â€” the principal is the user's EMAIL
      *       (the same value returned by {@code UserDetails.getUsername()})</li>
      *   <li>We look up the full {@link UserEntity} from our database using that email</li>
      * </ol>

@@ -1,12 +1,12 @@
-package com.cognelearn.dto.auth;
+package com.abd.cognelearn.dto.auth;
 
-import com.cognelearn.dto.user.UserResponse;
+import com.abd.cognelearn.dto.user.UserResponse;
 
 /**
- * AuthResponse — the data sent back to the browser after a successful login or signup.
+ * AuthResponse â€” the data sent back to the browser after a successful login or signup.
  *
  * <p>In the old JWT approach this record contained a {@code token} string.
- * With session-based auth we no longer need to return a token — the session cookie
+ * With session-based auth we no longer need to return a token â€” the session cookie
  * (JSESSIONID) is set automatically by Spring Security in the response headers.
  *
  * <p>We only return the user's profile so the frontend can display their name/email.

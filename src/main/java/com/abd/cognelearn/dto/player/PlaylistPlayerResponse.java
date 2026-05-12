@@ -1,10 +1,10 @@
-package com.cognelearn.dto.player;
+package com.abd.cognelearn.dto.player;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
- * PlaylistPlayerResponse — structured payload for the custom Video.js playlist player.
+ * PlaylistPlayerResponse â€” structured payload for the custom Video.js playlist player.
  *
  * <p>This is the API contract consumed by the vanilla JS player page.
  * It keeps the frontend free from hardcoded playlist data.

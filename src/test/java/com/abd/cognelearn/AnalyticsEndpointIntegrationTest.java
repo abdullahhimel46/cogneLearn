@@ -1,7 +1,7 @@
-package com.cognelearn;
+package com.abd.cognelearn;
 
-import com.cognelearn.model.UserEntity;
-import com.cognelearn.repository.UserRepository;
+import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.UUID;
@@ -27,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
         "spring.datasource.url=jdbc:h2:mem:cognelearn-analytics;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "cognelearn.seed-demo-data=false"
 })
 class AnalyticsEndpointIntegrationTest {
 
@@ -55,7 +56,8 @@ class AnalyticsEndpointIntegrationTest {
                 "Analytics User",
                 "analytics@example.com",
                 passwordEncoder.encode("secret123"),
-                Instant.now()
+                Instant.now(),
+                true
         ));
 
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")

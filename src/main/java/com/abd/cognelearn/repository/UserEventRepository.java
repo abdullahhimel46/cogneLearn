@@ -1,9 +1,9 @@
 package com.abd.cognelearn.repository;
 
-import com.abd.cognelearn.model.FeedbackEntity;
+import com.abd.cognelearn.model.UserEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Long> {
+public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 }

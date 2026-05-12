@@ -1,11 +1,11 @@
-package com.cognelearn.dto.session;
+package com.abd.cognelearn.dto.session;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * SessionResponse — the complete study session data sent back to the browser.
+ * SessionResponse â€” the complete study session data sent back to the browser.
  *
  * <p>Maps to the JavaScript session object in {@code StudySession.js}:
  * <pre>
@@ -38,7 +38,7 @@ import java.util.UUID;
  * @param completedDuration actual minutes studied
  * @param status            current lifecycle state: "active", "paused", or "completed"
  * @param createdAt         when the session record was created
- * @param attentionScores   all recorded attention scores (0–100) for this session
+ * @param attentionScores   all recorded attention scores (0â€“100) for this session
  */
 public record SessionResponse(
         UUID sessionId,

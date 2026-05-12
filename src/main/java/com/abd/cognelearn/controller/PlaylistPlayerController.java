@@ -1,7 +1,7 @@
-package com.cognelearn.controller;
+package com.abd.cognelearn.controller;
 
-import com.cognelearn.dto.player.PlaylistPlayerResponse;
-import com.cognelearn.service.PlaylistPlayerService;
+import com.abd.cognelearn.dto.player.PlaylistPlayerResponse;
+import com.abd.cognelearn.service.PlaylistPlayerService;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * PlaylistPlayerController — serves the data contract used by the custom player page.
+ * PlaylistPlayerController â€” serves the data contract used by the custom player page.
  */
 @RestController
 @RequestMapping("/api/playlist")

@@ -1,9 +1,9 @@
-package com.cognelearn.web;
+package com.abd.cognelearn.web;
 
 import java.time.Instant;
 
 /**
- * ApiError — the standard error response format sent to the browser when something goes wrong.
+ * ApiError â€” the standard error response format sent to the browser when something goes wrong.
  *
  * <p>Whenever an exception is thrown in any controller or service, our
  * {@link RestExceptionHandler} catches it and wraps it in this record before
