@@ -79,9 +79,13 @@ Then open: `http://localhost:8000`
 ## Technology Stack
 
 **Frontend:** HTML5, CSS3, Vanilla JavaScript
+
 **AI/ML:** Face-API.js with Tiny Face Detector (68 facial landmarks for attention tracking)
+
 **Data Storage:** Browser localStorage (no backend/server by default)
+
 **Privacy:** Client-side only processing—no data sent to servers
+
 
 ## Key Design Principles
 
