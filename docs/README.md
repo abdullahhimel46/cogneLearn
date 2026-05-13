@@ -2,20 +2,6 @@
 
 A privacy-first, self-guided adaptive learning platform that combines YouTube playlist management with real-time attention monitoring and Pomodoro time management—all processed locally in your browser.
 
-User Dashboard:
-<img width="975" height="1039" alt="image" src="https://github.com/user-attachments/assets/b0ad27ac-8da5-43b4-b89a-506bf8421230" />
-
-Adding YouTube playlist:
-<img width="975" height="504" alt="image" src="https://github.com/user-attachments/assets/fa0b541e-4d45-49e3-98c1-163485012d1d" />
-
-Setting study plans:
-<img width="975" height="503" alt="image" src="https://github.com/user-attachments/assets/97551111-cd56-4bf2-bf2a-3d3f81296173" />
-
-Distraction Free Learning Environment:
-
-<img width="624" height="582" alt="image" src="https://github.com/user-attachments/assets/7b6e4978-8e12-4eee-b9b3-7b2ee874aeb0" />
-
-
 ## Features
 
 ✨ **Core Features:**
@@ -25,6 +11,20 @@ Distraction Free Learning Environment:
 - 📊 **Productivity Dashboard** - Track focus time, sessions, and attention scores
 - 🔒 **Privacy First** - All data stored locally in browser (localStorage)
 - 🎯 **Focus Mode** - Distraction management and focus tracking
+
+**User Dashboard:**
+<img width="975" height="1039" alt="image" src="https://github.com/user-attachments/assets/b0ad27ac-8da5-43b4-b89a-506bf8421230" />
+
+**Adding YouTube playlist:**
+<img width="975" height="504" alt="image" src="https://github.com/user-attachments/assets/fa0b541e-4d45-49e3-98c1-163485012d1d" />
+
+**Setting study plans:**
+<img width="975" height="503" alt="image" src="https://github.com/user-attachments/assets/97551111-cd56-4bf2-bf2a-3d3f81296173" />
+
+**Distraction Free Learning Environment with real-time attention detection using AI:**
+
+<img width="624" height="582" alt="image" src="https://github.com/user-attachments/assets/7b6e4978-8e12-4eee-b9b3-7b2ee874aeb0" />
+
 
 ## Project Structure
 
