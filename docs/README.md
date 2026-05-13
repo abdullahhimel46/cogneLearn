@@ -12,6 +12,7 @@ Setting study plans:
 <img width="975" height="503" alt="image" src="https://github.com/user-attachments/assets/97551111-cd56-4bf2-bf2a-3d3f81296173" />
 
 Distraction Free Learning Environment:
+
 <img width="624" height="582" alt="image" src="https://github.com/user-attachments/assets/7b6e4978-8e12-4eee-b9b3-7b2ee874aeb0" />
 
 
