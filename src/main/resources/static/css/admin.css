@@ -6,15 +6,15 @@
 
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
-  --bg:             #f8fafc;
+  --bg:             #f1f5f9;
   --surface:        #ffffff;
   --surface-soft:   #f8fafc;
   --border:         #e2e8f0;
   --border-focus:   #c7d2fe;
 
   --text-primary:   #0f172a;
-  --text-secondary: #64748b;
-  --text-muted:     #94a3b8;
+  --text-secondary: #475569;
+  --text-muted:     #64748b;
 
   --primary:        #4f46e5;
   --primary-dark:   #4338ca;
@@ -417,7 +417,7 @@ body.sidebar-collapsed .main {
 /* ── Stats Row ───────────────────────────────────────────────── */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
@@ -486,8 +486,46 @@ body.sidebar-collapsed .main {
   margin-bottom: 18px;
 }
 
+/* ── Activity Dashboard (Charts) ─────────────────────────────── */
+.activity-dashboard { display: flex; flex-direction: column; gap: 24px; }
+.activity-charts { 
+  display: grid; 
+  grid-template-columns: 2fr 1fr; 
+  gap: 20px; 
+}
+.chart-container { 
+  position: relative; 
+  height: 250px; 
+  width: 100%; 
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+}
+.chart-container--doughnut {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .activity-charts { grid-template-columns: 1fr; }
+}
+
+.panel__subtitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-top: 16px;
+  margin-bottom: -8px;
+}
+
 /* ── Activity List ───────────────────────────────────────────── */
 .activity-list { display: flex; flex-direction: column; }
+.activity-list--compact .activity-item { padding: 10px 0; font-size: 0.85rem; }
 
 .activity-item {
   display: flex;
@@ -575,6 +613,23 @@ body.sidebar-collapsed .main {
 .data-table tbody tr { transition: background var(--ease); }
 .data-table tbody tr:hover { background: var(--primary-light); }
 
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-soft);
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 /* Badges */
 .badge {
   display: inline-flex;
@@ -588,6 +643,37 @@ body.sidebar-collapsed .main {
 
 .badge--active   { background: var(--success-light); color: var(--success); }
 .badge--disabled { background: rgba(15, 23, 42, 0.06); color: var(--text-muted); }
+
+.badge--info { background: rgba(14, 165, 233, 0.15); color: var(--info, #0ea5e9); }
+.badge--warning { background: rgba(245, 158, 11, 0.15); color: var(--warning, #f59e0b); }
+.badge--error { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+/* Elevated Button Style (Matches Image) */
+.btn-elevated {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--primary);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--ease);
+  box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.4);
+}
+
+.btn-elevated:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-elevated:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 /* Table action button */
 .btn-action {
@@ -914,6 +1000,50 @@ body.sidebar-collapsed .site-footer {
   margin-left: var(--sidebar-collapsed-w);
 }
 
+/* Compact footer variant used on admin pages after login — smaller, centered */
+.site-footer.site-footer--compact {
+  padding: 1.25rem 0; /* much shorter vertical space */
+}
+
+.site-footer.site-footer--compact .footer-main-grid {
+  /* Keep footer compact but spread brand and social to the edges
+     so there's clear space between the logo (left) and social icons (right).
+     Use full width inside the container and distribute space. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* put brand at left and social at right */
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.site-footer.site-footer--compact .footer-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Ensure social icons align to the right in compact footer */
+.site-footer.site-footer--compact .footer-social-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* hide verbose elements to keep the footer short */
+.site-footer.site-footer--compact .footer-light__tagline,
+.site-footer.site-footer--compact .footer-links-section,
+.site-footer.site-footer--compact .footer-contact-details,
+.site-footer.site-footer--compact .footer-section-title {
+  display: none !important;
+}
+
+.site-footer.site-footer--compact .social-icons-row { margin-top: 0; }
+.site-footer.site-footer--compact .social-circle-btn { width: 34px; height: 34px; }
+.site-footer.site-footer--compact .footer-bottom-divider { display: none; }
+.site-footer.site-footer--compact .footer-bottom-content { justify-content: center; }
+.site-footer.site-footer--compact .footer-copyright { font-size: 0.85rem; color: #94a3b8; }
+
 .site-footer .container {
   max-width: 1100px; /* Slightly tighter for premium look */
   margin: 0 auto;
@@ -1205,5 +1335,248 @@ body.admin-theme-dark .page__timestamp {
     border-color: rgba(255, 255, 255, 0.1) !important;
     color: #94a3b8 !important;
 }
+
+/* ── Email Categories & Tabs ───────────────────────────────────── */
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.category-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all var(--ease);
+}
+.category-tab:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+.category-tab.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Tooltip and Triggers */
+.trigger-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  cursor: help;
+  margin-left: 4px;
+}
+
+/* ── Modal Overlay ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.hidden {
+  display: none !important;
+}
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+}
+body.admin-theme-dark .modal-content {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── User Inspection Modal ────────────────────────────────────── */
+.user-inspect-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.user-inspect-modal.hidden {
+  display: none !important;
+}
+
+.user-inspect-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.user-inspect-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 440px;
+  z-index: 10;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+}
+
+.user-inspect-card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.user-inspect-card p {
+  margin: 4px 0 0 0;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.user-inspect-card hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.user-inspect-card .header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-inspect-card .avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-hover, #e2e8f0);
+  color: var(--primary, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.user-inspect-card .info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-inspect-card .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.user-inspect-card .row span:first-child {
+  color: var(--text-secondary);
+}
+
+.user-inspect-card .row span:last-child {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-inspect-card .stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.user-inspect-card .stat {
+  flex: 1;
+  background: var(--bg-hover, #f8fafc);
+  border: 1px solid var(--border);
+  padding: 12px 8px;
+  border-radius: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-inspect-card .stat span {
+  font-size: 1.2rem;
+}
+
+.user-inspect-card .stat strong {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.user-inspect-card .actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.user-inspect-card button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.user-inspect-card button.danger {
+  background: var(--danger-light, #fee2e2);
+  color: var(--danger, #dc2626);
+}
+
+.user-inspect-card button.danger:hover {
+  background: #fecaca;
+}
+
+.user-inspect-card button:not(.danger) {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.user-inspect-card button:not(.danger):hover {
+  background: var(--bg-hover);
+}
+
+
+
 
 

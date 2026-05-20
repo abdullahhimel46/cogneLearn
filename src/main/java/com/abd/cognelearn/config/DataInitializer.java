@@ -30,6 +30,7 @@ public class DataInitializer implements CommandLineRunner {
     private final StudySessionRepository studySessionRepository;
     private final UserEventRepository userEventRepository;
     private final PendingNotificationRepository pendingNotificationRepository;
+    private final ActivityLogRepository activityLogRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,6 +44,7 @@ public class DataInitializer implements CommandLineRunner {
 
         if (userRepository.count() > 0) {
             seedPendingMotivationalEmailsIfEmpty();
+            seedActivityLogs("System Admin", "Abdullah Himel", "Nadia Islam");
             return;
         }
 
@@ -111,7 +113,27 @@ public class DataInitializer implements CommandLineRunner {
         seedPendingForUser(nadia.getId(), "STREAK_30", Instant.now().minus(5, ChronoUnit.HOURS));
         seedPendingForUser(nadia.getId(), "INACTIVE_USER", Instant.now().minus(30, ChronoUnit.MINUTES));
 
+        seedActivityLogs(admin.getName(), himel.getName(), nadia.getName());
+
         System.out.println("Data seeding complete.");
+    }
+
+    private void seedActivityLogs(String adminName, String himelName, String nadiaName) {
+        if (activityLogRepository.count() >= 15) return;
+        activityLogRepository.deleteAll();
+
+        activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("User Registration").description("Abdullah Himel created a new account").userName(himelName).source("Web App").createdAt(Instant.now().minus(15, ChronoUnit.DAYS)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("User Registration").description("Nadia Islam created a new account").userName(nadiaName).source("Web App").createdAt(Instant.now().minus(5, ChronoUnit.DAYS)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("Playlist Created").description("Spring Boot Mastery playlist created").userName(himelName).source("Web App").createdAt(Instant.now().minus(10, ChronoUnit.DAYS)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("Session Started").description("Study session started for playlist").userName(himelName).source("Web App").createdAt(Instant.now().minus(2, ChronoUnit.HOURS)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.WARNING).title("Low Focus Detected").description("User signaled low focus").userName(himelName).source("AI Engine").createdAt(Instant.now().minus(90, ChronoUnit.MINUTES)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("Admin Login").description("System Admin logged into dashboard").userName(adminName).source("Admin Panel").createdAt(Instant.now().minus(10, ChronoUnit.MINUTES)).build());
+        activityLogRepository.save(ActivityLog.builder().type(LogType.ERROR).title("Failed Login").description("Multiple failed login attempts").userName("Unknown").source("Web App").createdAt(Instant.now().minus(5, ChronoUnit.MINUTES)).build());
+        
+        // Extra logs to trigger pagination
+        for (int i = 1; i <= 8; i++) {
+            activityLogRepository.save(ActivityLog.builder().type(LogType.INFO).title("Routine Check").description("System routine check " + i).userName("System").source("Internal").createdAt(Instant.now().minus(i * 10, ChronoUnit.MINUTES)).build());
+        }
     }
 
     private void seedPendingMotivationalEmailsIfEmpty() {

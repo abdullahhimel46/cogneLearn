@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -59,6 +60,16 @@
           <span>Users</span>
         </a>
 
+        <a href="#logs" class="nav-item" id="nav-logs" data-page="logs">
+          <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+            <line x1="9" y1="20" x2="15" y2="20"></line>
+            <line x1="12" y1="4" x2="12" y2="20"></line>
+          </svg>
+          <span>Logs</span>
+        </a>
+
         <a href="#emails" class="nav-item" id="nav-emails" data-page="emails">
           <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -90,14 +101,15 @@
           </svg>
           <span>Dark Mode</span>
         </button>
-        <button class="sidebar__back-link" id="adminLogoutBtn" type="button" style="border:none;background:none;cursor:pointer;width:100%;text-align:left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-            aria-hidden="true">
+
+        <!-- Logout button: keep a single button; label inside <span> so collapsed sidebar hides it -->
+        <button class="sidebar__back-link" id="adminLogoutBtn" type="button" aria-label="Logout" style="border:none;background:none;cursor:pointer;width:100%;text-align:left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
           </svg>
-          Logout
+          <span>Logout</span>
         </button>
       </div>
 
@@ -147,16 +159,25 @@
           <article class="stat-card" role="listitem">
             <p class="stat-card__label">Total Playlists</p>
             <p class="stat-card__value" id="statTotalPlaylists">—</p>
-          </article>
-          <article class="stat-card stat-card--status" role="listitem">
-            <p class="stat-card__label">System Status</p>
-            <p class="stat-card__value" id="statSystemStatus">—</p>
-          </article>
         </div>
 
         <section class="panel" aria-labelledby="heading-activity">
-          <h2 class="panel__title" id="heading-activity">Recent Activity</h2>
-          <ul class="activity-list" id="activityList" aria-live="polite"></ul>
+          <h2 class="panel__title" id="heading-activity">Recent Activity Overview</h2>
+          <div class="activity-dashboard">
+            <div class="activity-charts">
+              <div class="chart-container">
+                <canvas id="activityTrendChart"></canvas>
+              </div>
+              <div class="chart-container chart-container--doughnut">
+                <canvas id="activityTypeChart"></canvas>
+              </div>
+            </div>
+            <h3 class="panel__subtitle">Detailed Logs</h3>
+            <ul class="activity-list activity-list--compact" id="activityList" aria-live="polite"></ul>
+            <div style="text-align: center; margin-top: 16px;">
+              <button class="btn-elevated" id="viewAllLogsBtn" type="button">View All Logs &rarr;</button>
+            </div>
+          </div>
         </section>
 
         <section class="panel" aria-labelledby="heading-sysinfo">
@@ -177,6 +198,56 @@
           </dl>
         </section>
 
+      </section>
+
+      <!-- PAGE: Logs -->
+      <section class="page hidden" id="page-logs" aria-labelledby="heading-logs">
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Audit</p>
+            <h1 class="page__title" id="heading-logs">Activity Logs</h1>
+          </div>
+          <div class="admin-header-actions">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="panel panel--flush" aria-label="Full Logs Table">
+          <div class="table-wrap">
+            <table class="data-table" id="logsTable" aria-label="System Logs">
+              <thead>
+                <tr>
+                  <th scope="col">Type</th>
+                  <th scope="col">Event</th>
+                  <th scope="col">User</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Time</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination-controls" id="logsPagination">
+            <button class="btn-elevated" id="logsPrevBtn" disabled>Prev</button>
+            <span id="logsPageInfo" class="pagination-info">Page 1</span>
+            <button class="btn-elevated" id="logsNextBtn">Next</button>
+          </div>
+        </section>
       </section>
 
       <!-- PAGE: Users -->
@@ -234,10 +305,9 @@
         <header class="page__header">
           <div>
             <p class="page__eyebrow">Outreach</p>
-            <h1 class="page__title" id="heading-emails">Motivational Emails</h1>
+            <h1 class="page__title" id="heading-emails">Email Campaigns</h1>
           </div>
           <div class="admin-header-actions">
-            <p class="panel__hint" id="emailProviderStatus" style="margin:0">Checking email service…</p>
             <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
                 <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
@@ -257,31 +327,76 @@
           </div>
         </header>
 
-        <section class="panel panel--stack" aria-labelledby="heading-pending-emails">
-          <h2 class="panel__title" id="heading-pending-emails">Pending Motivational Emails</h2>
-          <p class="panel__hint">Review streak milestones, edit subject and message, then send to the learner.</p>
-          <div class="pending-notifications" id="pendingNotificationsList" role="list"
-            aria-label="Queued motivational emails"></div>
+        <section class="panel panel--stack" aria-labelledby="heading-email-tabs">
+          <h2 class="panel__title" id="heading-email-tabs">Campaign Categories</h2>
+          <div class="category-tabs" id="emailCategoryTabs">
+            <button class="category-tab active" data-category="INACTIVE_USER">Inactive User</button>
+            <button class="category-tab" data-category="LOW_FOCUS">Low Focus</button>
+            <button class="category-tab" data-category="STREAK">Streak Milestone</button>
+            <button class="category-tab" data-category="CUSTOM_EMAIL">Custom Email ✉️</button>
+          </div>
         </section>
 
-        <section class="panel panel--stack" aria-labelledby="heading-compose-email">
-          <h2 class="panel__title" id="heading-compose-email">Send Custom Email</h2>
-          <p class="panel__hint">Send a one-off message to any registered learner.</p>
+        <section class="panel panel--stack" id="emailCategoryPanel">
+          <h2 class="panel__title" id="activeCategoryTitle">🧠 INACTIVE_USER</h2>
+          <div class="trigger-info" style="background: var(--surface-hover); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+            <p id="activeCategoryTrigger" style="margin:0; font-size: 0.9rem;"><strong>Trigger:</strong> No activity for 3 days 
+              <span class="tooltip-icon" title="This email is triggered when a user remains inactive for more than 3 days.">ℹ️</span>
+            </p>
+            <!-- Recipients summary removed per request -->
+          </div>
+
+          <!-- Recipient Selector -->
+          <div class="recipients-selector-wrap" style="margin-bottom: 20px;">
+            <label class="pending-notification-card__label" style="display:block; margin-bottom:8px;">Recipients</label>
+            <div style="display:flex; gap:12px; margin-bottom: 12px; align-items:center;">
+              <input class="field" id="userCampaignSearch" type="text" placeholder="Search users... 🔍" style="flex:1; margin:0;">
+              <button class="btn-action hidden" id="selectAllCampaignUsers" type="button" style="white-space:nowrap; padding: 10px 16px;">Select All Users</button>
+            </div>
+            
+            <div id="campaignUsersList" class="checkbox-list-container" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--surface); display:flex; flex-direction:column; gap:8px;">
+              <!-- Javascript will populate checkpoints -->
+            </div>
+            <p id="campaignSelectedCount" style="font-size:0.9rem; color:var(--text-secondary); margin: 8px 0 0 0; font-weight:600;">Selected: 0 users</p>
+          </div>
+
           <div class="email-compose">
-            <label class="pending-notification-card__label" for="customEmailTo">Recipient</label>
-            <select class="field" id="customEmailTo" aria-label="Recipient email"></select>
-            <label class="pending-notification-card__label" for="customEmailSubject">Subject</label>
-            <input class="field" id="customEmailSubject" type="text" maxlength="200" placeholder="Email subject">
-            <label class="pending-notification-card__label" for="customEmailBody">Message</label>
-            <textarea class="pending-notification-edit" id="customEmailBody" rows="4"
+            <label class="pending-notification-card__label" for="emailTemplateSubject">Subject</label>
+            <input class="field" id="emailTemplateSubject" type="text" maxlength="200" placeholder="Email subject">
+            
+            <label class="pending-notification-card__label" for="emailTemplateBody">Message</label>
+            <textarea class="pending-notification-edit" id="emailTemplateBody" rows="6"
               placeholder="Write your message…"></textarea>
-            <div class="pending-notification-card__actions">
-              <button class="btn-send-email" id="sendCustomEmailBtn" type="button">Send Email</button>
+            
+            <div class="pending-notification-card__actions" style="margin-top: 16px;">
+              <button class="btn-action" id="previewEmailBtn" type="button">Preview</button>
+              <button class="btn-action" id="saveTemplateBtn" type="button">Save</button>
+              <button class="btn-elevated" id="openSendModalBtn" type="button" disabled>Send</button>
             </div>
           </div>
         </section>
 
       </section>
+
+      <!-- SEND EMAIL MODAL -->
+      <div id="sendEmailModal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <h2 id="sendEmailModalTitle" style="margin-top:0;">Send Email → INACTIVE_USER</h2>
+          <p class="modal-desc" style="color:var(--text-secondary); margin-bottom: 16px;">This email will be sent to users matching this condition.</p>
+          
+          <div class="modal-preview" style="background:var(--surface-hover); padding:16px; border-radius:8px; margin-bottom: 20px;">
+            <p style="margin:0 0 8px 0; word-break: break-all;"><strong>To:</strong> <span id="modalPreviewTo" style="color:var(--primary); font-weight:600;"></span></p>
+            <p style="margin:0 0 8px 0;"><strong>Subject:</strong> <span id="modalPreviewSubject"></span></p>
+            <p style="margin:0 0 4px 0;"><strong>Body:</strong></p>
+            <p id="modalPreviewBody" style="white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin:0;"></p>
+          </div>
+
+          <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn-action" id="cancelSendBtn" type="button">Cancel</button>
+            <button class="btn-elevated" id="confirmSendBtn" type="button">Send Email</button>
+          </div>
+        </div>
+      </div>
 
       <!-- PAGE: Settings -->
       <section class="page hidden" id="page-settings" aria-labelledby="heading-settings">
@@ -344,8 +459,8 @@
   </div>
   <!-- /.shell -->
 
-  <!-- ══ Footer (full-width, outside shell) ═════════════════════ -->
-  <footer class="site-footer">
+  <!-- ══ Footer (full-width, outside shell) — compact for admin pages ══ -->
+  <footer class="site-footer site-footer--compact">
     <div class="container">
       <div class="footer-main-grid">
         <!-- Brand Section -->
@@ -484,6 +599,12 @@
         }
     })();
   </script>
+
+  <!-- USER INSPECTION SYSTEM CONTAINER -->
+  <div id="userModal" class="user-inspect-modal hidden">
+    <div class="user-inspect-backdrop" onclick="closeModal()"></div>
+    <div class="user-inspect-card" id="modalContent"></div>
+  </div>
 </body>
 
 </html>

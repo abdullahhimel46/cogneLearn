@@ -15,4 +15,13 @@ public class AdminUserDTO {
     private String email;
     private Instant joined;
     private boolean active;
+    
+    // User inspection system fields
+    private String status;
+    private Instant joinedAt;
+    private Instant lastActive;
+    private int focusTime;
+    private int sessions;
+    private int streak;
 }
+

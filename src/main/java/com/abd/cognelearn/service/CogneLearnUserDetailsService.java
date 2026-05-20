@@ -2,6 +2,7 @@ package com.abd.cognelearn.service;
 
 import com.abd.cognelearn.model.UserEntity;
 import com.abd.cognelearn.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +31,10 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
 
     // We need the UserRepository so we can look up users in the database
     private final UserRepository userRepository;
+
+    // Feature flag: when true, deactivated users are marked disabled in Spring Security
+    @Value("${cognelearn.users.block-on-deactivate:true}")
+    private boolean blockOnDeactivate;
 
     /**
      * Constructor injection â€” Spring automatically provides the UserRepository bean.
@@ -70,10 +75,18 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
         }
 
         // Step 3: Wrap the user's login details in Spring Security's UserDetails format.
-        return User.builder()
+        User.UserBuilder builder = User.builder()
                 .username(user.getEmail())
                 .password(user.getPasswordHash())
-                .roles(role.trim())
-                .build();
+                .roles(role.trim());
+
+        // If configured, reflect the user's active flag into the Spring Security disabled state.
+        // When blockOnDeactivate=true, a user with active==false will be treated as disabled
+        // and Spring Security will reject authentication attempts for that account.
+        if (blockOnDeactivate) {
+            builder.disabled(!user.isActive());
+        }
+
+        return builder.build();
     }
 }

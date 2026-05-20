@@ -594,7 +594,6 @@ body.landing-page {
 
 .footer-section-title {
     color: #ffffff;
-    font-size: 1rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     letter-spacing: 0.02em;
@@ -1618,8 +1617,6 @@ body.sidebar-collapsed .sidebar-control {
 .sessions-panel .session-row:last-child {
     border-bottom: 0;
 }
-    opacity: 1;
-}
 
 .sessions-panel .session-row {
     padding: 12px 14px;
@@ -2611,7 +2608,7 @@ body.dashboard-theme-dark .modal-card {
 .attention-fill {
     height: 100%;
     background: #94a3b8;
-    width: 0%;
+    width: 0;
     transition: width 0.2s ease, background 0.2s ease;
     display: flex;
     align-items: center;

@@ -74,8 +74,74 @@ public class AdminController {
     @GetMapping("/users")
     public List<AdminUserDTO> getUsers() {
         return userRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
-                .map(u -> new AdminUserDTO(u.getId(), u.getName(), u.getEmail(), u.getCreatedAt(), u.isActive()))
+                .map(u -> {
+                    List<StudySessionEntity> sessions = studySessionRepository.findAllByUser(u);
+                    
+                    int totalFocusTime = sessions.stream()
+                            .mapToInt(StudySessionEntity::getCompletedDuration)
+                            .sum();
+                            
+                    Instant lastActive = sessions.stream()
+                            .map(StudySessionEntity::getStartTime)
+                            .filter(java.util.Objects::nonNull)
+                            .max(java.util.Comparator.naturalOrder())
+                            .orElse(null);
+                            
+                    int streak = calculateUserStreak(sessions);
+                    String status = u.isActive() ? "active" : "inactive";
+                    
+                    return new AdminUserDTO(
+                            u.getId(),
+                            u.getName(),
+                            u.getEmail(),
+                            u.getCreatedAt(),
+                            u.isActive(),
+                            status,
+                            u.getCreatedAt(),
+                            lastActive,
+                            totalFocusTime,
+                            sessions.size(),
+                            streak
+                    );
+                })
                 .collect(Collectors.toList());
+    }
+
+    private int calculateUserStreak(List<StudySessionEntity> sessions) {
+        if (sessions == null || sessions.isEmpty()) {
+            return 0;
+        }
+
+        // Collect unique study dates (sorted automatically by TreeMap)
+        java.util.Map<java.time.LocalDate, Boolean> studyDays = new java.util.TreeMap<>();
+        for (StudySessionEntity session : sessions) {
+            if (session.getStartTime() != null) {
+                java.time.LocalDate date = java.time.LocalDate.ofInstant(session.getStartTime(), java.time.ZoneId.systemDefault());
+                studyDays.put(date, true);
+            }
+        }
+
+        java.util.List<java.time.LocalDate> sortedDates = new java.util.ArrayList<>(studyDays.keySet());
+        if (sortedDates.isEmpty()) return 0;
+
+        int maxStreak = 1;
+        int currentStreak = 1;
+
+        for (int i = 1; i < sortedDates.size(); i++) {
+            java.time.LocalDate previousDate = sortedDates.get(i - 1);
+            java.time.LocalDate currentDate = sortedDates.get(i);
+
+            long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(previousDate, currentDate);
+
+            if (daysBetween == 1) {
+                currentStreak++;
+                maxStreak = Math.max(maxStreak, currentStreak);
+            } else {
+                currentStreak = 1;
+            }
+        }
+
+        return maxStreak;
     }
 
     /**
