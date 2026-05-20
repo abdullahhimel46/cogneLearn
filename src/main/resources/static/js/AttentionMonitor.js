@@ -1,278 +1,42 @@
 /**
- * AttentionMonitor Module - Tracks and monitors user attention levels
- * Enhanced with full face-api.js model suite (expressions, age, gender, etc.)
+ * AttentionMonitor (v2) - privacy-first attention inference.
+ *
+ * - Uses a Web Worker for ML inference when possible.
+ * - Falls back to main-thread inference if worker/models are unavailable.
+ * - Emits ONLY summarized metrics: { level: 0-100, status, faceDetected, timestamp }
  */
 const AttentionMonitor = {
     detectionIntervalMs: 1500,
     modelsPath: "/public/models/face-api",
+
     stream: null,
     videoElement: null,
     detectionHandle: null,
-    modelsReady: false,
     onUpdate: null,
     isTracking: false,
     sessionRunning: false,
-    ssdLoaded: false,
-    descriptorSupportLogged: false,
-    currentScore: 0,
+
+    // Worker state
+    worker: null,
+    workerReady: false,
+    pendingWorkerFrame: false,
+    workerSupported: typeof Worker !== "undefined" && typeof OffscreenCanvas !== "undefined",
+
+    // Fallback main-thread state
+    modelsReady: false,
     recentScores: [],
-    allScores: [],
-    sampleCount: 0,
-    distractedCount: 0,
-    lastDetection: null,
-
-    trackAttention: function (detection) {
-        if (!detection) {
-            return {
-                level: 0,
-                status: "no_face_detected",
-                faceDetected: false,
-                expressions: { dominant: "unknown", scores: {} },
-                timestamp: new Date().toISOString()
-            };
-        }
-
-        const attentionLevel = this.calculateAttentionLevel(detection);
-        const expressionData = this.analyzeExpressions(detection);
-
-        return {
-            level: attentionLevel,
-            status: attentionLevel > 70 ? "focused" : attentionLevel > 40 ? "moderate" : "distracted",
-            faceDetected: true,
-            expressions: expressionData,
-            timestamp: new Date().toISOString()
-        };
-    },
-
-    analyzeExpressions: function (detection) {
-        if (!detection || !detection.expressions) {
-            return { dominant: "unknown", scores: {} };
-        }
-
-        const expressions = detection.expressions;
-        const dominant = Object.keys(expressions).reduce(function (a, b) {
-            return expressions[a] > expressions[b] ? a : b;
-        });
-
-        return {
-            dominant: dominant,
-            scores: {
-                neutral: Math.round((expressions.neutral || 0) * 100),
-                happy: Math.round((expressions.happy || 0) * 100),
-                sad: Math.round((expressions.sad || 0) * 100),
-                angry: Math.round((expressions.angry || 0) * 100),
-                fearful: Math.round((expressions.fearful || 0) * 100),
-                disgusted: Math.round((expressions.disgusted || 0) * 100),
-                surprised: Math.round((expressions.surprised || 0) * 100)
-            }
-        };
-    },
-
-    calculateAttentionLevel: function (detection) {
-        if (!detection || !detection.landmarks) {
-            return 0;
-        }
-
-        const landmarks = detection.landmarks;
-        const leftEye = landmarks.getLeftEye();
-        const rightEye = landmarks.getRightEye();
-        const nose = landmarks.getNose();
-        const jaw = landmarks.getJawOutline();
-
-        if (!leftEye.length || !rightEye.length || !nose.length || !jaw.length) {
-            return 0;
-        }
-
-        const eyeMidpointX = (leftEye[0].x + rightEye[3].x) / 2;
-        const noseTipX = nose[3].x;
-        const faceWidth = jaw.reduce(function (acc, p) { return Math.max(acc, p.x); }, 0) -
-            jaw.reduce(function (acc, p) { return Math.min(acc, p.x); }, Number.MAX_SAFE_INTEGER);
-        const yawOffset = Math.abs(noseTipX - eyeMidpointX);
-        const yawThreshold = Math.max(faceWidth * 0.15, 1);
-        const yawScore = Math.max(0, 100 - yawOffset / yawThreshold * 100);
-
-        const eyeLineY = (leftEye[0].y + rightEye[3].y) / 2;
-        const noseTipY = nose[3].y;
-        const eyeToNoseDist = noseTipY - eyeLineY;
-        const faceHeight = jaw.reduce(function (acc, p) { return Math.max(acc, p.y); }, 0) - eyeLineY;
-        const currentPitchRatio = eyeToNoseDist / Math.max(1, faceHeight);
-        const pitchDiff = Math.abs(currentPitchRatio - 0.35);
-        const pitchScore = Math.max(0, 100 - pitchDiff / 0.25 * 100);
-
-        const eyeDistance = Math.sqrt(
-            Math.pow(rightEye[3].x - leftEye[0].x, 2) +
-            Math.pow(rightEye[3].y - leftEye[0].y, 2)
-        );
-        const normalizedEyeDistance = Math.min(100, Math.max(0, (eyeDistance - 40) / 70 * 100));
-        const depthScore = normalizedEyeDistance > 30 ? 100 : 50;
-
-        let expressionScore = 80;
-        if (detection.expressions) {
-            const expr = detection.expressions;
-            expressionScore = (
-                (expr.neutral || 0) * 100 +
-                (expr.happy || 0) * 80 +
-                (expr.surprised || 0) * 50 +
-                Math.max(expr.sad || 0, expr.angry || 0, expr.fearful || 0, expr.disgusted || 0) * -60
-            );
-            expressionScore = Math.max(0, Math.min(100, expressionScore));
-        }
-
-        return Math.round(Math.max(0, Math.min(100, (
-            yawScore * 0.30 +
-            pitchScore * 0.30 +
-            expressionScore * 0.30 +
-            depthScore * 0.10
-        ))));
-    },
-
-    alertDistraction: function (attentionLevel) {
-        if (attentionLevel < 20) {
-            return {
-                severity: "critical",
-                message: "You appear distracted. Take a moment to refocus or take a break.",
-                timestamp: new Date().toISOString()
-            };
-        }
-
-        if (attentionLevel < 40) {
-            return {
-                severity: "warning",
-                message: "Your attention seems low. Try to refocus on the study material.",
-                timestamp: new Date().toISOString()
-            };
-        }
-
-        return null;
-    },
-
-    getSessionAttentionStats: function (sessionId) {
-        const session = StudySession.getById(sessionId);
-        if (!session || !session.attentionScores || session.attentionScores.length === 0) {
-            return { avgLevel: 0, maxLevel: 0, minLevel: 0, count: 0, dominantExpressions: {} };
-        }
-
-        const scores = session.attentionScores;
-        const dominantExpressions = {};
-        if (session.expressions && Array.isArray(session.expressions)) {
-            session.expressions.forEach(function (expr) {
-                dominantExpressions[expr] = (dominantExpressions[expr] || 0) + 1;
-            });
-        }
-
-        return {
-            avgLevel: Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / scores.length),
-            maxLevel: Math.max.apply(null, scores),
-            minLevel: Math.min.apply(null, scores),
-            count: scores.length,
-            dominantExpressions: dominantExpressions
-        };
-    },
-
-    getAttentionTrend: function (days) {
-        const lookback = days || 7;
-        const sessions = StudySession.getAll();
-        const now = new Date();
-        const startDate = new Date(now.getTime() - lookback * 24 * 60 * 60 * 1000);
-        const relevantSessions = sessions.filter(function (s) { return new Date(s.startTime) >= startDate; });
-        const trendData = {};
-
-        relevantSessions.forEach(function (s) {
-            const date = new Date(s.startTime).toDateString();
-            if (!trendData[date]) {
-                trendData[date] = { date: date, avgAttention: 0, sessionCount: 0, scores: [] };
-            }
-            trendData[date].scores.push.apply(trendData[date].scores, s.attentionScores || []);
-            trendData[date].sessionCount++;
-        });
-
-        return Object.values(trendData).map(function (day) {
-            return {
-                date: day.date,
-                avgAttention: day.scores.length > 0
-                    ? Math.round(day.scores.reduce(function (a, b) { return a + b; }, 0) / day.scores.length)
-                    : 0,
-                sessionCount: day.sessionCount
-            };
-        });
-    },
+    currentScore: 0,
 
     syncWindowTracker: function () {
         window.attentionTracker = {
-            modelsLoaded: this.modelsReady,
+            workerSupported: this.workerSupported,
+            workerReady: this.workerReady,
             stream: this.stream,
-            video: this.videoElement,
             isTracking: this.isTracking,
             sessionRunning: this.sessionRunning,
             detectionInterval: this.detectionHandle,
-            currentScore: this.currentScore,
-            recentScores: this.recentScores,
-            allScores: this.allScores,
-            descriptorSupportLogged: this.descriptorSupportLogged,
-            sampleCount: this.sampleCount,
-            distractedCount: this.distractedCount,
-            ssdLoaded: this.ssdLoaded,
-            lastDetection: this.lastDetection
+            currentScore: this.currentScore
         };
-    },
-
-    updateOptionalUI: function (isTracking, statusText) {
-        const toggleButton = document.getElementById("toggleAttentionBtn");
-        const statusNode = document.getElementById("attentionStatus");
-
-        if (toggleButton) {
-            toggleButton.textContent = isTracking ? "Stop Tracking" : "Start Attention Tracking";
-        }
-
-        if (statusNode && statusText) {
-            statusNode.textContent = statusText;
-        }
-    },
-
-    loadModels: async function () {
-        if (this.modelsReady) {
-            return true;
-        }
-        if (!window.faceapi) {
-            throw new Error("face-api.js is not available.");
-        }
-
-        console.log("Loading face-api.js models from local folder...");
-        await faceapi.nets.tinyFaceDetector.loadFromUri(this.modelsPath);
-        await faceapi.nets.faceLandmark68Net.loadFromUri(this.modelsPath);
-
-        if (faceapi.nets.faceLandmark68TinyNet && faceapi.nets.faceLandmark68TinyNet.loadFromUri) {
-            await faceapi.nets.faceLandmark68TinyNet.loadFromUri(this.modelsPath);
-        }
-
-        await faceapi.nets.faceExpressionNet.loadFromUri(this.modelsPath);
-        await faceapi.nets.ageGenderNet.loadFromUri(this.modelsPath);
-
-        if (faceapi.nets.faceRecognitionNet && faceapi.nets.faceRecognitionNet.loadFromUri) {
-            await faceapi.nets.faceRecognitionNet.loadFromUri(this.modelsPath);
-        }
-
-        if (faceapi.nets.mtcnn && faceapi.nets.mtcnn.loadFromUri) {
-            try {
-                await faceapi.nets.mtcnn.loadFromUri(this.modelsPath);
-            } catch (error) {
-                console.log("MTCNN model unavailable, continuing without it.");
-            }
-        }
-
-        if (faceapi.nets.ssdMobilenetv1 && faceapi.nets.ssdMobilenetv1.loadFromUri) {
-            try {
-                await faceapi.nets.ssdMobilenetv1.loadFromUri(this.modelsPath);
-                this.ssdLoaded = true;
-            } catch (error) {
-                this.ssdLoaded = false;
-                console.log("SSD MobileNet model unavailable, using Tiny Face Detector fallback.");
-            }
-        }
-
-        this.modelsReady = true;
-        this.syncWindowTracker();
-        return true;
     },
 
     ensureVideoElement: function () {
@@ -315,7 +79,6 @@ const AttentionMonitor = {
             audio: false
         });
 
-        // Avoid hanging forever on permission prompts / device issues.
         this.stream = await Promise.race([
             getStream,
             new Promise(function (_, reject) {
@@ -324,22 +87,18 @@ const AttentionMonitor = {
         ]);
 
         video.srcObject = this.stream;
-
-        // Some browsers don't reliably fire onloadedmetadata for hidden video elements.
         try {
             const playPromise = video.play();
             if (playPromise && typeof playPromise.catch === "function") {
                 playPromise.catch(function () { });
             }
-        } catch (error) {
-            // ignore, we still try to detect once video is ready
+        } catch (e) {
+            // ignore
         }
 
         await Promise.race([
             new Promise(function (resolve) {
                 const done = function () {
-                    video.removeEventListener("loadedmetadata", done);
-                    video.removeEventListener("canplay", done);
                     resolve();
                 };
                 video.addEventListener("loadedmetadata", done, { once: true });
@@ -348,7 +107,7 @@ const AttentionMonitor = {
             new Promise(function (resolve) { window.setTimeout(resolve, 600); })
         ]);
 
-        // Ensure we actually have frames coming in.
+        // Ensure frames are available.
         await Promise.race([
             new Promise(function (resolve, reject) {
                 const start = Date.now();
@@ -374,159 +133,146 @@ const AttentionMonitor = {
         return this.stream;
     },
 
+    initWorker: function () {
+        if (!this.workerSupported || this.worker) {
+            return;
+        }
+
+        try {
+            this.worker = new Worker("/js/attention-worker.js");
+            const self = this;
+            this.worker.onmessage = function (event) {
+                const msg = event && event.data ? event.data : {};
+                if (msg.type === "ready") {
+                    self.workerReady = !!msg.ok;
+                    self.syncWindowTracker();
+                    return;
+                }
+                if (msg.type === "result") {
+                    self.pendingWorkerFrame = false;
+                    self.emitUpdate({
+                        level: typeof msg.level === "number" ? msg.level : 0,
+                        status: msg.status || "unknown",
+                        faceDetected: !!msg.faceDetected,
+                        timestamp: new Date(msg.ts || Date.now()).toISOString()
+                    });
+                }
+                if (msg.type === "dropped") {
+                    self.pendingWorkerFrame = false;
+                }
+            };
+            this.worker.postMessage({ type: "init", modelsPath: this.modelsPath });
+        } catch (e) {
+            this.worker = null;
+            this.workerReady = false;
+        }
+    },
+
+    loadModelsFallback: async function () {
+        if (this.modelsReady) return true;
+        if (!window.faceapi) {
+            return false;
+        }
+        await faceapi.nets.tinyFaceDetector.loadFromUri(this.modelsPath);
+        await faceapi.nets.faceLandmark68Net.loadFromUri(this.modelsPath);
+        await faceapi.nets.faceExpressionNet.loadFromUri(this.modelsPath);
+        this.modelsReady = true;
+        return true;
+    },
+
     smoothAttentionScore: function (score, maxSamples) {
         const sampleWindow = maxSamples || 10;
         this.recentScores.push(score);
         if (this.recentScores.length > sampleWindow) {
             this.recentScores.shift();
         }
-
         const sum = this.recentScores.reduce(function (a, b) { return a + b; }, 0);
         return Math.round(sum / Math.max(this.recentScores.length, 1));
     },
 
-    recordAttentionSample: function (score) {
-        this.sampleCount += 1;
-        this.allScores.push(score);
-        if (score < 40) {
-            this.distractedCount += 1;
+    captureFrameBuffer: function () {
+        const video = this.videoElement;
+        if (!video || video.readyState < 2) {
+            return null;
         }
 
-        const focusElem = document.getElementById("sessionInfoFocus");
-        if (focusElem) {
-            const avg = Math.round(
-                this.allScores.reduce(function (a, b) { return a + b; }, 0) /
-                Math.max(this.allScores.length, 1)
-            );
-            focusElem.textContent = avg + "%";
-        }
-
-        this.syncWindowTracker();
+        const width = 224;
+        const height = 224;
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(video, 0, 0, width, height);
+        const imageData = ctx.getImageData(0, 0, width, height);
+        return { width, height, data: imageData.data.buffer };
     },
 
-    buildDetectionTask: function () {
-        const detectorOptions = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+    calculateAttentionLevelFallback: function (detection) {
+        if (!detection || !detection.landmarks) return 0;
+        const landmarks = detection.landmarks;
+        const leftEye = landmarks.getLeftEye();
+        const rightEye = landmarks.getRightEye();
+        const nose = landmarks.getNose();
+        const jaw = landmarks.getJawOutline();
+        if (!leftEye.length || !rightEye.length || !nose.length || !jaw.length) return 0;
 
-        let task = faceapi
+        const eyeMidpointX = (leftEye[0].x + rightEye[3].x) / 2;
+        const noseTipX = nose[3].x;
+        const faceMaxX = jaw.reduce(function (acc, p) { return Math.max(acc, p.x); }, 0);
+        const faceMinX = jaw.reduce(function (acc, p) { return Math.min(acc, p.x); }, Number.MAX_SAFE_INTEGER);
+        const faceWidth = Math.max(1, faceMaxX - faceMinX);
+        const yawOffset = Math.abs(noseTipX - eyeMidpointX);
+        const yawThreshold = Math.max(faceWidth * 0.15, 1);
+        const yawScore = Math.max(0, 100 - (yawOffset / yawThreshold) * 100);
+
+        const eyeLineY = (leftEye[0].y + rightEye[3].y) / 2;
+        const noseTipY = nose[3].y;
+        const eyeToNoseDist = noseTipY - eyeLineY;
+        const faceMaxY = jaw.reduce(function (acc, p) { return Math.max(acc, p.y); }, 0);
+        const faceHeight = Math.max(1, faceMaxY - eyeLineY);
+        const currentPitchRatio = eyeToNoseDist / faceHeight;
+        const pitchDiff = Math.abs(currentPitchRatio - 0.35);
+        const pitchScore = Math.max(0, 100 - (pitchDiff / 0.25) * 100);
+
+        let expressionScore = 80;
+        if (detection.expressions) {
+            const expr = detection.expressions;
+            expressionScore = (
+                (expr.neutral || 0) * 100 +
+                (expr.happy || 0) * 80 +
+                (expr.surprised || 0) * 50 +
+                Math.max(expr.sad || 0, expr.angry || 0, expr.fearful || 0, expr.disgusted || 0) * -60
+            );
+            expressionScore = Math.max(0, Math.min(100, expressionScore));
+        }
+
+        const raw = yawScore * 0.35 + pitchScore * 0.35 + expressionScore * 0.30;
+        return Math.round(Math.max(0, Math.min(100, raw)));
+    },
+
+    detectOnceFallback: async function () {
+        if (!this.isTracking || !this.videoElement || !window.faceapi) {
+            return { level: 0, status: "no_face_detected", faceDetected: false, timestamp: new Date().toISOString() };
+        }
+
+        const detectorOptions = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+        const detection = await faceapi
             .detectSingleFace(this.videoElement, detectorOptions)
             .withFaceLandmarks()
-            .withFaceExpressions()
-            .withAgeAndGender();
+            .withFaceExpressions();
 
-        if (faceapi.nets.faceRecognitionNet && typeof task.withFaceDescriptors === "function") {
-            task = task.withFaceDescriptors();
-        } else if (!this.descriptorSupportLogged) {
-            console.log("Face descriptors not available in this build.");
-            this.descriptorSupportLogged = true;
-        }
-
-        return task;
-    },
-
-    detectOnce: async function () {
-        if (!this.isTracking || !this.videoElement || !window.faceapi) {
-            return {
-                level: 0,
-                status: "no_face_detected",
-                faceDetected: false,
-                expressions: { dominant: "unknown", scores: {} },
-                timestamp: new Date().toISOString()
-            };
-        }
-
-        const detection = await this.buildDetectionTask();
         if (!detection) {
-            const noFaceScore = this.smoothAttentionScore(0, 10);
-            this.currentScore = noFaceScore;
-            this.recordAttentionSample(noFaceScore);
-            this.lastDetection = {
-                score: noFaceScore,
-                expressions: null,
-                ageAndGender: null,
-                timestamp: new Date().toISOString()
-            };
-            this.syncWindowTracker();
-
-            return {
-                level: noFaceScore,
-                status: "no_face_detected",
-                faceDetected: false,
-                expressions: { dominant: "unknown", scores: {} },
-                timestamp: this.lastDetection.timestamp
-            };
+            const score = this.smoothAttentionScore(0, 10);
+            this.currentScore = score;
+            return { level: score, status: "no_face_detected", faceDetected: false, timestamp: new Date().toISOString() };
         }
 
-        const attentionData = this.trackAttention(detection);
-        const smoothedScore = this.smoothAttentionScore(attentionData.level, 10);
-        const expressions = detection.expressions || {};
-        const topExpression = Object.keys(expressions).length > 0
-            ? Object.keys(expressions).reduce(function (a, b) { return expressions[a] > expressions[b] ? a : b; })
-            : "unknown";
-        const ageAndGender = typeof detection.age === "number" ? {
-            age: Math.round(detection.age),
-            gender: detection.gender || "unknown",
-            genderProbability: Math.round((detection.genderProbability || 0) * 100)
-        } : null;
-
-        this.currentScore = smoothedScore;
-        this.recordAttentionSample(smoothedScore);
-        this.lastDetection = {
-            score: smoothedScore,
-            expressions: expressions,
-            ageAndGender: ageAndGender,
-            timestamp: attentionData.timestamp
-        };
-        this.syncWindowTracker();
-
-        console.log("Attention Score:", smoothedScore + "%", "|", topExpression, "|", attentionData.status);
-
-        return {
-            level: smoothedScore,
-            status: smoothedScore > 70 ? "focused" : smoothedScore > 40 ? "moderate" : "distracted",
-            faceDetected: true,
-            expressions: this.analyzeExpressions(detection),
-            ageAndGender: ageAndGender,
-            timestamp: attentionData.timestamp
-        };
-    },
-
-    updateAttentionUI: function (score, rawStatus) {
-        const fillElement = document.getElementById("attentionFill");
-        const percentElement = document.getElementById("attentionPercent");
-        const statusElement = document.getElementById("attentionStatus");
-
-        if (!fillElement) return;
-
-        fillElement.style.width = score + "%";
-        if (percentElement) percentElement.textContent = score + "%";
-
-        let status = "";
-        fillElement.classList.remove("attention-good", "attention-mid", "attention-low");
-        if (score >= 70) {
-            status = "🟢 Focused";
-            fillElement.classList.add("attention-good");
-        } else if (score >= 30) {
-            status = "🟡 Steady Focus";
-            fillElement.classList.add("attention-mid");
-        } else {
-            status = "🔴 Looking Away";
-            fillElement.classList.add("attention-low");
-        }
-
-        if (statusElement) statusElement.textContent = status;
+        const level = this.smoothAttentionScore(this.calculateAttentionLevelFallback(detection), 10);
+        this.currentScore = level;
+        return { level, status: level > 70 ? "focused" : level > 40 ? "moderate" : "distracted", faceDetected: true, timestamp: new Date().toISOString() };
     },
 
     emitUpdate: function (result) {
-        console.log("Attention Level:", {
-            level: result.level,
-            status: result.status,
-            expressions: result.expressions || null,
-            ageAndGender: result.ageAndGender || null,
-            timestamp: result.timestamp
-        });
-
-        this.updateAttentionUI(result.level, result.status);
-
         if (typeof this.onUpdate === "function") {
             this.onUpdate(result);
         }
@@ -536,22 +282,44 @@ const AttentionMonitor = {
         if (this.detectionHandle) {
             return;
         }
-
         const self = this;
+
         const tick = async function () {
+            if (!self.isTracking || !self.sessionRunning) {
+                return;
+            }
+
+            // Prefer worker pipeline.
+            if (self.worker && self.workerReady) {
+                if (self.pendingWorkerFrame) {
+                    return;
+                }
+                const frame = self.captureFrameBuffer();
+                if (!frame) {
+                    self.emitUpdate({ level: 0, status: "camera_starting", faceDetected: false, timestamp: new Date().toISOString() });
+                    return;
+                }
+                self.pendingWorkerFrame = true;
+                try {
+                    self.worker.postMessage({
+                        type: "frame",
+                        width: frame.width,
+                        height: frame.height,
+                        data: frame.data,
+                        ts: Date.now()
+                    }, [frame.data]);
+                } catch (e) {
+                    self.pendingWorkerFrame = false;
+                }
+                return;
+            }
+
+            // Fallback pipeline.
             try {
-                const result = await self.detectOnce();
+                const result = await self.detectOnceFallback();
                 self.emitUpdate(result);
-            } catch (error) {
-                console.error("Detection error:", error);
-                self.emitUpdate({
-                    level: self.smoothAttentionScore(0, 10),
-                    status: "camera_error",
-                    faceDetected: false,
-                    expressions: { dominant: "unknown", scores: {} },
-                    error: error.message,
-                    timestamp: new Date().toISOString()
-                });
+            } catch (e) {
+                self.emitUpdate({ level: 0, status: "camera_error", faceDetected: false, timestamp: new Date().toISOString() });
             }
         };
 
@@ -562,41 +330,39 @@ const AttentionMonitor = {
 
     start: async function (onUpdate) {
         this.onUpdate = onUpdate || this.onUpdate;
-        console.log("Requesting camera access...");
-        try {
-            await Promise.race([
-                this.loadModels(),
-                new Promise(function (_, reject) {
-                    window.setTimeout(function () { reject(new Error("Model load timed out.")); }, 12000);
-                })
-            ]);
-            await this.startCamera();
-        } catch (error) {
-            this.updateOptionalUI(false, "Camera unavailable");
-            this.syncWindowTracker();
-            throw error;
+        this.initWorker();
+
+        await this.startCamera();
+
+        // Prepare fallback models in the background; worker remains preferred.
+        if (!this.workerReady) {
+            try {
+                await Promise.race([
+                    this.loadModelsFallback(),
+                    new Promise(function (_, reject) {
+                        window.setTimeout(function () { reject(new Error("Model load timed out.")); }, 12000);
+                    })
+                ]);
+            } catch (e) {
+                // ignore
+            }
         }
+
         this.isTracking = true;
         this.sessionRunning = true;
         this.runDetectionLoop();
-        this.updateOptionalUI(true, "Tracking started...");
         this.syncWindowTracker();
-        console.log("Attention tracking started");
     },
 
     pause: function () {
+        this.isTracking = false;
+        this.sessionRunning = false;
         if (this.detectionHandle) {
             window.clearInterval(this.detectionHandle);
             this.detectionHandle = null;
         }
-        this.isTracking = false;
-        this.sessionRunning = false;
-        this.updateOptionalUI(false, "Tracking paused");
-        this.emitUpdate({
-            level: 0,
-            status: "paused",
-            timestamp: new Date().toISOString()
-        });
+        this.pendingWorkerFrame = false;
+        this.emitUpdate({ level: 0, status: "paused", faceDetected: false, timestamp: new Date().toISOString() });
         this.syncWindowTracker();
     },
 
@@ -608,21 +374,34 @@ const AttentionMonitor = {
     stop: function () {
         this.pause();
 
+        if (this.worker) {
+            try {
+                this.worker.postMessage({ type: "shutdown" });
+            } catch (e) {
+                // ignore
+            }
+            try {
+                this.worker.terminate();
+            } catch (e) {
+                // ignore
+            }
+        }
+        this.worker = null;
+        this.workerReady = false;
+
         if (this.stream) {
             this.stream.getTracks().forEach(function (track) { track.stop(); });
             this.stream = null;
         }
-
         if (this.videoElement) {
-            this.videoElement.pause();
+            try {
+                this.videoElement.pause();
+            } catch (e) {
+                // ignore
+            }
             this.videoElement.srcObject = null;
         }
-
-        this.isTracking = false;
-        this.sessionRunning = false;
-        this.updateOptionalUI(false);
         this.syncWindowTracker();
-        console.log("Attention tracking stopped");
     },
 
     setSessionRunning: function (isRunning) {
@@ -632,16 +411,9 @@ const AttentionMonitor = {
 
     toggle: async function (onUpdate) {
         if (!this.isTracking) {
-            try {
-                await this.start(onUpdate);
-            } catch (error) {
-                console.error("Error starting attention tracking:", error);
-                this.updateOptionalUI(false, "Camera unavailable");
-                throw error;
-            }
+            await this.start(onUpdate);
             return;
         }
-
         this.stop();
     },
 
@@ -650,20 +422,17 @@ const AttentionMonitor = {
             if (this.detectionHandle) {
                 window.clearInterval(this.detectionHandle);
                 this.detectionHandle = null;
-                this.syncWindowTracker();
             }
+            this.pendingWorkerFrame = false;
+            this.syncWindowTracker();
             return;
         }
-
         if (this.isTracking && this.sessionRunning && !this.detectionHandle) {
             this.runDetectionLoop();
         }
     }
 };
 
-window.loadFaceAPIModels = function () {
-    return AttentionMonitor.loadModels();
-};
 
 window.toggleAttentionTracking = function () {
     return AttentionMonitor.toggle(AttentionMonitor.onUpdate);

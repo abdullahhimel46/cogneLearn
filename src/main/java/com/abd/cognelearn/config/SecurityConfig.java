@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,6 +35,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     /**
@@ -128,9 +130,8 @@ public class SecurityConfig {
 
                 // Allow H2 console for development
                 .requestMatchers("/h2-console/**").permitAll()
-                
-                // Allow Admin API for dashboard testing
-                .requestMatchers("/api/admin/**").permitAll()
+
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                 // Everything else REQUIRES a logged-in session
                 .anyRequest().authenticated()

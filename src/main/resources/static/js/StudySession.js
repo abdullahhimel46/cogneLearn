@@ -1,5 +1,8 @@
 /**
- * StudySession Module - REST-backed sessions
+ * StudySession Module - REST-backed sessions (minimal metadata) + local analytics.
+ *
+ * Privacy-first: attention samples are stored locally (IndexedDB) and never streamed
+ * to the backend. The backend only receives tiny event signals via /api/v1/events.
  */
 const StudySession = {
     create: async function(sessionData) {
@@ -42,17 +45,16 @@ const StudySession = {
     },
 
     addAttentionScore: async function(sessionId, score) {
-        const session = await Api.post(`/api/v1/sessions/${sessionId}/attention`, {
-            score: score
-        });
-        const current = this.getCurrentSession();
-        if (current && String(current.sessionId) === String(sessionId)) {
-            localStorage.setItem('cognelearn_session', JSON.stringify(session));
+        // Legacy method name kept for compatibility with older UI code.
+        // New behavior: store locally only.
+        if (window.LocalAnalytics) {
+            await LocalAnalytics.recordAttentionSample(String(sessionId), Number(score) || 0, Date.now());
         }
-        return session;
+        return { ok: true };
     },
 
     getSessionHistory: function() {
+        // Backward compatible cache (UI may still read it). Source of truth is IndexedDB.
         const history = localStorage.getItem('cognelearn_session_history');
         return history ? JSON.parse(history) : [];
     },
@@ -62,21 +64,30 @@ const StudySession = {
             return;
         }
 
-        const history = this.getSessionHistory();
-        const averageAttention = Array.isArray(session.attentionScores) && session.attentionScores.length > 0
-            ? Math.round(session.attentionScores.reduce((sum, score) => sum + (Number(score) || 0), 0) / session.attentionScores.length)
-            : 0;
+        // Persist to IndexedDB (source of truth).
+        if (window.LocalAnalytics && String(session.status || '').toLowerCase() === 'completed') {
+            LocalAnalytics.finalizeCompletedSession(session)
+                .then(function (record) {
+                    // Maintain a small backward-compatible cache in localStorage for existing UI.
+                    // (Can be removed once all views read from IndexedDB.)
+                    const history = StudySession.getSessionHistory();
+                    const date = (record && record.endTime) || (record && record.startTime) || session.endTime || session.startTime || session.createdAt || new Date().toISOString();
+                    const averageAttention = record && typeof record.avgAttention === 'number' ? record.avgAttention : 0;
 
-        history.unshift({
-            sessionId: session.sessionId || null,
-            date: session.endTime || session.startTime || session.createdAt || new Date().toISOString(),
-            duration: session.completedDuration || session.duration || 0,
-            focusPercent: averageAttention,
-            avgFocus: averageAttention,
-            attentionSamples: Array.isArray(session.attentionScores) ? session.attentionScores : [],
-            completed: String(session.status || '').toLowerCase() === 'completed'
-        });
+                    history.unshift({
+                        sessionId: session.sessionId || null,
+                        date: date,
+                        duration: session.completedDuration || session.duration || 0,
+                        focusPercent: averageAttention,
+                        avgFocus: averageAttention,
+                        completed: true
+                    });
+                    localStorage.setItem('cognelearn_session_history', JSON.stringify(history.slice(0, 180)));
+                })
+                .catch(function () { });
+        }
 
-        localStorage.setItem('cognelearn_session_history', JSON.stringify(history.slice(0, 180)));
+        // Notify any open dashboards.
+        window.dispatchEvent(new CustomEvent('cognelearn:local-analytics-updated'));
     }
 };

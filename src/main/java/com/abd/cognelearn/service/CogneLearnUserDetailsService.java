@@ -64,15 +64,16 @@ public class CogneLearnUserDetailsService implements UserDetailsService {
                     new UsernameNotFoundException("No account found with email: " + normalizedEmail)
                 );
 
+        String role = user.getRole();
+        if (role == null || role.isBlank()) {
+            role = "USER";
+        }
+
         // Step 3: Wrap the user's login details in Spring Security's UserDetails format.
-        // We provide:
-        //   - username = email (what the user types to identify themselves)
-        //   - password = the HASHED password stored in our DB (never the plain-text one)
-        //   - roles/authorities = empty list (we don't use roles in this app yet)
         return User.builder()
-                .username(user.getEmail())       // Spring Security uses this as the principal name
-                .password(user.getPasswordHash()) // The BCrypt hash â€” Spring will compare it for us
-                .roles("USER")                    // Basic role, required by Spring Security
+                .username(user.getEmail())
+                .password(user.getPasswordHash())
+                .roles(role.trim())
                 .build();
     }
 }

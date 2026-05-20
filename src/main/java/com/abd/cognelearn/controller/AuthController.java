@@ -120,14 +120,8 @@ public class AuthController {
      */
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me() {
-        // Spring Security has already verified authentication, so we can safely get the user
         var user = currentUserService.requireUser();
-        return ResponseEntity.ok(new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt()
-        ));
+        return ResponseEntity.ok(authService.toUserResponse(user));
     }
 
     /**

@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * Default email implementation.
+ * Default no-op email implementation.
  *
- * Keeps the application runnable in environments where SMTP isn't configured.
+ * Always registered so the application starts even when SMTP is not configured.
+ * SmtpEmailService is marked @Primary and will override this bean when
+ * cognelearn.email.enabled=true and JavaMailSender is properly configured.
  */
 @Service
 public class NoOpEmailService implements EmailService {
@@ -28,5 +30,10 @@ public class NoOpEmailService implements EmailService {
     public void sendInactivityReminder(String to, String userName) {
         log.debug("Email disabled (inactivity). to={}, userName={}", to, userName);
     }
-}
 
+    @Override
+    public void sendApprovedMotivationalEmail(String to, String userName, String subject, String bodyText) {
+        log.debug("Email disabled (approved motivational). to={}, userName={}, subject={}",
+                to, userName, subject);
+    }
+}

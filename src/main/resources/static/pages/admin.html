@@ -59,12 +59,13 @@
           <span>Users</span>
         </a>
 
-        <a href="#feedback" class="nav-item" id="nav-feedback" data-page="feedback">
+        <a href="#emails" class="nav-item" id="nav-emails" data-page="emails">
           <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
           </svg>
-          <span>Feedback</span>
+          <span>Emails</span>
         </a>
 
         <a href="#settings" class="nav-item" id="nav-settings" data-page="settings">
@@ -89,14 +90,15 @@
           </svg>
           <span>Dark Mode</span>
         </button>
-        <a href="dashboard.html" class="sidebar__back-link">
+        <button class="sidebar__back-link" id="adminLogoutBtn" type="button" style="border:none;background:none;cursor:pointer;width:100%;text-align:left">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
             aria-hidden="true">
-            <path d="M19 12H5"></path>
-            <path d="m12 5-7 7 7 7"></path>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
           </svg>
-          Back to App
-        </a>
+          Logout
+        </button>
       </div>
 
     </aside>
@@ -112,7 +114,25 @@
             <p class="page__eyebrow">System</p>
             <h1 class="page__title" id="heading-overview">Overview</h1>
           </div>
-          <time class="page__timestamp" id="adminTimestamp" datetime=""></time>
+          <div class="admin-header-actions">
+            <time class="page__timestamp" id="adminTimestamp" datetime=""></time>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
         </header>
 
         <div class="stats-row" role="list" aria-label="Key metrics">
@@ -167,8 +187,26 @@
             <p class="page__eyebrow">Management</p>
             <h1 class="page__title" id="heading-users">Users</h1>
           </div>
-          <input class="search-input" id="userSearchInput" type="search" placeholder="Search by name or email…"
-            aria-label="Search users">
+          <div class="admin-header-actions">
+            <input class="search-input" id="userSearchInput" type="search" placeholder="Search by name or email…"
+              aria-label="Search users">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
         </header>
 
         <section class="panel panel--flush" aria-label="User table">
@@ -190,17 +228,58 @@
 
       </section>
 
-      <!-- PAGE: Feedback -->
-      <section class="page hidden" id="page-feedback" aria-labelledby="heading-feedback">
+      <!-- PAGE: Emails -->
+      <section class="page hidden" id="page-emails" aria-labelledby="heading-emails">
 
         <header class="page__header">
           <div>
-            <p class="page__eyebrow">Community</p>
-            <h1 class="page__title" id="heading-feedback">Feedback</h1>
+            <p class="page__eyebrow">Outreach</p>
+            <h1 class="page__title" id="heading-emails">Motivational Emails</h1>
+          </div>
+          <div class="admin-header-actions">
+            <p class="panel__hint" id="emailProviderStatus" style="margin:0">Checking email service…</p>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
           </div>
         </header>
 
-        <div class="feedback-list" id="feedbackList" role="list" aria-label="User feedback"></div>
+        <section class="panel panel--stack" aria-labelledby="heading-pending-emails">
+          <h2 class="panel__title" id="heading-pending-emails">Pending Motivational Emails</h2>
+          <p class="panel__hint">Review streak milestones, edit subject and message, then send to the learner.</p>
+          <div class="pending-notifications" id="pendingNotificationsList" role="list"
+            aria-label="Queued motivational emails"></div>
+        </section>
+
+        <section class="panel panel--stack" aria-labelledby="heading-compose-email">
+          <h2 class="panel__title" id="heading-compose-email">Send Custom Email</h2>
+          <p class="panel__hint">Send a one-off message to any registered learner.</p>
+          <div class="email-compose">
+            <label class="pending-notification-card__label" for="customEmailTo">Recipient</label>
+            <select class="field" id="customEmailTo" aria-label="Recipient email"></select>
+            <label class="pending-notification-card__label" for="customEmailSubject">Subject</label>
+            <input class="field" id="customEmailSubject" type="text" maxlength="200" placeholder="Email subject">
+            <label class="pending-notification-card__label" for="customEmailBody">Message</label>
+            <textarea class="pending-notification-edit" id="customEmailBody" rows="4"
+              placeholder="Write your message…"></textarea>
+            <div class="pending-notification-card__actions">
+              <button class="btn-send-email" id="sendCustomEmailBtn" type="button">Send Email</button>
+            </div>
+          </div>
+        </section>
 
       </section>
 
@@ -211,6 +290,24 @@
           <div>
             <p class="page__eyebrow">Configuration</p>
             <h1 class="page__title" id="heading-settings">Settings</h1>
+          </div>
+          <div class="admin-header-actions">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
           </div>
         </header>
 
@@ -269,10 +366,10 @@
         <div class="footer-links-section">
           <h3 class="footer-section-title">Useful Links</h3>
           <nav class="footer-section-links">
-            <a href="#" class="footer-light__link">User Guidelines</a>
-            <a href="#" class="footer-light__link">Privacy Policy</a>
-            <a href="#" class="footer-light__link">Terms and Conditions</a>
-            <a href="#" class="footer-light__link">About us</a>
+            <a href="user-guidelines.html" class="footer-light__link">User Guidelines</a>
+            <a href="privacy-policy.html" class="footer-light__link">Privacy Policy</a>
+            <a href="terms.html" class="footer-light__link">Terms and Conditions</a>
+            <a href="about.html" class="footer-light__link">About us</a>
           </nav>
         </div>
 
@@ -303,7 +400,90 @@
     </div>
   </footer>
 
+  <script src="../js/utils.js"></script>
+  <script src="../js/User.js"></script>
+  <script src="../js/auth.js"></script>
   <script src="../js/admin.js"></script>
+  <script>
+    document.getElementById('adminLogoutBtn')?.addEventListener('click', async () => {
+      await Auth.logout();
+    });
+
+    // Inline Admin Theme Init & Toggle Script
+    (() => {
+        const themeKey = "cognelearn_admin_theme";
+        const themeClass = "admin-theme-dark";
+        const currentTheme = localStorage.getItem(themeKey);
+        const isDark = currentTheme === "dark";
+        if (isDark) {
+            document.body.classList.add(themeClass);
+        } else {
+            document.body.classList.remove(themeClass);
+        }
+        
+        const setupThemeButtons = () => {
+            const buttons = document.querySelectorAll('.theme-toggle-btn');
+            buttons.forEach(btn => {
+                const moonIcon = btn.querySelector('.theme-icon-moon');
+                const sunIcon = btn.querySelector('.theme-icon-sun');
+                
+                const updateIcons = (dark) => {
+                    if (moonIcon && sunIcon) {
+                        moonIcon.style.display = dark ? 'none' : 'block';
+                        sunIcon.style.display = dark ? 'block' : 'none';
+                    }
+                };
+                
+                updateIcons(document.body.classList.contains(themeClass));
+                
+                btn.onclick = (e) => {
+                    if (e) e.preventDefault();
+                    const nowDark = document.body.classList.toggle(themeClass);
+                    localStorage.setItem(themeKey, nowDark ? "dark" : "light");
+                    
+                    document.querySelectorAll('.theme-toggle-btn').forEach(b => {
+                        const m = b.querySelector('.theme-icon-moon');
+                        const s = b.querySelector('.theme-icon-sun');
+                        if (m && s) {
+                            m.style.display = nowDark ? 'none' : 'block';
+                            s.style.display = nowDark ? 'block' : 'none';
+                        }
+                    });
+                    
+                    // Sync legacy sidebar theme toggle if it exists
+                    const sidebarToggle = document.getElementById('adminThemeToggle');
+                    if (sidebarToggle) {
+                        sidebarToggle.setAttribute('aria-pressed', String(nowDark));
+                    }
+                };
+            });
+            
+            // Sync from sidebar legacy adminThemeToggle
+            const sidebarToggle = document.getElementById('adminThemeToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    setTimeout(() => {
+                        const nowDark = document.body.classList.contains(themeClass);
+                        buttons.forEach(btn => {
+                            const moonIcon = btn.querySelector('.theme-icon-moon');
+                            const sunIcon = btn.querySelector('.theme-icon-sun');
+                            if (moonIcon && sunIcon) {
+                                moonIcon.style.display = nowDark ? 'none' : 'block';
+                                sunIcon.style.display = nowDark ? 'block' : 'none';
+                            }
+                        });
+                    }, 50);
+                });
+            }
+        };
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupThemeButtons);
+        } else {
+            setupThemeButtons();
+        }
+    })();
+  </script>
 </body>
 
 </html>

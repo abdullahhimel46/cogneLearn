@@ -109,6 +109,22 @@
                     <div class="header-actions">
                         <button class="btn btn-primary" type="button" onclick="showAddPlaylistModal()">+ Add
                             Playlist</button>
+                        <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                            </svg>
+                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </button>
                     </div>
                 </section>
 
@@ -225,10 +241,10 @@
                 <div class="footer-links-section">
                     <h3 class="footer-section-title">Useful Links</h3>
                     <nav class="footer-section-links">
-                        <a href="#" class="footer-light__link">User Guidelines</a>
-                        <a href="#" class="footer-light__link">Privacy Policy</a>
-                        <a href="#" class="footer-light__link">Terms and Conditions</a>
-                        <a href="#" class="footer-light__link">About us</a>
+                        <a href="user-guidelines.html" class="footer-light__link">User Guidelines</a>
+                        <a href="privacy-policy.html" class="footer-light__link">Privacy Policy</a>
+                        <a href="terms.html" class="footer-light__link">Terms and Conditions</a>
+                        <a href="about.html" class="footer-light__link">About us</a>
                     </nav>
                 </div>
 
@@ -275,6 +291,82 @@
             </div>
         </div>
     </footer>
+    <script>
+        // Inline Theme Init & Toggle Script
+        (() => {
+            const themeKey = "cognelearn_dashboard_theme";
+            const themeClass = "dashboard-theme-dark";
+            const currentTheme = localStorage.getItem(themeKey);
+            const isDark = currentTheme === "dark";
+            if (isDark) {
+                document.body.classList.add(themeClass);
+            } else {
+                document.body.classList.remove(themeClass);
+            }
+            
+            const setupThemeButtons = () => {
+                const buttons = document.querySelectorAll('.theme-toggle-btn');
+                buttons.forEach(btn => {
+                    const moonIcon = btn.querySelector('.theme-icon-moon');
+                    const sunIcon = btn.querySelector('.theme-icon-sun');
+                    
+                    const updateIcons = (dark) => {
+                        if (moonIcon && sunIcon) {
+                            moonIcon.style.display = dark ? 'none' : 'block';
+                            sunIcon.style.display = dark ? 'block' : 'none';
+                        }
+                    };
+                    
+                    updateIcons(document.body.classList.contains(themeClass));
+                    
+                    btn.onclick = (e) => {
+                        if (e) e.preventDefault();
+                        const nowDark = document.body.classList.toggle(themeClass);
+                        localStorage.setItem(themeKey, nowDark ? "dark" : "light");
+                        
+                        document.querySelectorAll('.theme-toggle-btn').forEach(b => {
+                            const m = b.querySelector('.theme-icon-moon');
+                            const s = b.querySelector('.theme-icon-sun');
+                            if (m && s) {
+                                m.style.display = nowDark ? 'none' : 'block';
+                                s.style.display = nowDark ? 'block' : 'none';
+                            }
+                        });
+                        
+                        // Sync legacy sidebar theme toggle if it exists
+                        const sidebarToggle = document.getElementById('themeToggle');
+                        if (sidebarToggle) {
+                            sidebarToggle.setAttribute('aria-pressed', String(nowDark));
+                        }
+                    };
+                });
+                
+                // Sync from sidebar legacy themeToggle
+                const sidebarToggle = document.getElementById('themeToggle');
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        setTimeout(() => {
+                            const nowDark = document.body.classList.contains(themeClass);
+                            buttons.forEach(btn => {
+                                const moonIcon = btn.querySelector('.theme-icon-moon');
+                                const sunIcon = btn.querySelector('.theme-icon-sun');
+                                if (moonIcon && sunIcon) {
+                                    moonIcon.style.display = nowDark ? 'none' : 'block';
+                                    sunIcon.style.display = nowDark ? 'block' : 'none';
+                                }
+                            });
+                        }, 50);
+                    });
+                }
+            };
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupThemeButtons);
+            } else {
+                setupThemeButtons();
+            }
+        })();
+    </script>
 </body>
 
 </html>

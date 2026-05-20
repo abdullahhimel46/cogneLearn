@@ -33,10 +33,12 @@ public class SmtpEmailService implements EmailService {
     private final Object mailSender;
 
     private final Constructor<?> simpleMailMessageConstructor;
+    private final Method setFrom;
     private final Method setTo;
     private final Method setSubject;
     private final Method setText;
     private final Method send;
+    private final String fromEmail;
 
     public SmtpEmailService(ApplicationContext applicationContext) {
         try {
@@ -44,8 +46,10 @@ public class SmtpEmailService implements EmailService {
             Class<?> messageClass = Class.forName(SIMPLE_MAIL_MESSAGE_CLASS);
 
             this.mailSender = applicationContext.getBean(senderClass);
+            this.fromEmail = applicationContext.getEnvironment().getProperty("spring.mail.username");
 
             this.simpleMailMessageConstructor = messageClass.getDeclaredConstructor();
+            this.setFrom = messageClass.getMethod("setFrom", String.class);
             this.setTo = messageClass.getMethod("setTo", String.class);
             this.setSubject = messageClass.getMethod("setSubject", String.class);
             this.setText = messageClass.getMethod("setText", String.class);
@@ -84,9 +88,19 @@ public class SmtpEmailService implements EmailService {
         sendSimpleMessage(to, subject, body);
     }
 
+    @Override
+    public void sendApprovedMotivationalEmail(String to, String userName, String subject, String bodyText) {
+        String safeName = userName == null ? "" : userName;
+        String text = "Hi " + safeName + ",\n\n" + bodyText + "\n\n— cogneLearn";
+        sendSimpleMessage(to, subject, text);
+    }
+
     private void sendSimpleMessage(String to, String subject, String body) {
         try {
             Object message = simpleMailMessageConstructor.newInstance();
+            if (fromEmail != null && !fromEmail.isBlank()) {
+                setFrom.invoke(message, fromEmail);
+            }
             setTo.invoke(message, to);
             setSubject.invoke(message, subject);
             setText.invoke(message, body);

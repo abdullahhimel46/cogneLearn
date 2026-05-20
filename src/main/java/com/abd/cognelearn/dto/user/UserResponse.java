@@ -34,6 +34,7 @@ public record UserResponse(
         UUID id,
         String name,
         String email,
-        Instant createdAt
+        Instant createdAt,
+        String role
 ) {
 }

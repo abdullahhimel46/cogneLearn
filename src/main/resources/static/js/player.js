@@ -811,14 +811,14 @@
         setTimerRunning(false);
     }
 
-    function handleLogout(event) {
+    async function handleLogout(event) {
         event.preventDefault();
         clearSessionConfig();
         if (typeof Auth !== "undefined" && Auth.logout) {
-            Auth.logout();
+            await Auth.logout();
             return;
         }
-        window.location.href = "login.html";
+        window.location.replace("login.html");
     }
 
     function showPlaylistLoadError(message) {

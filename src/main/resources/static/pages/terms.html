@@ -4,20 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cogneLearn - Adaptive Learning Platform</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Terms and Conditions - cogneLearn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body class="landing-page">
+<body class="info-page-body">
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="index.html" class="navbar-brand" aria-label="cogneLearn home">
+            <a href="../index.html" class="navbar-brand" aria-label="cogneLearn home">
                 <span class="navbar-brand__mark" aria-hidden="true">CL</span>
                 <span class="navbar-brand__name">cogneLearn</span>
             </a>
             <div class="navbar-right">
                 <ul class="navbar-links" id="navLinks">
-                    <li><a href="pages/login.html">Login</a></li>
+                    <li><a href="login.html">Login</a></li>
                 </ul>
                 <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
                     <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -39,101 +43,61 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <p class="eyebrow-tag">Adaptive Learning Platform</p>
-            <h1>Learn Better. <span class="hero-accent">Focus Smarter.</span></h1>
-            <p>cogneLearn is an adaptive learning platform that combines YouTube playlists with real-time attention
-                monitoring and time management tools—all with your privacy in mind.</p>
+    <!-- Main Content Container -->
+    <div class="info-page-container">
+        <header class="info-page-header">
+            <h1>Terms & Conditions</h1>
+            <p class="subtitle">A simple, transparent, and friendly agreement for using cogneLearn.</p>
+        </header>
 
-            <div class="hero-buttons">
-                <a href="pages/login.html?mode=signup" class="btn btn-primary">Get Started</a>
-                <a href="#features" class="btn btn-secondary">Learn More</a>
-            </div>
-        </div>
-    </section>
+        <!-- Section 1: Usage Scope -->
+        <section class="info-section">
+            <h2>Usage Scope</h2>
+            <p>cogneLearn is created to assist self-directed students, researchers, and developers in building deep focus and mastering their learning pipelines. By using this application, you agree to utilize its tools strictly for personal study, focus optimization, and educational enhancement.</p>
+        </section>
 
-    <section id="features" class="container landing-features">
-        <h2>Key Features</h2>
+        <!-- Section 2: No Guarantees -->
+        <section class="info-section">
+            <h2>No Guarantees & "As-Is" Service</h2>
+            <p>cogneLearn is offered entirely free of charge as a productivity tool:</p>
+            <ul>
+                <li>We make no warranties or guarantees regarding the uptime, flawless execution, or continuous availability of the application.</li>
+                <li>The application is provided <span class="highlight-accent">"as-is" and "as-available"</span>. We are not responsible for any learning setbacks, focus delays, or platform glitches.</li>
+            </ul>
+        </section>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="feature-icon">📚</div>
-                <h3>YouTube Playlists</h3>
-                <p>Import and manage your learning playlists in one distraction-free space.</p>
-            </div>
+        <!-- Section 3: User Responsibility -->
+        <section class="info-section">
+            <h2>User Responsibility</h2>
+            <p>As a community of deep learners, we count on all users to maintain high standards of digital citizenship:</p>
+            <ul>
+                <li>You agree not to bypass, reverse engineer, or abuse our APIs or proxy tools.</li>
+                <li>You acknowledge that all video content streamed is owned by the respective authors/publishers on YouTube, and you agree to respect copyright regulations while loading study playlists.</li>
+            </ul>
+        </section>
 
-            <div class="stat-card">
-                <div class="feature-icon">⏱️</div>
-                <h3>Pomodoro Timer</h3>
-                <p>Integrated time management with 25-min work and 5-min break cycles.</p>
-            </div>
+        <!-- Section 4: Limitations of Liability -->
+        <section class="info-section">
+            <h2>Limitations & Local Data Integrity</h2>
+            <p>Because cogneLearn prioritizes your privacy by saving study habits locally on your device:</p>
+            <ul>
+                <li>We are not responsible for any loss of study history, custom playlist settings, or accumulated metrics that result from you clearing your browser storage, reinstalling, or using private browsing modes.</li>
+                <li>It is your sole responsibility to manage and maintain your local database state.</li>
+            </ul>
+        </section>
 
-            <div class="stat-card">
-                <div class="feature-icon">👁️</div>
-                <h3>Attention Tracking</h3>
-                <p>Real-time focus monitoring using AI—all processed locally for privacy.</p>
-            </div>
+        <!-- Section 5: Feature Constraints -->
+        <section class="info-section">
+            <h2>Feature & AI Constraints</h2>
+            <p>Our attention tracking features utilize complex computer-vision scripts executed on the client side:</p>
+            <ul>
+                <li>The performance, responsiveness, and exactness of focus monitoring depend heavily on your device's camera hardware, operating system speed, and room lighting conditions.</li>
+                <li>This tool is meant for personal reference only and should not be used as an absolute, definitive measure of mental cognitive state.</li>
+            </ul>
+        </section>
+    </div>
 
-            <div class="stat-card">
-                <div class="feature-icon">📊</div>
-                <h3>Productivity Stats</h3>
-                <p>Track your focus time, sessions, and learning patterns over time.</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Privacy First</h3>
-                <p>All your data stays in your browser. No tracking, no cloud uploads.</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Focus Mode</h3>
-                <p>Block distractions and maintain deep focus during study sessions.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="landing-cta">
-        <div class="container">
-            <h2>Ready to Transform Your Learning?</h2>
-            <p>Join thousands of self-directed learners who are mastering their focus.</p>
-            <a href="pages/login.html?mode=signup" class="btn btn-primary">Start Learning Today</a>
-        </div>
-    </section>
-
-    <script src="js/User.js"></script>
-    <script src="js/playlist.js"></script>
-
-    <script src="js/Video.js"></script>
-    <script src="js/StudySession.js"></script>
-    <script src="js/ProductivityAnalytics.js"></script>
-    <script src="js/AttentionMonitor.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        // Session-based auth: check the server session and update the nav.
-        (async () => {
-            try {
-                const me = await Api.get('/api/v1/auth/me');
-                if (me) {
-                    const dashboardLink = me.role === 'ADMIN' ? 'pages/admin.html' : 'pages/dashboard.html';
-                    document.getElementById('navLinks').innerHTML = `
-                        <li><a href="${dashboardLink}">Dashboard</a></li>
-                        <li><a href="#" onclick="logout()">Logout</a></li>
-                    `;
-                }
-            } catch (e) {
-                // not logged in → keep Login link
-            }
-        })();
-
-        async function logout() {
-            await Auth.logout();
-        }
-    </script>
-
+    <!-- Footer -->
     <footer class="site-footer footer-light">
         <div class="container">
             <div class="footer-main-grid">
@@ -147,7 +111,7 @@
                         <p class="footer-light__tagline">Combining YouTube learning with distraction-free tracking and AI attention insights.</p>
                     </div>
                     <div class="footer-contact-details">
-                        <span class="contact-item">abdullahhimel46@gamil.com</span>
+                        <span class="contact-item">abdullahhimel46@gmail.com</span>
                         <span class="contact-item">Helpline: +8801890986804</span>
                         <span class="contact-item small">(Available: 10AM-5PM)</span>
                     </div>
@@ -157,10 +121,10 @@
                 <div class="footer-links-section">
                     <h3 class="footer-section-title">Useful Links</h3>
                     <nav class="footer-section-links">
-                        <a href="pages/user-guidelines.html" class="footer-light__link">User Guidelines</a>
-                        <a href="pages/privacy-policy.html" class="footer-light__link">Privacy Policy</a>
-                        <a href="pages/terms.html" class="footer-light__link">Terms and Conditions</a>
-                        <a href="pages/about.html" class="footer-light__link">About us</a>
+                        <a href="user-guidelines.html" class="footer-light__link">User Guidelines</a>
+                        <a href="privacy-policy.html" class="footer-light__link">Privacy Policy</a>
+                        <a href="terms.html" class="footer-light__link">Terms and Conditions</a>
+                        <a href="about.html" class="footer-light__link">About us</a>
                     </nav>
                 </div>
 
@@ -177,7 +141,7 @@
                         <a href="https://www.linkedin.com/in/its-abdullah-himel/" target="_blank" rel="noreferrer" class="social-circle-btn linkedin" aria-label="LinkedIn">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
                         </a>
-                        <a href="#" class="social-circle-btn github" aria-label="GitHub">
+                        <a href="https://github.com/abdullahhimel46" class="social-circle-btn github" aria-label="GitHub">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.341-3.369-1.341-.454-1.152-1.11-1.459-1.11-1.459-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
                         </a>
                     </div>
@@ -190,7 +154,38 @@
             </div>
         </div>
     </footer>
+
+    <!-- Scripts to Dynamically Handle Active Session -->
+    <script src="../js/User.js"></script>
+    <script src="../js/playlist.js"></script>
+    <script src="../js/Video.js"></script>
+    <script src="../js/StudySession.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
     <script>
+        // Smooth scroll to top on page load
+        window.scrollTo(0, 0);
+
+        (async () => {
+            try {
+                const me = await Api.get('/api/v1/auth/me');
+                if (me) {
+                    const dashboardLink = me.role === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                    document.getElementById('navLinks').innerHTML = `
+                        <li><a href="${dashboardLink}">Dashboard</a></li>
+                        <li><a href="#" onclick="logout(event)">Logout</a></li>
+                    `;
+                }
+            } catch (e) {
+                // not logged in
+            }
+        })();
+
+        async function logout(e) {
+            if (e) e.preventDefault();
+            await Auth.logout();
+        }
+
         // Inline Theme Init & Toggle Script
         (() => {
             const themeKey = "cognelearn_dashboard_theme";

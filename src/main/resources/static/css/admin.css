@@ -293,6 +293,7 @@ body.admin-theme-dark .page__card,
 body.admin-theme-dark .stat-card,
 body.admin-theme-dark .panel,
 body.admin-theme-dark .feedback-card,
+body.admin-theme-dark .pending-notification-card,
 body.admin-theme-dark .settings-card {
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(12px);
@@ -616,6 +617,38 @@ body.sidebar-collapsed .main {
   box-shadow: none;
 }
 
+.btn-send-email {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 22px;
+  border-radius: var(--radius-xs);
+  border: none;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-send-email:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+}
+
+.btn-send-email:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+body.admin-theme-dark .btn-send-email {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
 /* ── Feedback Cards ──────────────────────────────────────────── */
 .feedback-list { display: flex; flex-direction: column; gap: 14px; }
 
@@ -651,6 +684,116 @@ body.sidebar-collapsed .main {
 }
 
 .feedback-card__user { font-weight: 600; color: var(--primary); }
+
+.panel--stack { margin-top: 28px; }
+
+.panel__hint {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: -6px 0 16px;
+  line-height: 1.55;
+}
+
+.pending-notifications {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pending-notification-card {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 22px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pending-notification-card:hover {
+  border-color: rgba(79, 70, 229, 0.2);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.pending-notification-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pending-notification-card__user {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.pending-notification-card__event {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.pending-notification-card__time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.pending-notification-card__recipient {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.pending-notification-card__message {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.email-compose {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 560px;
+}
+
+.email-compose .field {
+  width: 100%;
+}
+
+.pending-notification-card__label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.pending-notification-card textarea {
+  width: 100%;
+  min-height: 76px;
+  resize: vertical;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.88rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.pending-notification-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
 /* ── Settings ────────────────────────────────────────────────── */
 .setting-row {
@@ -966,3 +1109,101 @@ body.sidebar-collapsed .site-footer {
   .setting-row__control { width: 100%; }
   .field { width: 100%; }
 }
+
+/* ============================================================
+   Premium Unified Logo & Theme Toggle Style Block
+   ============================================================ */
+.sidebar__mark,
+.footer-light__mark {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+    display: grid !important;
+    place-items: center !important;
+    font-weight: 800 !important;
+    font-size: 0.9rem !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #3b82f6, #0ea5e9) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    border: none !important;
+    flex-shrink: 0 !important;
+}
+
+.sidebar__name,
+.footer-light__title {
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--text-primary) !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+body.admin-theme-dark .sidebar__name,
+body.admin-theme-dark .footer-light__title {
+    color: #ffffff !important;
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-secondary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--surface);
+    color: var(--primary);
+    transform: scale(1.05);
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    transition: transform 0.3s ease;
+}
+
+/* Dark Mode Overrides for Toggle */
+body.admin-theme-dark .theme-toggle-btn {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+body.admin-theme-dark .theme-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+body.admin-theme-dark .theme-icon-moon {
+    display: none !important;
+}
+
+body.admin-theme-dark .theme-icon-sun {
+    display: block !important;
+}
+
+.admin-header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+body.admin-theme-dark .page__timestamp {
+    background: rgba(13, 17, 23, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #94a3b8 !important;
+}
+
+

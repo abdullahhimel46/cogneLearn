@@ -25,13 +25,17 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ${MAIL_USERNAME:abdullahhimel46@gmail.com}
-    password: ${MAIL_PASSWORD:your-app-password}
+    password: ${MAIL_PASSWORD:bspo itqs pptf omok}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
+cognelearn:
+  email:
+    enabled: true
 
 # ─── Authentication ──────────────────────────────────────────────────────────
 # We used Spring Security session-based authentication (no JWT).

@@ -4,16 +4,15 @@ import com.abd.cognelearn.dto.admin.AdminActivityDTO;
 import com.abd.cognelearn.dto.admin.AdminStatsDTO;
 import com.abd.cognelearn.dto.admin.AdminUserDTO;
 import com.abd.cognelearn.dto.admin.MilestoneDTO;
-import com.abd.cognelearn.model.FeedbackEntity;
 import com.abd.cognelearn.model.SessionStatus;
 import com.abd.cognelearn.model.StudySessionEntity;
 import com.abd.cognelearn.model.UserEntity;
-import com.abd.cognelearn.repository.FeedbackRepository;
 import com.abd.cognelearn.repository.PlaylistRepository;
 import com.abd.cognelearn.repository.StudySessionRepository;
 import com.abd.cognelearn.repository.UserEventRepository;
 import com.abd.cognelearn.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +31,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final UserRepository userRepository;
     private final PlaylistRepository playlistRepository;
     private final StudySessionRepository studySessionRepository;
-    private final FeedbackRepository feedbackRepository;
     private final UserEventRepository userEventRepository;
 
     /**
@@ -50,14 +49,6 @@ public class AdminController {
         long activeSessions = studySessionRepository.countByStatus(SessionStatus.ACTIVE);
         
         return new AdminStatsDTO(totalUsers, activeSessions, totalPlaylists, "OK");
-    }
-
-    /**
-     * Fetch all feedback submitted by users.
-     */
-    @GetMapping("/feedback")
-    public List<FeedbackEntity> getFeedback() {
-        return feedbackRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     /**
@@ -132,10 +123,10 @@ public class AdminController {
 
     private String translateEventType(String type) {
         return switch (type) {
-            case "STREAK_7" -> "achieved a 7-day focus streak!";
-            case "STREAK_30" -> "reached a massive 30-day focus streak!";
-            case "LOW_FOCUS" -> "received a focus health tip.";
-            case "INACTIVE_USER" -> "was sent a re-engagement reminder.";
+            case "STREAK_7" -> "achieved a 7-day focus streak (motivational email pending admin review).";
+            case "STREAK_30" -> "reached a 30-day focus streak (motivational email pending admin review).";
+            case "LOW_FOCUS" -> "signaled a focus milestone (motivational email pending admin review).";
+            case "INACTIVITY", "INACTIVE_USER" -> "signaled inactivity (motivational email pending admin review).";
             default -> "triggered an event: " + type;
         };
     }

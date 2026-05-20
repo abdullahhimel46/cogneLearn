@@ -119,6 +119,10 @@
             return session.avgFocus;
         }
 
+        if (typeof session.avgAttention === "number") {
+            return session.avgAttention;
+        }
+
         if (Array.isArray(session.attentionScores) && session.attentionScores.length > 0) {
             const total = session.attentionScores.reduce((sum, score) => sum + (Number(score) || 0), 0);
             return Math.round(total / session.attentionScores.length);
@@ -144,10 +148,15 @@
         try {
             const me = await Api.get("/api/v1/auth/me");
             localStorage.setItem("cognelearn_user", JSON.stringify(me));
+            if (me && me.id && window.LocalDB) {
+                LocalDB.setUserScope(me.id);
+                localStorage.setItem("cognelearn_scoped_user_id", String(me.id));
+            }
             dom.userName.textContent = getCurrentUserFirstName(me);
             return true;
         } catch (error) {
             localStorage.removeItem("cognelearn_user");
+            localStorage.removeItem("cognelearn_scoped_user_id");
             window.location.href = "login.html";
             return false;
         }
@@ -178,6 +187,86 @@
         }
 
         return 0;
+    }
+
+    /**
+     * Renders a 3-month consistency heatmap (similar to GitHub contributions)
+     * using the daily analytics data from IndexedDB.
+     */
+    function renderHeatmap(dailyAnalytics) {
+        const container = document.getElementById("focusHeatmap");
+        if (!container) return;
+
+        // Data processing
+        const dataMap = {};
+        (dailyAnalytics || []).forEach(day => {
+            if (day && day.date) {
+                dataMap[day.date] = {
+                    minutes: Number(day.totalFocusMinutes) || 0,
+                    sessions: Number(day.sessionsCompleted) || 0
+                };
+            }
+        });
+
+        // Date range: last 90 days
+        const today = new Date();
+        const dates = [];
+        for (let i = 89; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            dates.push(d.toISOString().split("T")[0]);
+        }
+
+        // Group by weeks (columns)
+        const weeks = [];
+        let currentWeek = [];
+        
+        // Align the first week (padding if necessary)
+        const firstDate = new Date(dates[0]);
+        const firstDayOfWeek = firstDate.getDay(); // 0 is Sunday
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            currentWeek.push(null);
+        }
+
+        dates.forEach(dateStr => {
+            const dateObj = new Date(dateStr);
+            if (dateObj.getDay() === 0 && currentWeek.length > 0) {
+                weeks.push(currentWeek);
+                currentWeek = [];
+            }
+            currentWeek.push(dateStr);
+        });
+        if (currentWeek.length > 0) {
+            weeks.push(currentWeek);
+        }
+
+        // Render
+        container.innerHTML = "";
+
+        weeks.forEach(week => {
+            const col = document.createElement("div");
+            col.className = "heatmap-column";
+            
+            week.forEach(date => {
+                const cell = document.createElement("div");
+                cell.className = "heatmap-cell";
+                
+                if (date) {
+                    const stats = dataMap[date] || { minutes: 0, sessions: 0 };
+                    const level = stats.minutes >= 120 ? 4 : stats.minutes >= 60 ? 3 : stats.minutes >= 25 ? 2 : stats.minutes > 0 ? 1 : 0;
+                    cell.classList.add(`level-${level}`);
+                    
+                    const readableDate = new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                    cell.setAttribute("data-tooltip", `${readableDate}: ${stats.minutes}m focus`);
+                } else {
+                    cell.style.visibility = "hidden";
+                }
+                
+                col.appendChild(cell);
+            });
+            
+            container.appendChild(col);
+        });
     }
 
     function renderDashboardMetrics() {
@@ -544,6 +633,12 @@
         });
     }
 
+    /** Refreshes chart + heatmap in the Focus Analytics panel (uses state.sessions and state.dailyAnalytics). */
+    function renderFocusAnalytics() {
+        renderAnalyticsChart();
+        renderHeatmap(state.dailyAnalytics);
+    }
+
     function openModal(modal) {
         if (!modal) {
             return;
@@ -593,7 +688,7 @@
         }
 
         if (state.analyticsLoaded) {
-            renderAnalyticsChart();
+            renderFocusAnalytics();
             dom.analyticsSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
@@ -728,21 +823,74 @@
 
         window.addEventListener("storage", function (event) {
             if (event.key === "cognelearn_session_history") {
-                syncSessionsFromStorage();
-                renderRecentSessions();
-                renderAnalyticsChart();
+                syncSessionsFromStorage().then(function () {
+                    renderRecentSessions();
+                    renderAnalyticsChart();
+                });
             }
+        });
+
+        window.addEventListener("cognelearn:local-analytics-updated", function () {
+            syncSessionsFromStorage().then(function () {
+                if (window.LocalAnalytics && typeof LocalAnalytics.getDashboardStats === "function") {
+                    LocalAnalytics.getDashboardStats().then(function (stats) {
+                        state.dashboard = stats;
+                        renderDashboardMetrics();
+                    }).catch(function () { });
+                    if (typeof LocalAnalytics.getDailyAnalytics === "function") {
+                        LocalAnalytics.getDailyAnalytics(90).then(function (rows) {
+                            state.dailyAnalytics = rows;
+                            renderFocusAnalytics();
+                        }).catch(function () {
+                            renderFocusAnalytics();
+                        });
+                    } else {
+                        renderFocusAnalytics();
+                    }
+                } else {
+                    renderAnalyticsChart();
+                }
+                renderRecentSessions();
+            });
         });
     }
 
     async function loadDashboardData() {
         try {
-            state.dashboard = await SimpleAnalytics.getDashboard();
-            state.sessions = await StudySession.getAll();
-            syncSessionsFromStorage();
+            if (window.LocalAnalytics && typeof LocalAnalytics.bootstrapFromServer === "function") {
+                await LocalAnalytics.bootstrapFromServer();
+            }
+
+            if (window.LocalAnalytics && typeof LocalAnalytics.getDashboardStats === "function") {
+                state.dashboard = await LocalAnalytics.getDashboardStats();
+                state.sessions = await LocalAnalytics.getAllSessions();
+                state.dailyAnalytics = await LocalAnalytics.getDailyAnalytics(90);
+
+                if (typeof LocalAnalytics.maybeEmitInactivityEvent === "function") {
+                    await LocalAnalytics.maybeEmitInactivityEvent();
+                }
+
+                renderDashboardMetrics();
+                renderFocusAnalytics();
+                renderRecentSessions();
+                if (window.EventOutbox) {
+                    EventOutbox.flush().catch(function () { });
+                }
+            } else {
+                // Legacy fallback
+                state.dashboard = await SimpleAnalytics.getDashboard();
+                state.sessions = await StudySession.getAll();
+            }
+
+            await syncSessionsFromStorage();
             renderDashboardMetrics();
             await renderRecentSessions();
             await loadPlaylists();
+
+            if (state.dashboard) {
+                state.dashboard.totalPlaylists = Array.isArray(state.playlists) ? state.playlists.length : (state.dashboard.totalPlaylists || 0);
+                renderDashboardMetrics();
+            }
         } catch (error) {
             console.error(error);
             alert("Failed to load dashboard data. Please try again.");
@@ -1109,7 +1257,13 @@
         });
     }
 
-    function syncSessionsFromStorage() {
+    async function syncSessionsFromStorage() {
+        if (window.LocalAnalytics && typeof LocalAnalytics.getAllSessions === "function") {
+            const localSessions = await LocalAnalytics.getAllSessions();
+            mergeSessionCollections(state.sessions, Array.isArray(localSessions) ? localSessions : []);
+            return;
+        }
+
         const localHistory = JSON.parse(localStorage.getItem("cognelearn_session_history") || "[]");
         mergeSessionCollections(state.sessions, Array.isArray(localHistory) ? localHistory : []);
     }
@@ -1448,8 +1602,8 @@
         handleFocusSessionLaunch(playlistId, "playlist_thumb");
     };
 
-    window.logout = function logout() {
-        Auth.logout();
+    window.logout = async function logout() {
+        await Auth.logout();
     };
 
     function restoreTheme() {

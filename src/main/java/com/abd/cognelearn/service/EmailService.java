@@ -15,4 +15,9 @@ public interface EmailService {
     void sendFocusTipEmail(String to, String userName);
 
     void sendInactivityReminder(String to, String userName);
+
+    /**
+     * Sends an admin-approved motivational message. Used only after explicit admin action.
+     */
+    void sendApprovedMotivationalEmail(String to, String userName, String subject, String bodyText);
 }

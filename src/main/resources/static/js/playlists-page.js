@@ -508,8 +508,8 @@
         window.location.href = target;
     };
 
-    window.logout = function logout() {
-        Auth.logout();
+    window.logout = async function logout() {
+        await Auth.logout();
     };
 
     function restoreTheme() {

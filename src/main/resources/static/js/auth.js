@@ -20,29 +20,19 @@ const Auth = {
             return false;
         }
 
-        // Hardcoded admin login logic
-        if (normalizedEmail === 'admin@email.com' && password === '123456') {
-            const adminUser = {
-                id: 0,
-                name: 'System Admin',
-                email: 'admin@email.com',
-                role: 'ADMIN'
-            };
-            localStorage.setItem('cognelearn_user', JSON.stringify(adminUser));
-            window.location.href = 'admin.html';
-            return true;
-        }
-
         try {
             const response = await Api.post('/api/v1/auth/login', {
                 email: normalizedEmail,
                 password: password
             });
 
-            // Session-based auth: Spring sets a JSESSIONID cookie. We only cache the user for UI.
             localStorage.setItem('cognelearn_user', JSON.stringify(response.user));
+            if (response.user && response.user.id && window.LocalDB) {
+                LocalDB.setUserScope(response.user.id);
+                localStorage.setItem('cognelearn_scoped_user_id', String(response.user.id));
+            }
 
-            if (normalizedEmail === 'admin@email.com') {
+            if (response.user && response.user.role === 'ADMIN') {
                 window.location.href = 'admin.html';
             } else {
                 window.location.href = 'dashboard.html';
@@ -86,8 +76,11 @@ const Auth = {
                 password: password
             });
 
-            // Backend auto-logs in after signup (session cookie). Cache user for UI.
             localStorage.setItem('cognelearn_user', JSON.stringify(response.user));
+            if (response.user && response.user.id && window.LocalDB) {
+                LocalDB.setUserScope(response.user.id);
+                localStorage.setItem('cognelearn_scoped_user_id', String(response.user.id));
+            }
 
             window.location.href = 'dashboard.html';
             return true;
@@ -102,13 +95,17 @@ const Auth = {
      */
     logout: async function() {
         try {
-            // Invalidate the server-side session and clear JSESSIONID cookie.
             await Api.post('/api/v1/auth/logout', {});
         } catch (e) {
-            // Ignore network/logout errors; still clear client cache.
+            // Still clear client state even if the network call fails.
         }
         User.logout();
-        window.location.href = '../index.html';
+        if (window.LocalDB) {
+            LocalDB.setUserScope(null);
+        }
+        localStorage.removeItem('cognelearn_scoped_user_id');
+        const onPages = window.location.pathname.includes('/pages/');
+        window.location.replace(onPages ? 'login.html' : 'pages/login.html');
     },
 
     /**

@@ -4,6 +4,10 @@ import com.abd.cognelearn.model.UserEntity;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * UserRepository â€” handles all database operations for {@link UserEntity}.
@@ -53,4 +57,22 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
      * @return {@code true} if an account with this email exists, {@code false} otherwise
      */
     boolean existsByEmailIgnoreCase(String email);
+
+    /**
+     * Backfill any rows that still have a NULL role (left over from the DDL migration)
+     * to the default value 'USER'.
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET u.role = 'USER' WHERE u.role IS NULL OR u.role = ''")
+    int fixNullRoles();
+
+    /**
+     * Directly set a role for a specific user by email (case-insensitive).
+     * Used by DataInitializer to ensure the admin account always has ROLE_ADMIN.
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET u.role = :role WHERE LOWER(u.email) = LOWER(:email)")
+    int setRoleByEmail(@Param("email") String email, @Param("role") String role);
 }

@@ -14,6 +14,7 @@ import com.abd.cognelearn.repository.StudySessionRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,13 @@ public class StudySessionService {
     private final CurrentUserService currentUserService;
 
     /**
+     * Privacy-first default: do NOT store per-sample attention scores on the server.
+     *
+     * <p>Set {@code cognelearn.attention.store-on-server=true} to enable server-side storage.
+     */
+    private final boolean storeAttentionOnServer;
+
+    /**
      * Constructor â€” Spring injects all required dependencies automatically.
      *
      * @param studySessionRepository repository for session DB operations
@@ -49,11 +57,13 @@ public class StudySessionService {
     public StudySessionService(
             StudySessionRepository studySessionRepository,
             PlaylistRepository playlistRepository,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            @Value("${cognelearn.attention.store-on-server:false}") boolean storeAttentionOnServer
     ) {
         this.studySessionRepository = studySessionRepository;
         this.playlistRepository = playlistRepository;
         this.currentUserService = currentUserService;
+        this.storeAttentionOnServer = storeAttentionOnServer;
     }
 
     /**
@@ -226,6 +236,11 @@ public class StudySessionService {
         UserEntity user = currentUserService.requireUser();
         StudySessionEntity session = studySessionRepository.findByIdAndUser(sessionId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
+
+        // Privacy-first: ignore attention samples unless explicitly enabled.
+        if (!storeAttentionOnServer) {
+            return toResponse(session);
+        }
 
         // Create a new score record and link it to the session
         AttentionScoreEntity scoreEntity = new AttentionScoreEntity(

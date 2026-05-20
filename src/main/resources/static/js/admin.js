@@ -13,16 +13,18 @@
 /* ── Data Layer ──────────────────────────────────────────────── */
 
 const Data = {
+  fetchDefaults: { credentials: 'include' },
+
   /** Fetch stats from backend */
   async stats() {
-    const res = await fetch('/api/admin/stats');
+    const res = await fetch('/api/admin/stats', Data.fetchDefaults);
     if (!res.ok) throw new Error('Failed to fetch dashboard stats');
     return await res.json();
   },
 
   /** Fetch recent system activity */
   async activity() {
-    const res = await fetch('/api/admin/activity');
+    const res = await fetch('/api/admin/activity', Data.fetchDefaults);
     if (!res.ok) throw new Error('Failed to fetch system activity');
     return await res.json();
   },
@@ -39,22 +41,62 @@ const Data = {
 
   /** Fetch all registered users */
   async users() {
-    const res = await fetch('/api/admin/users');
+    const res = await fetch('/api/admin/users', Data.fetchDefaults);
     if (!res.ok) throw new Error('Failed to fetch users');
     return await res.json();
   },
 
   /** Toggle user active status */
   async toggleUserActive(userId) {
-    const res = await fetch(`/api/admin/users/${userId}/toggle-active`, { method: 'POST' });
+    const res = await fetch(`/api/admin/users/${userId}/toggle-active`, {
+      method: 'POST',
+      ...Data.fetchDefaults,
+    });
     if (!res.ok) throw new Error('Failed to toggle user status');
   },
 
-  /** Fetch user feedback */
-  async feedback() {
-    const res = await fetch('/api/admin/feedback');
-    if (!res.ok) throw new Error('Failed to fetch feedback');
+  async emailStatus() {
+    const res = await fetch('/api/admin/notifications/status', Data.fetchDefaults);
+    if (!res.ok) throw new Error('Failed to fetch email status');
     return await res.json();
+  },
+
+  /** Privacy-first queue: milestone notifications awaiting admin send */
+  async pendingNotifications() {
+    const res = await fetch('/api/admin/notifications/pending', Data.fetchDefaults);
+    if (!res.ok) throw new Error('Failed to fetch pending notifications');
+    return await res.json();
+  },
+
+  async sendPendingNotification(notificationId, subject, message) {
+    const body = {};
+    if (subject && subject.trim()) body.subject = subject.trim();
+    if (message && message.trim()) body.message = message.trim();
+    const opts = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      ...Data.fetchDefaults,
+    };
+    if (Object.keys(body).length > 0) opts.body = JSON.stringify(body);
+    const res = await fetch(`/api/admin/notifications/${notificationId}/send`, opts);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to send notification');
+    }
+  },
+
+  async sendCustomEmail(userId, subject, message) {
+    const res = await fetch('/api/admin/notifications/send-custom', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, subject, message }),
+      ...Data.fetchDefaults,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to send email');
+    }
+    return data;
   },
 };
 
@@ -89,7 +131,7 @@ function make(tag, className, text) {
 /* ── Navigation ──────────────────────────────────────────────── */
 
 function navigateTo(page) {
-  if (!['overview', 'users', 'feedback', 'settings'].includes(page)) return;
+  if (!['overview', 'users', 'emails', 'settings'].includes(page)) return;
 
   document.querySelectorAll('.nav-item').forEach(link => {
     const isTarget = link.dataset.page === page;
@@ -107,7 +149,7 @@ function navigateTo(page) {
   // Re-render the specific page when navigated to ensure data is fresh
   if (page === 'overview') renderOverview();
   if (page === 'users') renderUsers();
-  if (page === 'feedback') renderFeedback();
+  if (page === 'emails') renderEmails();
 }
 
 function initNavigation() {
@@ -118,7 +160,8 @@ function initNavigation() {
     });
   });
 
-  const initialPage = location.hash.replace('#', '') || 'overview';
+  let initialPage = location.hash.replace('#', '') || 'overview';
+  if (initialPage === 'feedback') initialPage = 'emails';
   navigateTo(initialPage);
 }
 
@@ -282,38 +325,157 @@ function initUsersPage() {
   });
 }
 
-/* ── Feedback Page ───────────────────────────────────────────── */
-
-async function renderFeedback() {
-  const container = el('feedbackList');
-  container.innerHTML = '<p style="text-align:center; padding: 20px;">Loading feedback...</p>';
+async function renderPendingNotifications() {
+  const container = el('pendingNotificationsList');
+  container.innerHTML = '<p class="panel__hint" style="margin:0">Loading queue…</p>';
 
   try {
-    const feedbacks = await Data.feedback();
+    const items = await Data.pendingNotifications();
     container.innerHTML = '';
 
-    if (feedbacks.length === 0) {
-      container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 40px;">No feedback received yet.</p>';
+    if (items.length === 0) {
+      container.innerHTML = '<p class="panel__hint" style="margin:0">No pending motivational emails.</p>';
       return;
     }
 
-    feedbacks.forEach(item => {
-      const card = make('article', 'feedback-card');
+    items.forEach((item) => {
+      const card = make('article', 'pending-notification-card');
       card.setAttribute('role', 'listitem');
 
-      const msg  = make('p', 'feedback-card__message', item.message);
-      const meta = make('div', 'feedback-card__meta');
+      const head = make('div', 'pending-notification-card__head');
+      const userEl = make('span', 'pending-notification-card__user', item.userName);
+      const eventEl = make('span', 'pending-notification-card__event', item.eventType);
+      const timeEl = make('span', 'pending-notification-card__time', fmtDateTime(item.createdAt));
+      head.append(userEl, eventEl, timeEl);
 
-      const userSpan = make('span', 'feedback-card__user', item.userName ?? 'Anonymous');
-      const dateSpan = make('span', null, fmtDate(item.createdAt));
+      const recipient = make('p', 'pending-notification-card__recipient',
+        `To: ${item.userEmail || 'unknown'}`);
+      const msg = make('p', 'pending-notification-card__message', item.suggestedMessage);
 
-      meta.append(userSpan, dateSpan);
-      card.append(msg, meta);
+      const subjectLabel = make('span', 'pending-notification-card__label', 'Subject');
+      const subjectInput = document.createElement('input');
+      subjectInput.className = 'field';
+      subjectInput.type = 'text';
+      subjectInput.value = item.emailSubject || '';
+      subjectInput.setAttribute('aria-label', 'Email subject');
+
+      const editLabel = make('span', 'pending-notification-card__label', 'Message');
+      const ta = document.createElement('textarea');
+      ta.className = 'pending-notification-edit';
+      ta.setAttribute('aria-label', 'Email message');
+      ta.value = item.suggestedMessage;
+
+      const actions = make('div', 'pending-notification-card__actions');
+      const sendBtn = make('button', 'btn-send-email', 'Send Email');
+      sendBtn.type = 'button';
+
+      sendBtn.addEventListener('click', async () => {
+        if (!confirm(`Send motivational email to ${item.userEmail}?`)) return;
+        try {
+          sendBtn.disabled = true;
+          await Data.sendPendingNotification(
+            item.id,
+            subjectInput.value.trim(),
+            ta.value.trim()
+          );
+          await renderPendingNotifications();
+        } catch (err) {
+          console.error(err);
+          alert(err.message || 'Could not send email. Check SMTP settings in application.yml.');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      });
+
+      actions.appendChild(sendBtn);
+      card.append(head, recipient, msg, subjectLabel, subjectInput, editLabel, ta, actions);
       container.appendChild(card);
     });
   } catch (err) {
-    container.innerHTML = '<p style="text-align:center; color:var(--danger)">Error loading feedback</p>';
+    console.error(err);
+    container.innerHTML = '<p class="panel__hint" style="margin:0;color:var(--danger)">Could not load the queue. Open this page after signing in as an admin (admin@cognelearn.app in demo).</p>';
   }
+}
+
+function fmtDateTime(iso) {
+  if (!iso) return 'N/A';
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+/* ── Emails Page ─────────────────────────────────────────────── */
+
+async function renderEmailStatus() {
+  const statusEl = document.getElementById('emailProviderStatus');
+  if (!statusEl) return;
+  try {
+    const status = await Data.emailStatus();
+    statusEl.textContent = status.enabled
+      ? `Email service: ${status.provider} (ready to send)`
+      : 'Email service disabled — set cognelearn.email.enabled=true and spring.mail.*';
+    statusEl.style.color = status.enabled ? 'var(--success, #10b981)' : 'var(--danger)';
+  } catch {
+    statusEl.textContent = 'Could not check email service status.';
+    statusEl.style.color = 'var(--danger)';
+  }
+}
+
+function populateCustomEmailRecipients() {
+  const select = document.getElementById('customEmailTo');
+  if (!select) return;
+  select.innerHTML = '';
+  const learners = state.users.filter(u => u.email !== 'admin@cognelearn.app');
+  learners.forEach((u) => {
+    const opt = document.createElement('option');
+    opt.value = u.id;
+    opt.dataset.email = u.email;
+    opt.textContent = `${u.name} (${u.email})`;
+    select.appendChild(opt);
+  });
+}
+
+async function renderEmails() {
+  if (state.users.length === 0) {
+    try {
+      state.users = await Data.users();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  populateCustomEmailRecipients();
+  await renderEmailStatus();
+  await renderPendingNotifications();
+}
+
+function initEmailsPage() {
+  const sendBtn = document.getElementById('sendCustomEmailBtn');
+  if (!sendBtn) return;
+
+  sendBtn.addEventListener('click', async () => {
+    const select = el('customEmailTo');
+    const userId = select.value;
+    const recipientEmail = select.selectedOptions[0]?.dataset.email || '';
+    const subject = el('customEmailSubject').value.trim();
+    const message = el('customEmailBody').value.trim();
+    if (!userId || !subject || !message) {
+      alert('Please fill in recipient, subject, and message.');
+      return;
+    }
+    if (!confirm(`Send email to ${recipientEmail || 'this user'}?`)) return;
+    try {
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending…';
+      const result = await Data.sendCustomEmail(userId, subject, message);
+      el('customEmailSubject').value = '';
+      el('customEmailBody').value = '';
+      alert(result.message || `Email sent to ${result.recipientEmail || recipientEmail}.`);
+    } catch (err) {
+      alert(err.message || 'Failed to send email. Check SMTP settings.');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send Email';
+    }
+  });
 }
 
 /* ── Settings Page ───────────────────────────────────────────── */
@@ -373,20 +535,40 @@ function initTheme() {
   }
 }
 
+/* ── Session guard ───────────────────────────────────────────── */
+
+async function ensureAdminSession() {
+  const res = await fetch('/api/v1/auth/me', Data.fetchDefaults);
+  if (!res.ok) {
+    window.location.href = 'login.html?redirect=admin';
+    return false;
+  }
+  const user = await res.json();
+  if (user.role !== 'ADMIN') {
+    window.location.href = 'dashboard.html';
+    return false;
+  }
+  localStorage.setItem('cognelearn_user', JSON.stringify(user));
+  return true;
+}
+
 /* ── Bootstrap ───────────────────────────────────────────────── */
 
 async function init() {
   renderTimestamp();
-  
-  // Initial data load
+
+  const ok = await ensureAdminSession();
+  if (!ok) return;
+
   await Promise.all([
     renderOverview(),
     renderUsers(),
-    renderFeedback()
+    renderEmails()
   ]);
 
   initNavigation();
   initUsersPage();
+  initEmailsPage();
   initSettings();
   initTheme();
 }

@@ -1,7 +1,7 @@
 package com.abd.cognelearn.controller;
 
 import com.abd.cognelearn.dto.user.UserResponse;
-import com.abd.cognelearn.model.UserEntity;
+import com.abd.cognelearn.service.AuthService;
 import com.abd.cognelearn.service.CurrentUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final CurrentUserService currentUserService;
+    private final AuthService authService;
 
-    /**
-     * Constructor â€” Spring injects CurrentUserService.
-     *
-     * @param currentUserService helper that reads the logged-in user from the session
-     */
-    public UserController(CurrentUserService currentUserService) {
+    public UserController(CurrentUserService currentUserService, AuthService authService) {
         this.currentUserService = currentUserService;
+        this.authService = authService;
     }
 
     /**
@@ -59,17 +56,6 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser() {
         // Step 1: Get the logged-in UserEntity from the Spring Security session context
-        UserEntity user = currentUserService.requireUser();
-
-        // Step 2: Convert to a safe response DTO (excludes passwordHash)
-        UserResponse response = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt()
-        );
-
-        // Step 3: Return 200 OK with the user profile JSON
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(authService.toUserResponse(currentUserService.requireUser()));
     }
 }

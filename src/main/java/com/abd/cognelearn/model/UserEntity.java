@@ -81,6 +81,12 @@ public class UserEntity {
     private boolean active = true;
 
     /**
+     * Spring Security role name without the {@code ROLE_} prefix (e.g. {@code USER}, {@code ADMIN}).
+     */
+    @Column(nullable = false, length = 32, columnDefinition = "varchar(32) default 'USER'")
+    private String role = "USER";
+
+    /**
      * No-argument constructor required by JPA.
      * JPA uses this to reconstruct objects from database rows.
      * You shouldn't call this directly in your code â€” use the other constructor.
@@ -106,8 +112,7 @@ public class UserEntity {
         this.active = active;
     }
 
-    // â”€â”€ Getters and Setters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // Getters let other classes READ the fields.
+     // Getters let other classes READ the fields.
     // Setters let other classes UPDATE the fields.
     // JPA also needs these to load data from the database back into objects.
 
@@ -128,4 +133,12 @@ public class UserEntity {
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = (role == null || role.isBlank()) ? "USER" : role.trim();
+    }
 }
