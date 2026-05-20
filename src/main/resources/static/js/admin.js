@@ -841,19 +841,13 @@ function initEmailsPage() {
     );
     // Select all matching users
     filtered.forEach(u => {
-    
-    <hr>
-
-    <p style="color:var(--text-secondary); font-size:0.92rem; margin:0 0 12px 0;">
-      ${user.active ? 'Clicking "Deactivate" will prevent this user from signing in.' : 'Clicking "Activate" will allow this user to sign in again.'}
-    </p>
-
-    <div class="actions">
-      <button type="button" onclick="closeModal()">Close</button>
-        <button type="button" class="danger" title="${user.active ? 'Deactivate — prevents user from signing in' : 'Activate — allow user to sign in'}" onclick="deactivateUser('${user.id}')">
-         ${user.active ? 'Deactivate' : 'Activate'} User
-       </button>
-    </div>
+      if (!EmailState.selectedUsers.includes(u.id)) {
+        EmailState.selectedUsers.push(u.id);
+      }
+    });
+    renderCampaignUsersList();
+    updateAudienceCount();
+  });
   el('emailTemplateSubject').addEventListener('input', checkEmailFormValid);
   el('emailTemplateBody').addEventListener('input', checkEmailFormValid);
 

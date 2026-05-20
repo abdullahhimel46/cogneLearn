@@ -24,6 +24,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
+    # Set MAIL_USERNAME and MAIL_PASSWORD as environment variables to enable real SMTP.
+    # If not set, the app falls back to NoOpEmailService (no emails sent).
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
@@ -35,7 +37,8 @@ spring:
 
 cognelearn:
   email:
-    enabled: true
+    # Set to true only when MAIL_USERNAME and MAIL_PASSWORD env vars are configured.
+    enabled: ${COGNELEARN_EMAIL_ENABLED:false}
 
 # ─── Authentication ──────────────────────────────────────────────────────────
 # We used Spring Security session-based authentication (no JWT).
@@ -46,3 +49,4 @@ cognelearn:
 
 playlistProxy:
   cacheTtlMs: 600000
+
