@@ -20,6 +20,8 @@ public class BulkEmailSenderService {
     private final ActivityLogService activityLogService;
     private final EmailService emailService;
 
+    private final EmailTrackingService emailTrackingService;
+
     public long getAudienceCount(EmailCategory category) {
         // Placeholder audience resolution logic
         if (category == EmailCategory.INACTIVE_USER) {
@@ -59,14 +61,35 @@ public class BulkEmailSenderService {
     }
 
     @Async
-    public void sendBulkCampaign(java.util.List<com.abd.cognelearn.controller.EmailCampaignController.Recipient> recipients, String subject, String message) {
+    public void sendBulkCampaign(java.util.List<com.abd.cognelearn.controller.EmailCampaignController.Recipient> recipients,
+                                 EmailCategory category,
+                                 String subject,
+                                 String message) {
         log.info("Sending bulk campaign email to {} users. Subject: {}", recipients.size(), subject);
 
-        // Send real emails to each recipient using the injected EmailService
         for (com.abd.cognelearn.controller.EmailCampaignController.Recipient r : recipients) {
-            log.info("Sending email to: {} <{}>", r.getName(), r.getEmail());
+            log.info("Processing recipient: {} <{}>", r.getName(), r.getEmail());
+
+            // try to resolve the user by email (case-insensitive)
+            var userOpt = userRepository.findByEmailIgnoreCase(r.getEmail());
+            if (userOpt.isEmpty()) {
+                log.warn("No user found for email {}, skipping", r.getEmail());
+                continue;
+            }
+
+            var user = userOpt.get();
+            java.util.UUID userId = user.getId();
+
+            // rate limit check
+            if (!emailTrackingService.canSendEmailToday(userId)) {
+                log.info("Skipping {} <{}>: already sent email in last 24h", r.getName(), r.getEmail());
+                continue;
+            }
+
             try {
                 emailService.sendApprovedMotivationalEmail(r.getEmail(), r.getName(), subject, message);
+                // record successful send
+                emailTrackingService.recordEmailSent(userId, category);
             } catch (Exception e) {
                 log.error("Failed to send email to {} <{}>: {}", r.getName(), r.getEmail(), e.getMessage());
             }

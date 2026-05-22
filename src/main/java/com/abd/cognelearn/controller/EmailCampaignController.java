@@ -32,12 +32,18 @@ public class EmailCampaignController {
     private final UserRepository userRepository;
     private final EmailTemplateService templateService;
     private final BulkEmailSenderService senderService;
+    private final com.abd.cognelearn.repository.EmailLogRepository emailLogRepository;
 
     @GetMapping("/users")
     public List<UserResponse> getUsers() {
         return userRepository.findAll().stream()
                 .filter(u -> !u.getRole().equals("ADMIN")) // omit admin if needed
-                .map(u -> new UserResponse(u.getId(), u.getName(), u.getEmail()))
+                .map(u -> {
+                    java.time.Instant lastEmailTime = emailLogRepository.findTopByUserIdOrderBySentAtDesc(u.getId())
+                            .map(com.abd.cognelearn.model.EmailLog::getSentAt)
+                            .orElse(null);
+                    return new UserResponse(u.getId(), u.getName(), u.getEmail(), lastEmailTime);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -50,7 +56,9 @@ public class EmailCampaignController {
     @PostMapping("/send-email")
     public ResponseEntity<?> sendEmail(@RequestBody EmailRequest req) {
         // Send email logic (Async)
-        senderService.sendBulkCampaign(req.getRecipients(), req.getSubject(), req.getMessage());
+        // pass category if provided (can be null); default to STREAK if null
+        com.abd.cognelearn.model.EmailCategory category = req.getCategory() != null ? req.getCategory() : com.abd.cognelearn.model.EmailCategory.STREAK;
+        senderService.sendBulkCampaign(req.getRecipients(), category, req.getSubject(), req.getMessage());
         return ResponseEntity.ok("Emails sent");
     }
 
@@ -61,6 +69,7 @@ public class EmailCampaignController {
         private UUID id;
         private String name;
         private String email;
+        private java.time.Instant lastEmailSentAt;
     }
 
     @Data
@@ -78,6 +87,7 @@ public class EmailCampaignController {
         private List<Recipient> recipients;
         private String subject;
         private String message;
+        private EmailCategory category;
     }
 
     @Data

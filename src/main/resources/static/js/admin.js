@@ -768,7 +768,13 @@ function renderCampaignUsersList() {
     label.style.cursor = 'pointer';
     label.style.fontSize = '0.92rem';
     label.style.flex = '1';
-    label.innerHTML = `<strong>${user.name}</strong> <span style="color:var(--text-secondary); margin-left:4px;">(${user.email})</span>`;
+    let lastSentHtml = '';
+    if (user.lastEmailSentAt) {
+      const timeStr = new Date(user.lastEmailSentAt).toLocaleString();
+      lastSentHtml = `<span style="font-size: 0.8rem; margin-left:8px; color:var(--primary);">(Last Sent: ${timeStr})</span>`;
+    }
+
+    label.innerHTML = `<strong>${user.name}</strong> <span style="color:var(--text-secondary); margin-left:4px;">(${user.email})</span> ${lastSentHtml}`;
 
     itemDiv.appendChild(checkbox);
     itemDiv.appendChild(label);
@@ -936,8 +942,6 @@ function initEmailsPage() {
     const subject = el('emailTemplateSubject').value.trim();
     const body = el('emailTemplateBody').value.trim();
     
-    if (!confirm(`Send email to ${selectedUserObjects.length} users?`)) return;
-
     const btn = el('confirmSendBtn');
     btn.textContent = 'Sending...';
     btn.disabled = true;
@@ -952,8 +956,12 @@ function initEmailsPage() {
           message: body
         })
       });
-      el('sendEmailModal').classList.add('hidden');
-      alert(`Emails sent successfully to ${selectedUserObjects.length} users`);
+      
+      btn.textContent = 'Sent!';
+      setTimeout(() => {
+        el('sendEmailModal').classList.add('hidden');
+        btn.textContent = 'Send Email';
+      }, 1000);
       
       // Clear selection
       EmailState.selectedUsers = [];
