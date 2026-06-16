@@ -3,6 +3,26 @@
 > cogneLearn is an AI-powered adaptive learning platform that integrates YouTube playlist management with real-time attention monitoring, Pomodoro-based study sessions, and productivity analytics — all backed by a secure, session-authenticated Spring Boot REST API.
 
 ---
+## Home-page
+<img width="1744" height="2482" alt="image" src="https://github.com/user-attachments/assets/f626eb29-23ac-44cc-a352-6d48d511e014" />
+
+## User dashboard
+<img width="1744" height="3143" alt="image" src="https://github.com/user-attachments/assets/ad18af79-7062-4c13-9507-b51c0bcd47ae" />
+
+## User can create custom playlist by adding video/playlist from youtube
+<img width="1890" height="869" alt="image" src="https://github.com/user-attachments/assets/858e0b2e-f9de-4e3a-87ba-759fafe7ce25" />
+
+## User can manage playlist
+<img width="1744" height="1351" alt="image" src="https://github.com/user-attachments/assets/32abcebf-95f6-4e70-962a-6edeae1107e1" />
+
+## Admin dashboard
+<img width="1744" height="1981" alt="image" src="https://github.com/user-attachments/assets/50a45f08-97fb-45bb-9a86-ff4f1a73a4ae" />
+
+## Email Campaigns for admin
+<img width="1910" height="1693" alt="screencapture-localhost-8081-pages-admin-html-2026-06-16-10_39_03" src="https://github.com/user-attachments/assets/24acc8c3-06fd-42fa-a806-020c6bb1dd96" />
+
+
+
 
 ## 📐 Architecture
 
