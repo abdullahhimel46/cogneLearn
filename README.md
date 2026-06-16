@@ -7,16 +7,20 @@
 <img width="1744" height="2482" alt="image" src="https://github.com/user-attachments/assets/f626eb29-23ac-44cc-a352-6d48d511e014" />
 
 ## User dashboard
-<img width="1744" height="3143" alt="image" src="https://github.com/user-attachments/assets/ad18af79-7062-4c13-9507-b51c0bcd47ae" />
+<img width="1910" height="2025" alt="screencapture-localhost-8081-pages-dashboard-html-2026-06-16-10_41_57" src="https://github.com/user-attachments/assets/d84684f1-397b-4e90-8008-0cbc943b5889" />
+
 
 ## User can create custom playlist by adding video/playlist from youtube
-<img width="1890" height="869" alt="image" src="https://github.com/user-attachments/assets/858e0b2e-f9de-4e3a-87ba-759fafe7ce25" />
+<img width="1910" height="2025" alt="screencapture-localhost-8081-pages-dashboard-html-2026-06-16-10_42_40" src="https://github.com/user-attachments/assets/a9b99611-f8e8-41c4-ae26-c19e5c658b27" />
+
 
 ## User can manage playlist
-<img width="1744" height="1351" alt="image" src="https://github.com/user-attachments/assets/32abcebf-95f6-4e70-962a-6edeae1107e1" />
+<img width="1910" height="1462" alt="screencapture-localhost-8081-pages-playlists-html-2026-06-16-10_43_41" src="https://github.com/user-attachments/assets/a9457122-f358-430a-9752-9462133fb27c" />
+
 
 ## Admin dashboard
-<img width="1744" height="1981" alt="image" src="https://github.com/user-attachments/assets/50a45f08-97fb-45bb-9a86-ff4f1a73a4ae" />
+<img width="1910" height="2144" alt="screencapture-localhost-8081-pages-admin-html-2026-06-16-10_41_03" src="https://github.com/user-attachments/assets/4a757954-dc51-41fa-9560-40810bc0e853" />
+
 
 ## Email Campaigns for admin
 <img width="1910" height="1693" alt="screencapture-localhost-8081-pages-admin-html-2026-06-16-10_39_03" src="https://github.com/user-attachments/assets/24acc8c3-06fd-42fa-a806-020c6bb1dd96" />
