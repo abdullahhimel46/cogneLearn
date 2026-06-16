@@ -4,10 +4,12 @@
 
 ---
 ## Home-page
-<img width="1744" height="2482" alt="image" src="https://github.com/user-attachments/assets/f626eb29-23ac-44cc-a352-6d48d511e014" />
+<img width="1910" height="2687" alt="screencapture-localhost-8081-index-html-2026-06-16-10_45_34" src="https://github.com/user-attachments/assets/1dfc522f-1a57-4664-b814-30f856964947" />
+
 
 ## User dashboard
-<img width="1910" height="2025" alt="screencapture-localhost-8081-pages-dashboard-html-2026-06-16-10_41_57" src="https://github.com/user-attachments/assets/d84684f1-397b-4e90-8008-0cbc943b5889" />
+<img width="1910" height="3067" alt="screencapture-localhost-8081-pages-dashboard-html-2026-06-16-10_44_57" src="https://github.com/user-attachments/assets/86a0cee3-7b3e-4a02-878d-94d2ce513dec" />
+
 
 
 ## User can create custom playlist by adding video/playlist from youtube
