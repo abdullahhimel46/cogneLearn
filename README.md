@@ -27,6 +27,8 @@
 ## Email Campaigns for admin
 <img width="1910" height="1693" alt="screencapture-localhost-8081-pages-admin-html-2026-06-16-10_39_03" src="https://github.com/user-attachments/assets/24acc8c3-06fd-42fa-a806-020c6bb1dd96" />
 
+## Swagger UI
+<img width="1885" height="868" alt="image" src="https://github.com/user-attachments/assets/b7590387-d00b-4ed5-b472-c10872e2476a" />
 
 
 
