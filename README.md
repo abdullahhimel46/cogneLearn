@@ -30,8 +30,6 @@
 ## Swagger UI
 <img width="1885" height="868" alt="image" src="https://github.com/user-attachments/assets/b7590387-d00b-4ed5-b472-c10872e2476a" />
 
-
-
 ## 📐 Architecture
 
 ```

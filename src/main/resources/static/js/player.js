@@ -270,28 +270,21 @@
         dom.focusLabel.textContent = labelText || (safePercent >= 65 ? "Focused" : safePercent >= 20 ? "Steady" : "Needs attention");
     }
 
-    function parseYouTubeId(value) {
+    function parseYouTubeInfo(value) {
         if (!value) {
             return null;
         }
         const trimmed = String(value).trim();
-        if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
-            return trimmed;
-        }
-        try {
-            const url = new URL(trimmed);
-            const host = url.hostname.replace("www.", "");
-            if (host === "youtu.be") {
-                const shortId = url.pathname.split("/").filter(Boolean)[0];
-                return /^[a-zA-Z0-9_-]{11}$/.test(shortId) ? shortId : null;
-            }
-            if (host === "youtube.com" || host === "m.youtube.com") {
-                const id = url.searchParams.get("v");
-                return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
-            }
-        } catch (error) {
-            return null;
-        }
+        
+        const videoMatch = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+        if (videoMatch) return { type: 'video', id: videoMatch[1] };
+        
+        const listMatch = trimmed.match(/[?&]list=([^"&?\/\s]+)/i);
+        if (listMatch) return { type: 'playlist', id: listMatch[1] };
+        
+        if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return { type: 'video', id: trimmed };
+        if (/^PL[a-zA-Z0-9_-]+$/.test(trimmed)) return { type: 'playlist', id: trimmed };
+        
         return null;
     }
 
@@ -299,18 +292,22 @@
         const videos = (playlistResponse && playlistResponse.videos) || [];
         return videos.map(function (video, index) {
             const rawId = video.externalId || video.id;
-            const youtubeId = parseYouTubeId(rawId);
+            const ytInfo = parseYouTubeInfo(rawId);
+            const isVideo = ytInfo && ytInfo.type === 'video';
+            const isPlaylist = ytInfo && ytInfo.type === 'playlist';
+            
             return {
                 index: index,
                 id: rawId,
                 title: video.title || "Untitled video",
-                subtitle: video.subtitle || (youtubeId ? "YouTube video" : "Playlist item"),
+                subtitle: video.subtitle || (ytInfo ? (isPlaylist ? "YouTube Playlist" : "YouTube video") : "Playlist item"),
                 kind: video.kind || "video",
-                youtubeId: youtubeId,
+                youtubeId: isVideo ? ytInfo.id : null,
+                youtubePlaylistId: isPlaylist ? ytInfo.id : null,
                 mediaUrl: video.url || video.mediaUrl || "",
-                thumbnail: youtubeId
-                    ? "https://i.ytimg.com/vi/" + youtubeId + "/hqdefault.jpg"
-                    : "https://placehold.co/160x90?text=Video"
+                thumbnail: isVideo
+                    ? "https://i.ytimg.com/vi/" + ytInfo.id + "/hqdefault.jpg"
+                    : (isPlaylist ? "https://placehold.co/160x90/ff0000/ffffff?text=YT+Playlist" : "https://placehold.co/160x90?text=Video")
             };
         });
     }
@@ -634,19 +631,27 @@
             }
         }
 
-        function ensureYouTubePlayer(youtubeId, autoplay) {
+        function ensureYouTubePlayer(item, autoplay) {
             const frame = getYouTubeContainer();
             return ensureYouTubeApi().then(function () {
                 return new Promise(function (resolve) {
                     if (!youtubePlayer) {
-                        youtubePlayer = new YT.Player(frame.id, {
+                        const playerOpts = {
                             width: "100%",
                             height: "100%",
-                            videoId: youtubeId,
                             host: "https://www.youtube-nocookie.com",
                             playerVars: { autoplay: autoplay ? 1 : 0, rel: 0, playsinline: 1, modestbranding: 1 },
                             events: { onReady: resolve, onStateChange: onYouTubeStateChange }
-                        });
+                        };
+                        
+                        if (item.youtubeId) {
+                            playerOpts.videoId = item.youtubeId;
+                        } else if (item.youtubePlaylistId) {
+                            playerOpts.playerVars.listType = 'playlist';
+                            playerOpts.playerVars.list = item.youtubePlaylistId;
+                        }
+                        
+                        youtubePlayer = new YT.Player(frame.id, playerOpts);
                         return;
                     }
                     resolve();
@@ -654,21 +659,26 @@
             }).then(function () {
                 return new Promise(function (resolve) {
                     pendingYouTubeReady = resolve;
-                    if (autoplay && youtubePlayer && youtubePlayer.loadVideoById) {
-                        youtubePlayer.loadVideoById(youtubeId);
-                        return;
-                    }
-                    if (youtubePlayer && youtubePlayer.cueVideoById) {
-                        youtubePlayer.cueVideoById(youtubeId);
-                        return;
-                    }
-                    // Fallback for environments where cueVideoById is not exposed.
-                    if (youtubePlayer && youtubePlayer.loadVideoById) {
-                        youtubePlayer.loadVideoById(youtubeId);
-                        if (youtubePlayer.pauseVideo) {
-                            youtubePlayer.pauseVideo();
+                    if (item.youtubePlaylistId) {
+                        if (autoplay && youtubePlayer && youtubePlayer.loadPlaylist) {
+                            youtubePlayer.loadPlaylist({ list: item.youtubePlaylistId });
+                            return;
+                        }
+                        if (youtubePlayer && youtubePlayer.cuePlaylist) {
+                            youtubePlayer.cuePlaylist({ list: item.youtubePlaylistId });
+                            return;
+                        }
+                    } else if (item.youtubeId) {
+                        if (autoplay && youtubePlayer && youtubePlayer.loadVideoById) {
+                            youtubePlayer.loadVideoById(item.youtubeId);
+                            return;
+                        }
+                        if (youtubePlayer && youtubePlayer.cueVideoById) {
+                            youtubePlayer.cueVideoById(item.youtubeId);
+                            return;
                         }
                     }
+                    resolve();
                 });
             });
         }
@@ -681,9 +691,9 @@
             },
             load: function (item, autoplay) {
                 const token = ++state.currentVideoToken;
-                if (item.youtubeId) {
+                if (item.youtubeId || item.youtubePlaylistId) {
                     showYouTubePlayer();
-                    return ensureYouTubePlayer(item.youtubeId, autoplay).then(function () { return token; });
+                    return ensureYouTubePlayer(item, autoplay).then(function () { return token; });
                 }
                 showHtml5Player();
                 dom.video.poster = item.thumbnail;
@@ -708,24 +718,19 @@
             play: function () {
                 if (state.playerMode === "youtube") {
                     if (youtubePlayer && youtubePlayer.playVideo) {
-                        if (youtubePlayer.mute) {
-                            youtubePlayer.mute();
+                        if (youtubePlayer.unMute) {
+                            youtubePlayer.unMute();
                         }
                         youtubePlayer.playVideo();
                     }
                     return Promise.resolve(true);
                 }
                 if (dom.video.src) {
-                    const shouldRestoreMuted = !dom.video.muted;
-                    if (shouldRestoreMuted) {
-                        dom.video.muted = true;
-                    }
+                    dom.video.muted = false;
                     return dom.video.play().then(function () {
                         return true;
-                    }).catch(function () {
-                        if (shouldRestoreMuted) {
-                            dom.video.muted = false;
-                        }
+                    }).catch(function (error) {
+                        console.warn("Playback failed or was blocked:", error);
                         syncPlayButton();
                         return false;
                     });

@@ -3287,4 +3287,67 @@ body.dashboard-theme-dark.landing-page .navbar-brand__name {
     color: #ffffff !important;
 }
 
+/* ========================================
+   Landing Page - Dark Mode Specific Overrides
+   ======================================== */
+body.dashboard-theme-dark.landing-page {
+    background:
+        radial-gradient(circle at 8% 8%, rgba(79, 124, 255, 0.15), transparent 30%),
+        radial-gradient(circle at 88% 0%, rgba(8, 145, 178, 0.15), transparent 28%),
+        #0b0f19;
+}
+
+body.dashboard-theme-dark.landing-page .hero .container {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+}
+
+body.dashboard-theme-dark.landing-page .eyebrow-tag {
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    background: rgba(96, 165, 250, 0.1);
+    color: #93c5fd;
+}
+
+body.dashboard-theme-dark.landing-page .hero-accent {
+    background: linear-gradient(90deg, #60a5fa, #38bdf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+body.dashboard-theme-dark.landing-page .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dashboard-theme-dark.landing-page .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dashboard-theme-dark.landing-page .navbar {
+    background: rgba(11, 15, 25, 0.85) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dashboard-theme-dark.landing-page .navbar-links a {
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05));
+    box-shadow: none;
+    color: #38bdf8 !important;
+}
+
+body.dashboard-theme-dark.landing-page .navbar-links a:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.2);
+    color: #ffffff !important;
+}
+
+body.dashboard-theme-dark.landing-page .feature-icon {
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    background: rgba(56, 189, 248, 0.1);
+}
+
 

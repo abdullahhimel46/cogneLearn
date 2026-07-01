@@ -26,8 +26,8 @@ spring:
     port: 587
     # Set MAIL_USERNAME and MAIL_PASSWORD as environment variables to enable real SMTP.
     # If not set, the app falls back to NoOpEmailService (no emails sent).
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:

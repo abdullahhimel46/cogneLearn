@@ -124,6 +124,13 @@ public class SecurityConfig {
                 .requestMatchers("/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/proxy/**").permitAll()
 
+                // Allow Swagger UI and OpenAPI documentation
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html"
+                ).permitAll()
+
                 // Allow only the public auth endpoints without an existing session.
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/logout")
                 .permitAll()
