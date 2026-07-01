@@ -1,0 +1,332 @@
+/* ========================================
+   cogneLearn - Our Mission Page
+   ======================================== */
+
+/* General Layout & Typography */
+.mission-page {
+    background: #F1F5F9;
+    color: #0f172a;
+}
+
+body.dashboard-theme-dark.mission-page {
+    background: #0b0f19;
+    color: #e2e8f0;
+}
+
+.mission-section {
+    padding: 8rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-container {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.mission-heading-huge {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    color: #0f172a;
+}
+body.dashboard-theme-dark.mission-page .mission-heading-huge {
+    color: #ffffff;
+}
+
+.mission-heading-large {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: #0f172a;
+}
+body.dashboard-theme-dark.mission-page .mission-heading-large {
+    color: #ffffff;
+}
+
+.mission-subtext {
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 650px;
+}
+
+body.dashboard-theme-dark.mission-page .mission-subtext {
+    color: #94a3b8;
+}
+
+/* Animations */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+.stagger-4 { transition-delay: 0.4s; }
+.stagger-5 { transition-delay: 0.5s; }
+
+/* Section 1: Hero */
+.mission-hero {
+    text-align: left;
+    padding-top: 10rem;
+    padding-bottom: 8rem;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.mission-hero .mission-container {
+    max-width: 700px;
+    margin: 0;
+}
+
+/* Section 2: Tutorial Hell */
+.tutorial-hell-section {
+    text-align: center;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.dashboard-theme-dark.mission-page .tutorial-hell-section {
+    background: rgba(15, 23, 42, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.tutorial-hell-sequence {
+    margin: 4rem 0 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dashboard-theme-dark.mission-page .tutorial-hell-sequence {
+    color: #94a3b8;
+}
+
+.tutorial-arrow {
+    display: flex;
+    justify-content: center;
+    color: #3b82f6;
+    opacity: 0.5;
+}
+
+.emotional-hook {
+    margin-top: 6rem;
+}
+
+.emotional-hook p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 4rem;
+}
+
+body.dashboard-theme-dark.mission-page .emotional-hook p {
+    color: #ffffff;
+}
+
+.emotional-hook h2 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.2;
+}
+
+/* Section 3: Workflow */
+.workflow-section {
+    padding: 8rem 1.5rem;
+}
+
+.workflow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-top: 4rem;
+}
+
+@media (max-width: 768px) {
+    .workflow-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.workflow-step {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.02);
+}
+
+body.dashboard-theme-dark.mission-page .workflow-step {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.workflow-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(8, 145, 178, 0.1);
+    color: #0891b2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+body.dashboard-theme-dark.mission-page .workflow-icon {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+}
+
+.workflow-text h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: #0f172a;
+}
+body.dashboard-theme-dark.mission-page .workflow-text h3 { color: #ffffff; }
+
+.workflow-text p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    color: #475569;
+}
+body.dashboard-theme-dark.mission-page .workflow-text p { color: #94a3b8; }
+
+.workflow-explanation {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #475569;
+}
+body.dashboard-theme-dark.mission-page .workflow-explanation { color: #94a3b8; }
+
+/* Section 4: Privacy */
+.privacy-section {
+    background: #030712;
+    color: #ffffff;
+    text-align: center;
+    padding: 10rem 1.5rem;
+}
+
+.privacy-section .mission-heading-large {
+    color: #ffffff;
+}
+
+.privacy-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 2rem;
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.privacy-section .mission-subtext {
+    color: #94a3b8;
+    margin: 0 auto;
+}
+
+.privacy-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 3rem;
+    align-items: center;
+}
+
+.privacy-feature {
+    font-size: 1.125rem;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.privacy-feature svg {
+    color: #22c55e;
+    width: 20px;
+    height: 20px;
+}
+
+/* Section 5: Vision */
+.vision-section {
+    padding: 10rem 1.5rem;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(79, 124, 255, 0.96), rgba(8, 145, 178, 0.95));
+    color: #ffffff;
+}
+
+.vision-section .mission-heading-large {
+    color: #ffffff;
+}
+
+.vision-section .mission-subtext {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 auto 3rem;
+}
+
+.vision-section .btn-primary {
+    background: #ffffff;
+    color: #315fef;
+    font-size: 1.125rem;
+    padding: 1rem 2.5rem;
+    border: none;
+}
+
+.vision-section .btn-primary:hover {
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Icons SVG styling */
+svg.lucide {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.privacy-icon svg.lucide {
+    width: 40px;
+    height: 40px;
+}
