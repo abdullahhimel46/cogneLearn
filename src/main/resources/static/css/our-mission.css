@@ -140,11 +140,10 @@ body.dashboard-theme-dark.mission-page .mission-body-text {
     }
 }
 
-/* Section 1: Hero */
 .mission-hero {
-    padding-top: 10rem;
+    padding-top: 6rem;
     padding-bottom: 6rem;
-    min-height: 90vh;
+    min-height: 80vh;
     display: flex;
     align-items: center;
 }
@@ -340,6 +339,30 @@ body.dashboard-theme-dark.mission-page .hero-mock-thumb { background: #475569; }
 .hero-title-spaced {
     margin-bottom: 2.5rem;
 }
+
+.hero-feature-statement-wrapper {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.hero-feature-top {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+body.dashboard-theme-dark.mission-page .hero-feature-top { color: #cbd5e1; }
+.hero-feature-bottom {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+body.dashboard-theme-dark.mission-page .hero-feature-bottom { color: #f8fafc; }
+.hero-feature-highlight {
+    color: #4f46e5;
+}
+body.dashboard-theme-dark.mission-page .hero-feature-highlight { color: #818cf8; }
 
 .hero-subtitle-group {
     margin-bottom: 2.5rem;
