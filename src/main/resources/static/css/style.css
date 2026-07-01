@@ -590,6 +590,7 @@ body.landing-page {
 .footer-links-section {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .footer-section-title {
@@ -605,6 +606,7 @@ body.landing-page {
 .footer-section-links {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.75rem;
 }
 
@@ -625,6 +627,7 @@ body.landing-page {
 .footer-social-section {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .social-icons-row {
