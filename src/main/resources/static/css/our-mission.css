@@ -4,7 +4,7 @@
 
 /* General Layout & Typography */
 .mission-page {
-    background: #F8FAFC;
+    background: #f1f5f9;
     color: #0f172a;
 }
 
@@ -146,6 +146,28 @@ body.dashboard-theme-dark.mission-page .mission-body-text {
     min-height: auto;
     display: flex;
     align-items: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #eef2ff 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+body.dashboard-theme-dark.mission-page .mission-hero {
+    background: transparent;
+}
+
+body.dashboard-theme-dark.mission-page .mission-hero::before {
+    display: none;
 }
 
 .mission-hero-grid {
@@ -400,7 +422,7 @@ body.dashboard-theme-dark.mission-page .hero-subtitle-group p {
 /* Section 2: Tutorial Hell */
 .tutorial-hell-section {
     text-align: center;
-    background: #ffffff;
+    background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
 }
 
 body.dashboard-theme-dark.mission-page .tutorial-hell-section {
@@ -559,7 +581,7 @@ body.dashboard-theme-dark.mission-page .better-way-logo { color: #818cf8; }
 /* Section 3: Workflow */
 .workflow-section {
     padding: 10rem 1.5rem;
-    background: #F8FAFC;
+    background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
 }
 
 body.dashboard-theme-dark.mission-page .workflow-section {
@@ -581,9 +603,9 @@ body.dashboard-theme-dark.mission-page .workflow-section {
     gap: 1rem;
     padding: 2.5rem;
     background: #ffffff;
-    border: 1px solid transparent;
+    border: 1px solid rgba(99, 102, 241, 0.1);
     border-radius: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.07);
     text-align: center;
     align-items: center;
     transition: all 0.4s ease;
@@ -596,8 +618,8 @@ body.dashboard-theme-dark.mission-page .workflow-step {
 
 .workflow-step:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.35);
 }
 
 body.dashboard-theme-dark.mission-page .workflow-step:hover {
