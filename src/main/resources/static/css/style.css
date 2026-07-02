@@ -484,16 +484,9 @@ body.landing-page {
    Footer
    ======================================== */
 
-/* ========================================
-   Footer (Premium Design)
-   ======================================== */
-
-/* ========================================
-   Footer (3-Column Premium Redesign)
-   ======================================== */
 
 .site-footer.footer-light {
-    padding: 3.5rem 0 2rem;
+    padding: 1rem 0 0;
     background: #030712; /* Deep Midnight */
     position: relative;
     overflow: hidden;
@@ -518,7 +511,7 @@ body.landing-page {
     display: grid;
     grid-template-columns: 1.2fr 1fr 1fr;
     gap: 2.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     position: relative;
     z-index: 1;
 }
@@ -660,12 +653,12 @@ body.landing-page {
 .footer-bottom-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .footer-bottom-content {
     text-align: center;
-    padding-top: 0.5rem;
+    padding-top: 0;
 }
 
 .footer-copyright {
