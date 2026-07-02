@@ -803,7 +803,7 @@ function checkEmailFormValid() {
   const body = el('emailTemplateBody').value.trim();
   const hasSelected = EmailState.selectedUsers.length > 0;
   
-  el('openSendModalBtn').disabled = (!subj || !body || !hasSelected);
+  el('openSendModalBtn').disabled = !(hasSelected && subj && body);
 }
 
 function initEmailsPage() {
@@ -1072,7 +1072,11 @@ async function init() {
   initLogsPage();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 /* ── Logs Page ───────────────────────────────────────────────── */
 let currentLogsPage = 0;

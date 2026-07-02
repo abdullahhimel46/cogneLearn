@@ -1,0 +1,282 @@
+/* ── Site Footer ─────────────────────────────────────────────── */
+.site-footer {
+  background: #030712;
+  padding: 5rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+  color: #94a3b8;
+  margin-left: var(--sidebar-w);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-collapsed .site-footer {
+  margin-left: var(--sidebar-collapsed-w);
+}
+
+/* Compact footer variant used on admin pages after login — smaller, centered */
+.site-footer.site-footer--compact {
+  padding: 1.25rem 0;
+  /* much shorter vertical space */
+}
+
+.site-footer.site-footer--compact .footer-main-grid {
+  /* Keep footer compact but spread brand and social to the edges
+     so there's clear space between the logo (left) and social icons (right).
+     Use full width inside the container and distribute space. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* put brand at left and social at right */
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.site-footer.site-footer--compact .footer-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Ensure social icons align to the right in compact footer */
+.site-footer.site-footer--compact .footer-social-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* hide verbose elements to keep the footer short */
+.site-footer.site-footer--compact .footer-light__tagline,
+.site-footer.site-footer--compact .footer-links-section,
+.site-footer.site-footer--compact .footer-contact-details,
+.site-footer.site-footer--compact .footer-section-title {
+  display: none !important;
+}
+
+.site-footer.site-footer--compact .social-icons-row {
+  margin-top: 0;
+}
+
+.site-footer.site-footer--compact .social-circle-btn {
+  width: 34px;
+  height: 34px;
+}
+
+.site-footer.site-footer--compact .footer-bottom-divider {
+  display: none;
+}
+
+.site-footer.site-footer--compact .footer-bottom-content {
+  justify-content: center;
+}
+
+.site-footer.site-footer--compact .footer-copyright {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.site-footer .container {
+  max-width: 1100px;
+  /* Slightly tighter for premium look */
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-main-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-light__brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-light__mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1, #0ea5e9);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.footer-light__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.footer-light__tagline {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.footer-contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-item {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  font-weight: 600;
+  opacity: 0.85;
+  display: block;
+}
+
+.contact-item.small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.footer-links-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-section-title {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.footer-section-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.footer-light__link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.footer-light__link:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.footer-social-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.social-icons-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.social-circle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.social-circle-btn.facebook {
+  background: #1877F2;
+}
+
+.social-circle-btn.instagram {
+  background: #E4405F;
+}
+
+.social-circle-btn.linkedin {
+  background: #0A66C2;
+}
+
+.social-circle-btn.github {
+  background: #333333;
+}
+
+.social-circle-btn:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.footer-bottom-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.footer-bottom-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-copyright {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.footer-light__mark {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #3b82f6, #0ea5e9) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+  border: none !important;
+  flex-shrink: 0 !important;
+}
+
+.footer-light__title {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--text-primary) !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+}
+
+@media (max-width: 768px) {
+  .footer__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer__links {
+    text-align: left;
+  }
+}
