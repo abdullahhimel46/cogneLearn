@@ -1,0 +1,25 @@
+/* ============================================================
+   Logs Page CSS
+   ============================================================ */
+
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-soft);
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+body.admin-theme-dark .pagination-controls {
+  background: var(--surface-soft);
+  border-color: var(--border);
+}

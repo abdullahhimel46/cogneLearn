@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Admin - cogneLearn</title>
+  <meta name="description" content="cogneLearn admin settings.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/admin-sidebar.css">
+  <link rel="stylesheet" href="../../css/admin.css">
+  <link rel="stylesheet" href="../../css/admin-footer.css">
+  <link rel="stylesheet" href="../../css/admin/settings.css">
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <div id="admin-sidebar-container"></div>
+
+    <main class="main" id="main">
+
+      <section class="page" id="page-settings" aria-labelledby="heading-settings">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Configuration</p>
+            <h1 class="page__title" id="heading-settings">Settings</h1>
+          </div>
+          <div class="admin-header-actions">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="panel" aria-labelledby="heading-system-settings">
+          <h2 class="panel__title" id="heading-system-settings">System Controls</h2>
+
+          <div class="setting-row">
+            <div class="setting-row__info">
+              <p class="setting-row__name">Maintenance Mode</p>
+              <p class="setting-row__desc">Prevents users from logging in while maintenance is in progress.</p>
+            </div>
+            <button class="toggle" id="maintenanceToggle" role="switch" aria-checked="false"
+              aria-label="Toggle maintenance mode" type="button">
+              <span class="toggle__knob"></span>
+            </button>
+          </div>
+
+          <div class="setting-row setting-row--form">
+            <div class="setting-row__info">
+              <label class="setting-row__name" for="appNameInput">App Name</label>
+              <p class="setting-row__desc">Display name shown in the navigation and emails.</p>
+            </div>
+            <div class="setting-row__control">
+              <input class="field" id="appNameInput" type="text" value="cogneLearn" maxlength="64"
+                aria-label="Application display name">
+              <button class="btn-save" id="saveAppNameBtn" type="button">Save</button>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="admin-footer-container"></div>
+
+  <script>
+    async function loadAdminComponents() {
+      try {
+        const [sidebarRes, footerRes] = await Promise.all([
+          fetch('../../fragment/admin-sidebar.html'),
+          fetch('../../fragment/admin-footer.html')
+        ]);
+        
+        document.getElementById('admin-sidebar-container').innerHTML = await sidebarRes.text();
+        document.getElementById('admin-footer-container').innerHTML = await footerRes.text();
+
+        const scripts = [
+          '../../js/utils.js',
+          '../../js/auth.js',
+          '../../js/admin/admin-common.js',
+          '../../js/admin/settings.js'
+        ];
+        
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load admin components:", err);
+      }
+    }
+    
+    loadAdminComponents();
+  </script>
+</body>
+</html>

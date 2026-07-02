@@ -6,29 +6,29 @@
 
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
-  --bg: #f1f5f9;
+  --bg: #eff3f8;
   --surface: #ffffff;
   --surface-soft: #f8fafc;
-  --border: #e2e8f0;
-  --border-focus: #c7d2fe;
+  --border: #d1d9e6;
+  --border-focus: #a5b4fc;
 
   --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748b;
 
   --primary: #4f46e5;
   --primary-dark: #4338ca;
-  --primary-light: rgba(79, 70, 229, 0.10);
-  --primary-glow: rgba(79, 70, 229, 0.22);
+  --primary-light: rgba(79, 70, 229, 0.12);
+  --primary-glow: rgba(79, 70, 229, 0.25);
 
   --success: #10b981;
-  --success-light: rgba(16, 185, 129, 0.10);
+  --success-light: rgba(16, 185, 129, 0.12);
   --danger: #ef4444;
-  --danger-light: rgba(239, 68, 68, 0.10);
+  --danger-light: rgba(239, 68, 68, 0.12);
 
-  --shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
-  --shadow-soft: 0 4px 15px rgba(15, 23, 42, 0.04);
-  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06);
+  --shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 4px 20px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 12px 35px rgba(15, 23, 42, 0.08);
 
   --sidebar-w: 250px;
   --sidebar-collapsed-w: 80px;

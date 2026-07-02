@@ -1,0 +1,162 @@
+/* ============================================================
+   Settings Page CSS
+   ============================================================ */
+
+/* ── Settings ────────────────────────────────────────────────── */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row:first-of-type {
+  padding-top: 0;
+}
+
+.setting-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-row--form {
+  align-items: flex-start;
+}
+
+.setting-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-row__name {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.setting-row__desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+  transition: background var(--ease), box-shadow var(--ease);
+  cursor: pointer;
+}
+
+.toggle[aria-checked="true"] {
+  background: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.20);
+  transition: transform var(--ease);
+}
+
+.toggle[aria-checked="true"] .toggle__knob {
+  transform: translateX(18px);
+}
+
+.setting-row__control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.field {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 9px 14px;
+  outline: none;
+  width: 210px;
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.10);
+}
+
+.btn-save {
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--ease);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-save:hover {
+  background: var(--surface);
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+body.admin-theme-dark .toggle:not([aria-checked="true"]) {
+  background: #334155;
+}
+
+body.admin-theme-dark .btn-save {
+  background: var(--surface);
+  border-color: var(--border);
+  color: #fff;
+}
+
+body.admin-theme-dark .btn-save:hover {
+  background: var(--surface-hover);
+  border-color: #64748b;
+}
+
+@media (max-width: 560px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .setting-row__control {
+    width: 100%;
+  }
+
+  .field {
+    width: 100%;
+  }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users - Admin - cogneLearn</title>
+  <meta name="description" content="cogneLearn user management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/admin-sidebar.css">
+  <link rel="stylesheet" href="../../css/admin.css">
+  <link rel="stylesheet" href="../../css/admin-footer.css">
+  <link rel="stylesheet" href="../../css/admin/users.css">
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <div id="admin-sidebar-container"></div>
+
+    <main class="main" id="main">
+
+      <section class="page" id="page-users" aria-labelledby="heading-users">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Management</p>
+            <h1 class="page__title" id="heading-users">Users</h1>
+          </div>
+          <div class="admin-header-actions">
+            <input class="search-input" id="userSearchInput" type="search" placeholder="Search by name or email…"
+              aria-label="Search users">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="panel panel--flush" aria-label="User table">
+          <div class="table-wrap">
+            <table class="data-table" id="usersTable" aria-label="Registered users">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Joined</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="admin-footer-container"></div>
+
+  <!-- USER INSPECTION SYSTEM CONTAINER -->
+  <div id="userModal" class="user-inspect-modal hidden">
+    <div class="user-inspect-backdrop" onclick="closeModal()"></div>
+    <div class="user-inspect-card" id="modalContent"></div>
+  </div>
+
+  <script>
+    async function loadAdminComponents() {
+      try {
+        const [sidebarRes, footerRes] = await Promise.all([
+          fetch('../../fragment/admin-sidebar.html'),
+          fetch('../../fragment/admin-footer.html')
+        ]);
+        
+        document.getElementById('admin-sidebar-container').innerHTML = await sidebarRes.text();
+        document.getElementById('admin-footer-container').innerHTML = await footerRes.text();
+
+        const scripts = [
+          '../../js/utils.js',
+          '../../js/auth.js',
+          '../../js/admin/admin-common.js',
+          '../../js/admin/users.js'
+        ];
+        
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load admin components:", err);
+      }
+    }
+    
+    loadAdminComponents();
+  </script>
+</body>
+</html>

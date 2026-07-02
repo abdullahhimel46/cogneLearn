@@ -1,0 +1,93 @@
+/* ============================================================
+   Emails Page CSS
+   ============================================================ */
+
+/* ── Email Categories & Tabs ───────────────────────────────────── */
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.category-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all var(--ease);
+}
+
+.category-tab:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.category-tab.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Tooltip and Triggers */
+.trigger-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  cursor: help;
+  margin-left: 4px;
+}
+
+/* ── Modal Overlay ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+}
+
+body.admin-theme-dark .modal-content {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.hidden {
+  display: none !important;
+}

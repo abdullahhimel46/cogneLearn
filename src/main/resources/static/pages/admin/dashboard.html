@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — cogneLearn</title>
+  <meta name="description" content="cogneLearn system control panel for administrators.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/admin-sidebar.css">
+  <link rel="stylesheet" href="../../css/admin.css">
+  <link rel="stylesheet" href="../../css/admin-footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <div id="admin-sidebar-container"></div>
+
+    <main class="main" id="main">
+
+      <section class="page" id="page-overview" aria-labelledby="heading-overview">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">System</p>
+            <h1 class="page__title" id="heading-overview">Overview</h1>
+          </div>
+          <div class="admin-header-actions">
+            <time class="page__timestamp" id="adminTimestamp" datetime=""></time>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="stats-row" role="list" aria-label="Key metrics">
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Total Users</p>
+            <p class="stat-card__value" id="statTotalUsers">—</p>
+          </article>
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Active Sessions</p>
+            <p class="stat-card__value" id="statActiveSessions">—</p>
+          </article>
+          <article class="stat-card" role="listitem">
+            <p class="stat-card__label">Total Playlists</p>
+            <p class="stat-card__value" id="statTotalPlaylists">—</p>
+          </article>
+        </div>
+
+        <section class="panel" aria-labelledby="heading-activity">
+          <h2 class="panel__title" id="heading-activity">Recent Activity Overview</h2>
+          <div class="activity-dashboard">
+            <div class="activity-charts">
+              <div class="chart-container">
+                <canvas id="activityTrendChart"></canvas>
+              </div>
+              <div class="chart-container chart-container--doughnut">
+                <canvas id="activityTypeChart"></canvas>
+              </div>
+            </div>
+            <h3 class="panel__subtitle">Detailed Logs</h3>
+            <ul class="activity-list activity-list--compact" id="activityList" aria-live="polite"></ul>
+            <div style="text-align: center; margin-top: 16px;">
+              <button class="btn-elevated" id="viewAllLogsBtn" type="button" onclick="window.location.href='logs.html'">View All Logs &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="heading-sysinfo">
+          <h2 class="panel__title" id="heading-sysinfo">System Info</h2>
+          <dl class="info-grid">
+            <div class="info-row">
+              <dt class="info-row__key">Server Status</dt>
+              <dd class="info-row__val" id="sysServerStatus">—</dd>
+            </div>
+            <div class="info-row">
+              <dt class="info-row__key">API Latency</dt>
+              <dd class="info-row__val" id="sysApiLatency">—</dd>
+            </div>
+            <div class="info-row">
+              <dt class="info-row__key">Error Count (24 h)</dt>
+              <dd class="info-row__val" id="sysErrorCount">—</dd>
+            </div>
+          </dl>
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="admin-footer-container"></div>
+
+  <script>
+    async function loadAdminComponents() {
+      try {
+        const [sidebarRes, footerRes] = await Promise.all([
+          fetch('../../fragment/admin-sidebar.html'),
+          fetch('../../fragment/admin-footer.html')
+        ]);
+        
+        document.getElementById('admin-sidebar-container').innerHTML = await sidebarRes.text();
+        document.getElementById('admin-footer-container').innerHTML = await footerRes.text();
+
+        const scripts = [
+          '../../js/utils.js',
+          '../../js/auth.js',
+          '../../js/admin/admin-common.js',
+          '../../js/admin/dashboard.js'
+        ];
+        
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load admin components:", err);
+      }
+    }
+    
+    loadAdminComponents();
+  </script>
+</body>
+</html>

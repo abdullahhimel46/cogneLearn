@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emails - Admin - cogneLearn</title>
+  <meta name="description" content="cogneLearn email campaigns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/admin-sidebar.css">
+  <link rel="stylesheet" href="../../css/admin.css">
+  <link rel="stylesheet" href="../../css/admin-footer.css">
+  <link rel="stylesheet" href="../../css/admin/emails.css">
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <div id="admin-sidebar-container"></div>
+
+    <main class="main" id="main">
+
+      <section class="page" id="page-emails" aria-labelledby="heading-emails">
+
+        <header class="page__header">
+          <div>
+            <p class="page__eyebrow">Outreach</p>
+            <h1 class="page__title" id="heading-emails">Email Campaigns</h1>
+          </div>
+          <div class="admin-header-actions">
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                </svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="panel panel--stack" aria-labelledby="heading-email-tabs">
+          <h2 class="panel__title" id="heading-email-tabs">Campaign Categories</h2>
+          <div class="category-tabs" id="emailCategoryTabs">
+            <button class="category-tab active" data-category="INACTIVE_USER">Inactive User</button>
+            <button class="category-tab" data-category="LOW_FOCUS">Low Focus</button>
+            <button class="category-tab" data-category="STREAK">Streak Milestone</button>
+            <button class="category-tab" data-category="CUSTOM_EMAIL">Custom Email ✉️</button>
+          </div>
+        </section>
+
+        <section class="panel panel--stack" id="emailCategoryPanel">
+          <h2 class="panel__title" id="activeCategoryTitle">🧠 INACTIVE_USER</h2>
+          <div class="trigger-info" style="background: var(--surface-hover); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+            <p id="activeCategoryTrigger" style="margin:0; font-size: 0.9rem;"><strong>Trigger:</strong> No activity for 3 days 
+              <span class="tooltip-icon" title="This email is triggered when a user remains inactive for more than 3 days.">ℹ️</span>
+            </p>
+          </div>
+
+          <div class="recipients-selector-wrap" style="margin-bottom: 20px;">
+            <label class="pending-notification-card__label" style="display:block; margin-bottom:8px;">Recipients</label>
+            <div style="display:flex; gap:12px; margin-bottom: 12px; align-items:center;">
+              <input class="field" id="userCampaignSearch" type="text" placeholder="Search users... 🔍" style="flex:1; margin:0;">
+              <button class="btn-action hidden" id="selectAllCampaignUsers" type="button" style="white-space:nowrap; padding: 10px 16px;">Select All Users</button>
+            </div>
+            
+            <div id="campaignUsersList" class="checkbox-list-container" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--surface); display:flex; flex-direction:column; gap:8px;">
+            </div>
+            <p id="campaignSelectedCount" style="font-size:0.9rem; color:var(--text-secondary); margin: 8px 0 0 0; font-weight:600;">Selected: 0 users</p>
+          </div>
+
+          <div class="email-compose">
+            <label class="pending-notification-card__label" for="emailTemplateSubject">Subject</label>
+            <input class="field" id="emailTemplateSubject" type="text" maxlength="200" placeholder="Email subject">
+            
+            <label class="pending-notification-card__label" for="emailTemplateBody">Message</label>
+            <textarea class="pending-notification-edit" id="emailTemplateBody" rows="6"
+              placeholder="Write your message…"></textarea>
+            
+            <div class="pending-notification-card__actions" style="margin-top: 16px;">
+              <button class="btn-action" id="previewEmailBtn" type="button">Preview</button>
+              <button class="btn-action" id="saveTemplateBtn" type="button">Save</button>
+              <button class="btn-elevated" id="openSendModalBtn" type="button" disabled>Send</button>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="admin-footer-container"></div>
+
+  <!-- SEND EMAIL MODAL -->
+  <div id="sendEmailModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 id="sendEmailModalTitle" style="margin-top:0;">Send Email → INACTIVE_USER</h2>
+      <p class="modal-desc" style="color:var(--text-secondary); margin-bottom: 16px;">This email will be sent to users matching this condition.</p>
+      
+      <div class="modal-preview" style="background:var(--surface-hover); padding:16px; border-radius:8px; margin-bottom: 20px;">
+        <p style="margin:0 0 8px 0; word-break: break-all;"><strong>To:</strong> <span id="modalPreviewTo" style="color:var(--primary); font-weight:600;"></span></p>
+        <p style="margin:0 0 8px 0;"><strong>Subject:</strong> <span id="modalPreviewSubject"></span></p>
+        <p style="margin:0 0 4px 0;"><strong>Body:</strong></p>
+        <p id="modalPreviewBody" style="white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin:0;"></p>
+      </div>
+
+      <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end;">
+        <button class="btn-action" id="cancelSendBtn" type="button">Cancel</button>
+        <button class="btn-elevated" id="confirmSendBtn" type="button">Send Email</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadAdminComponents() {
+      try {
+        const [sidebarRes, footerRes] = await Promise.all([
+          fetch('../../fragment/admin-sidebar.html'),
+          fetch('../../fragment/admin-footer.html')
+        ]);
+        
+        document.getElementById('admin-sidebar-container').innerHTML = await sidebarRes.text();
+        document.getElementById('admin-footer-container').innerHTML = await footerRes.text();
+
+        const scripts = [
+          '../../js/utils.js',
+          '../../js/auth.js',
+          '../../js/admin/admin-common.js',
+          '../../js/admin/emails.js'
+        ];
+        
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load admin components:", err);
+      }
+    }
+    
+    loadAdminComponents();
+  </script>
+</body>
+</html>
