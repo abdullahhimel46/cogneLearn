@@ -141,9 +141,9 @@ body.dashboard-theme-dark.mission-page .mission-body-text {
 }
 
 .mission-hero {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
-    min-height: 80vh;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    min-height: auto;
     display: flex;
     align-items: center;
 }
@@ -341,7 +341,7 @@ body.dashboard-theme-dark.mission-page .hero-mock-thumb { background: #475569; }
 }
 
 .hero-feature-statement-wrapper {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -394,7 +394,7 @@ body.dashboard-theme-dark.mission-page .hero-subtitle-group p {
 }
 
 .hero-cta-wrapper {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
 }
 
 /* Section 2: Tutorial Hell */
@@ -411,7 +411,7 @@ body.dashboard-theme-dark.mission-page .tutorial-hell-section {
     position: relative;
     width: 600px;
     height: 600px;
-    margin: 0 auto 6rem auto;
+    margin: 0 auto 1rem auto;
 }
 
 .tutorial-arrows-svg {
@@ -704,7 +704,7 @@ body.dashboard-theme-dark.mission-page .workflow-text p {
 
 /* Section 5: Vision */
 .vision-section {
-    padding: 12rem 1.5rem;
+    padding: 3rem 0.5rem 1.5rem 0.5rem;
     text-align: center;
     background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #1d4ed8 100%);
     color: #ffffff;
