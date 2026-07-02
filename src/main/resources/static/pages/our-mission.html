@@ -51,10 +51,10 @@
                 <div class="mission-hero-grid">
                     <!-- Left: Text -->
                     <div class="reveal-on-scroll hero-content-left">
-                        <p class="hero-mock-kicker" style="margin-bottom: 1rem; font-size: 0.875rem;">FOCUS SESSION</p>
+                        <!-- <p class="hero-mock-kicker" style="margin-bottom: 1rem; font-size: 0.875rem;">FOCUS SESSION</p> -->
                         <h1 class="mission-heading-huge hero-title-spaced" style="font-size: clamp(2rem, 4vw, 3rem);">
-                            Imagine a place where<br>
-                            YouTube helps you learn,<br><br>
+                            Imagine a place where YouTube<br>
+                            helps you learn,<br>
                             instead of distracting you.
                         </h1>
                         
@@ -65,9 +65,9 @@
                         
                         <hr class="hero-divider">
 
-                        <p class="mission-body-text hero-body-constrained" style="font-size: 1rem; margin-bottom: 2rem;">
+                        <p class="mission-body-text hero-body-constrained" style="font-size: 1rem; margin-bottom: 1.5rem;">
                             Millions of students turn to YouTube every day to learn something new.
-                            <br><br>
+                            <br>
                             But YouTube wasn't designed to help you stay focused. It was designed to keep you watching.
                         </p>
                         
@@ -168,40 +168,100 @@
         <!-- SECTION 2: Tutorial Hell -->
         <section class="mission-section tutorial-hell-section">
             <div class="mission-container">
-                <h2 class="mission-heading-large reveal-on-scroll">Ever found yourself stuck in tutorial hell?</h2>
-
-                <div class="tutorial-hell-sequence">
-                    <div class="reveal-on-scroll stagger-1">It starts with one tutorial...</div>
-                    <div class="tutorial-arrow reveal-on-scroll stagger-1"><svg class="lucide" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M12 5v14M19 12l-7 7-7-7" />
-                        </svg></div>
-                    <div class="reveal-on-scroll stagger-2">Watch.</div>
-                    <div class="tutorial-arrow reveal-on-scroll stagger-2"><svg class="lucide" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M12 5v14M19 12l-7 7-7-7" />
-                        </svg></div>
-                    <div class="reveal-on-scroll stagger-3">Save.</div>
-                    <div class="tutorial-arrow reveal-on-scroll stagger-3"><svg class="lucide" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M12 5v14M19 12l-7 7-7-7" />
-                        </svg></div>
-                    <div class="reveal-on-scroll stagger-4">Repeat.</div>
-                    <div class="tutorial-arrow reveal-on-scroll stagger-4"><svg class="lucide" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M12 5v14M19 12l-7 7-7-7" />
-                        </svg></div>
-                    <div class="reveal-on-scroll stagger-5">No real progress.</div>
+                <div class="tutorial-hell-header text-center reveal-on-scroll" style="text-align: center; margin-bottom: 4rem;">
+                    <h2 class="mission-heading-large" style="margin-bottom: 0.5rem;">Ever found yourself <span style="color: #4f46e5;">stuck in tutorial hell?</span></h2>
+                    <p class="mission-subtext" style="margin: 0 auto; max-width: 600px;">It starts with good intentions, but somehow you end up here.</p>
                 </div>
 
-                <div class="emotional-hook">
-                    <hr class="minimal-divider reveal-on-scroll">
-                    <p class="reveal-on-scroll stagger-1">
-                        There has to be a better way.
-                    </p>
-                    <h2 class="reveal-on-scroll stagger-2">That's why we built <br><span
-                            class="glow-text">cogneLearn.</span></h2>
-                    <hr class="minimal-divider reveal-on-scroll stagger-3">
+                <div class="tutorial-hell-circle reveal-on-scroll">
+                    <svg class="tutorial-arrows-svg" viewBox="0 0 600 600" fill="none">
+                        <!-- Curved dashed arrows will go here -->
+                        <!-- 1 to 2 -->
+                        <path d="M 380 140 Q 480 180 500 250" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-yellow)" />
+                        <!-- 2 to 3 -->
+                        <path d="M 470 380 Q 450 480 370 510" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-blue)" />
+                        <!-- 3 to 4 -->
+                        <path d="M 230 510 Q 150 480 130 380" stroke="#22c55e" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-green)" />
+                        <!-- 4 to 5 -->
+                        <path d="M 100 250 Q 120 180 220 140" stroke="#f97316" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-orange)" />
+                        
+                        <defs>
+                            <marker id="arrow-yellow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#fbbf24" />
+                            </marker>
+                            <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                            </marker>
+                            <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" />
+                            </marker>
+                            <marker id="arrow-orange" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" />
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <!-- Center Node -->
+                    <div class="th-node th-center-node">
+                        <div class="th-icon-circle" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                        </div>
+                        <h3 style="color: #ef4444;">Tutorial Hell</h3>
+                        <p>The endless cycle<br>we all face.</p>
+                    </div>
+
+                    <!-- Node 1: Top -->
+                    <div class="th-node th-node-1">
+                        <div class="th-icon-circle" style="color: #8b5cf6; background: rgba(139, 92, 246, 0.1);">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+                        </div>
+                        <h3>Want to Learn</h3>
+                        <p>A new skill, a new<br>beginning.</p>
+                    </div>
+
+                    <!-- Node 2: Right -->
+                    <div class="th-node th-node-2">
+                        <div class="th-icon-circle" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+                        </div>
+                        <h3>Start a Course</h3>
+                        <p>Create a plan,<br>save tutorials.</p>
+                    </div>
+
+                    <!-- Node 3: Bottom Right -->
+                    <div class="th-node th-node-3">
+                        <div class="th-icon-circle" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                        </div>
+                        <h3>Lose Momentum</h3>
+                        <p>Only 5-20%<br>completed.</p>
+                    </div>
+
+                    <!-- Node 4: Bottom Left -->
+                    <div class="th-node th-node-4">
+                        <div class="th-icon-circle" style="color: #22c55e; background: rgba(34, 197, 94, 0.1);">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                        </div>
+                        <h3>Start Again</h3>
+                        <p>Another tutorial,<br>another playlist.</p>
+                    </div>
+
+                    <!-- Node 5: Left -->
+                    <div class="th-node th-node-5">
+                        <div class="th-icon-circle" style="color: #f97316; background: rgba(249, 115, 22, 0.1);">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" x2="9.01" y1="9" y2="9"></line><line x1="15" x2="15.01" y1="9" y2="9"></line></svg>
+                        </div>
+                        <h3>Motivation<br>Fades Away</h3>
+                        <p>Feel overwhelmed,<br>take a break.</p>
+                    </div>
+                </div>
+
+                <div class="better-way-box reveal-on-scroll">
+                    <div class="better-way-icon">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="#4f46e5" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <h3>There has to be a better way.</h3>
+                    <p>That's why we built <br><span class="better-way-logo">cogneLearn.</span></p>
                 </div>
             </div>
         </section>

@@ -337,7 +337,7 @@ body.dashboard-theme-dark.mission-page .hero-mock-thumb { background: #475569; }
 }
 
 .hero-title-spaced {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
 }
 
 .hero-feature-statement-wrapper {
@@ -365,7 +365,7 @@ body.dashboard-theme-dark.mission-page .hero-feature-bottom { color: #f8fafc; }
 body.dashboard-theme-dark.mission-page .hero-feature-highlight { color: #818cf8; }
 
 .hero-subtitle-group {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
 }
 
 .hero-subtitle-group p {
@@ -384,13 +384,13 @@ body.dashboard-theme-dark.mission-page .hero-subtitle-group p {
     height: 1px;
     opacity: 0.15;
     background: currentColor;
-    margin: 0 0 2.5rem 0;
+    margin: 0 0 1.5rem 0;
     border: none;
 }
 
 .hero-body-constrained {
     max-width: 500px;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .hero-cta-wrapper {
@@ -407,67 +407,154 @@ body.dashboard-theme-dark.mission-page .tutorial-hell-section {
     background: #0b0f19;
 }
 
-.tutorial-hell-sequence {
-    margin: 3rem auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #64748b;
-    max-width: 400px;
+.tutorial-hell-circle {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    margin: 0 auto 6rem auto;
 }
 
-body.dashboard-theme-dark.mission-page .tutorial-hell-sequence {
-    color: #94a3b8;
+.tutorial-arrows-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
-.tutorial-arrow {
-    display: flex;
-    justify-content: center;
-    color: #cbd5e1;
-    margin: 0.5rem 0;
+.th-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    width: 180px;
+    z-index: 1;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+body.dashboard-theme-dark.mission-page .th-node {
+    background: #1e293b;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid #334155;
 }
 
-body.dashboard-theme-dark.mission-page .tutorial-arrow {
-    color: #475569;
-}
-
-.emotional-hook {
-    margin-top: 4rem;
-}
-
-.emotional-hook p {
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #475569;
-    margin-bottom: 2rem;
-}
-
-body.dashboard-theme-dark.mission-page .emotional-hook p {
-    color: #94a3b8;
-}
-
-.emotional-hook h2 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    color: #0f172a;
-    line-height: 1.2;
+.th-node h3 {
+    font-size: 0.875rem;
     font-weight: 700;
+    color: #0f172a;
+    margin: 0.5rem 0 0.25rem 0;
+}
+body.dashboard-theme-dark.mission-page .th-node h3 { color: #f8fafc; }
+
+.th-node p {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.4;
+    margin: 0;
+}
+body.dashboard-theme-dark.mission-page .th-node p { color: #94a3b8; }
+
+.th-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
-body.dashboard-theme-dark.mission-page .emotional-hook h2 {
-    color: #ffffff;
+.th-center-node {
+    top: 50%;
+    left: 50%;
+    width: 220px;
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 60px rgba(239, 68, 68, 0.1);
+}
+.th-node-1 { top: 15%; left: 50%; }
+.th-node-2 { top: 38%; left: 85%; }
+.th-node-3 { top: 75%; left: 75%; }
+.th-node-4 { top: 75%; left: 25%; }
+.th-node-5 { top: 38%; left: 15%; }
+
+@media (max-width: 768px) {
+    .tutorial-hell-circle {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        height: auto;
+        width: 100%;
+    }
+    .tutorial-arrows-svg {
+        display: none;
+    }
+    .th-node {
+        position: relative;
+        top: auto !important;
+        left: auto !important;
+        transform: none;
+        width: 100%;
+        max-width: 320px;
+    }
 }
 
-.glow-text {
-    color: #2563EB;
-    text-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+.better-way-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #f8fafc, #eff6ff);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 24px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.05);
+}
+body.dashboard-theme-dark.mission-page .better-way-box {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
-body.dashboard-theme-dark.mission-page .glow-text {
-    color: #60a5fa;
-    text-shadow: 0 0 30px rgba(96, 165, 250, 0.6);
+.better-way-icon {
+    width: 48px;
+    height: 48px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.1);
 }
+body.dashboard-theme-dark.mission-page .better-way-icon {
+    background: #0b0f19;
+}
+
+.better-way-box h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+body.dashboard-theme-dark.mission-page .better-way-box h3 { color: #f8fafc; }
+
+.better-way-box p {
+    font-size: 1.125rem;
+    color: #475569;
+}
+body.dashboard-theme-dark.mission-page .better-way-box p { color: #cbd5e1; }
+
+.better-way-logo {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #4f46e5;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+body.dashboard-theme-dark.mission-page .better-way-logo { color: #818cf8; }
 
 /* Section 3: Workflow */
 .workflow-section {
