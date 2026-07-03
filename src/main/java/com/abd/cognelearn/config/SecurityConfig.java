@@ -117,6 +117,7 @@ public class SecurityConfig {
                     "/pages/**",
                     "/css/**",
                     "/js/**",
+                    "/fragment/**",
                     "/public/**"
                 ).permitAll()
 
