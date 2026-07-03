@@ -16,6 +16,11 @@
 </head>
 
 <body>
+  <script>
+    if (localStorage.getItem('cognelearn_admin_sidebar') === 'collapsed' || (window.innerWidth <= 1024 && localStorage.getItem('cognelearn_admin_sidebar') !== 'expanded')) {
+      document.body.classList.add('sidebar-collapsed');
+    }
+  </script>
 
   <div class="shell">
 
