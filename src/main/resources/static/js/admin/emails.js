@@ -29,7 +29,7 @@ const EmailState = {
       tooltip: 'This campaign celebrates users who have achieved a 7-day or longer daily learning streak. Positive reinforcement at milestone moments dramatically improves long-term engagement. This email acknowledges their dedication, celebrates the achievement, and motivates them to push even further.'
     },
     'CUSTOM_EMAIL': {
-      title: '✉️ CUSTOM EMAIL',
+      title: '<svg viewBox="0 0 24 24" width="24" height="24" style="vertical-align:-4px; margin-right:4px;"><path fill="#EA4335" d="M2 6v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6L12 13 2 6z"/><path fill="#C5221F" d="M2 6l10 7 10-7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/></svg> CUSTOM EMAIL',
       trigger: 'Fully manual — you choose the recipients, subject, and message content',
       audience: 'Manually selected recipients from the full user list below — use this for announcements, one-on-one messages, or any campaign not covered by the above templates.',
       tooltip: 'A fully custom email campaign with no automatic targeting rules. The admin manually picks which users to contact, writes a subject line, and composes the email body from scratch. Use this for system announcements, special offers, direct support messages, or any ad-hoc communication need.'
@@ -73,7 +73,7 @@ async function renderEmails() {
     EmailState.template.body = '';
     el('emailTemplateSubject').value = '';
     el('emailTemplateBody').value = '';
-    el('activeCategoryTitle').textContent = info.title;
+    el('activeCategoryTitle').innerHTML = info.title;
     el('activeCategoryTrigger').innerHTML = `<strong>Trigger:</strong> ${info.trigger} <span class="tooltip-icon" title="${info.tooltip}">ℹ️</span>`;
     const audienceEl = document.getElementById('activeCategoryAudience');
     if (audienceEl) {
@@ -102,7 +102,7 @@ async function fetchEmailTemplate(category) {
     console.error("Failed to fetch template", e);
   }
 
-  el('activeCategoryTitle').textContent = info.title;
+  el('activeCategoryTitle').innerHTML = info.title;
   el('activeCategoryTrigger').innerHTML = `<strong>Trigger:</strong> ${info.trigger} <span class="tooltip-icon" title="${info.tooltip}">ℹ️</span>`;
   const audienceEl2 = document.getElementById('activeCategoryAudience');
   if (audienceEl2) {

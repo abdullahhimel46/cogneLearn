@@ -104,8 +104,9 @@ const Auth = {
             LocalDB.setUserScope(null);
         }
         localStorage.removeItem('cognelearn_scoped_user_id');
+        const onAdmin = window.location.pathname.includes('/pages/admin/');
         const onPages = window.location.pathname.includes('/pages/');
-        window.location.replace(onPages ? 'login.html' : 'pages/login.html');
+        window.location.replace(onAdmin ? '../login.html' : onPages ? 'login.html' : 'pages/login.html');
     },
 
     /**

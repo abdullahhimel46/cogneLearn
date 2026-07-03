@@ -222,5 +222,18 @@ async function initCommon() {
   initSidebarActiveLink();
   initTheme();
   renderTimestamp();
+
+  const logoutBtn = document.getElementById('adminLogoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (window.Auth && typeof window.Auth.logout === 'function') {
+        window.Auth.logout();
+      } else {
+        localStorage.removeItem('cognelearn_user');
+        window.location.replace('../login.html');
+      }
+    });
+  }
+
   return true;
 }
