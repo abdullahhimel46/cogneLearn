@@ -1,4 +1,4 @@
-(function () {
+function initPlayer() {
     const DEFAULT_DURATION_MINUTES = 25;
     const DEFAULT_CYCLES = 2;
     const YT_STATE = { ENDED: 0, PLAYING: 1, PAUSED: 2, CUED: 5 };
@@ -1054,4 +1054,10 @@
     }
 
     init();
-})();
+}
+
+if (document.readyState === 'loading' || (document.getElementById('sidebar-container') && !document.getElementById('sidebar-container').innerHTML)) {
+    document.addEventListener('componentsLoaded', initPlayer);
+} else {
+    initPlayer();
+}

@@ -1,4 +1,4 @@
-(function () {
+function initPlaylistsPage() {
     const state = {
         playlists: [],
         playlistItems: [],
@@ -530,4 +530,10 @@
     }
 
     init();
-})();
+}
+
+if (document.readyState === 'loading' || (document.getElementById('sidebar-container') && !document.getElementById('sidebar-container').innerHTML)) {
+    document.addEventListener('componentsLoaded', initPlaylistsPage);
+} else {
+    initPlaylistsPage();
+}

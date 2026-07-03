@@ -485,6 +485,72 @@ body.landing-page {
    ======================================== */
 
 
+.site-footer {
+    background: #030712;
+    padding: 5rem 0 3rem;
+    position: relative;
+    overflow: hidden;
+    color: #94a3b8;
+    margin-left: 0;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-body .site-footer {
+    margin-left: 250px;
+}
+
+body.sidebar-collapsed .site-footer {
+    margin-left: 84px;
+}
+
+/* Compact footer variant used on logged-in user pages */
+.site-footer.site-footer--compact {
+    padding: 1.25rem 0;
+}
+.site-footer.site-footer--compact .footer-main-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+.site-footer.site-footer--compact .footer-brand-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.site-footer.site-footer--compact .footer-social-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.site-footer.site-footer--compact .footer-light__tagline,
+.site-footer.site-footer--compact .footer-links-section,
+.site-footer.site-footer--compact .footer-contact-details,
+.site-footer.site-footer--compact .footer-section-title {
+    display: none !important;
+}
+.site-footer.site-footer--compact .social-icons-row {
+    margin-top: 0;
+}
+.site-footer.site-footer--compact .social-circle-btn {
+    width: 34px;
+    height: 34px;
+}
+.site-footer.site-footer--compact .footer-bottom-divider {
+    display: none;
+}
+.site-footer.site-footer--compact .footer-bottom-content {
+    justify-content: center;
+}
+.site-footer.site-footer--compact .footer-copyright {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+
+
 .site-footer.footer-light {
     padding: 1rem 0 0;
     background: #030712; /* Deep Midnight */

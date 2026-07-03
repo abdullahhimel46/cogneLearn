@@ -1,4 +1,4 @@
-(function () {
+function initDashboard() {
     const state = {
         dashboard: null,
         sessions: [],
@@ -1630,4 +1630,10 @@
     }
 
     init();
-})();
+}
+
+if (document.readyState === 'loading' || (document.getElementById('sidebar-container') && !document.getElementById('sidebar-container').innerHTML)) {
+    document.addEventListener('componentsLoaded', initDashboard);
+} else {
+    initDashboard();
+}

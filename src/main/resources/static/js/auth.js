@@ -33,7 +33,7 @@ const Auth = {
             }
 
             if (response.user && response.user.role === 'ADMIN') {
-                window.location.href = 'admin.html';
+                window.location.href = 'admin/dashboard.html';
             } else {
                 window.location.href = 'dashboard.html';
             }

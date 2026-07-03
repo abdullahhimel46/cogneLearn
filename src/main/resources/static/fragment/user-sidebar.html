@@ -1,0 +1,93 @@
+<aside class="app-sidebar" id="appSidebar">
+  <div class="sidebar-top">
+    <button class="mobile-menu-btn drawer-toggle-btn" id="menuToggle" type="button" aria-label="Toggle drawer">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="brand-lockup">
+      <div class="brand-mark">CL</div>
+      <div class="brand-copy">
+        <span class="brand-title">cogneLearn</span>
+        <span class="brand-tag">Focus better every day</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Primary navigation">
+      <a href="dashboard.html" class="nav-link" id="nav-dashboard">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </span>
+        <span>Dashboard</span>
+      </a>
+      <a href="player.html" class="nav-link" id="sidebarFocusSessionBtn">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
+          </svg>
+        </span>
+        <span>Focus Session</span>
+      </a>
+      <a href="playlists.html" class="nav-link" id="nav-playlists">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M8 6h13"></path>
+            <path d="M8 12h13"></path>
+            <path d="M8 18h13"></path>
+            <path d="M3 6h.01"></path>
+            <path d="M3 12h.01"></path>
+            <path d="M3 18h.01"></path>
+          </svg>
+        </span>
+        <span>Playlists</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="sidebar-control" id="themeToggle" type="button" aria-pressed="false">
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+        </svg>
+      </span>
+      <span>Dark Mode</span>
+    </button>
+    <button class="sidebar-control" type="button" id="logoutBtn" onclick="if(typeof logout === 'function'){logout();} else if(typeof Auth !== 'undefined'){Auth.logout();}">
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <path d="m16 17 5-5-5-5"></path>
+          <path d="M21 12H9"></path>
+        </svg>
+      </span>
+      <span>Logout</span>
+    </button>
+  </div>
+</aside>
+
+<script>
+  (() => {
+    const pathname = window.location.pathname;
+    const pageName = pathname.split('/').pop() || 'dashboard.html';
+    const sidebar = document.getElementById('appSidebar');
+    if (sidebar) {
+      const links = sidebar.querySelectorAll('.nav-link');
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.includes(pageName)) {
+          link.classList.add('is-active');
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.classList.remove('is-active');
+          link.removeAttribute('aria-current');
+        }
+      });
+    }
+  })();
+</script>
