@@ -40,3 +40,4 @@ out/
 ### Data ###
 *.db
 *.mv.db
+data/
