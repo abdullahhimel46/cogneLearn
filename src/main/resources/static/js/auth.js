@@ -33,9 +33,9 @@ const Auth = {
             }
 
             if (response.user && response.user.role === 'ADMIN') {
-                window.location.href = 'admin/dashboard.html';
+                window.location.href = '/pages/admin/dashboard.html';
             } else {
-                window.location.href = 'dashboard.html';
+                window.location.href = '/pages/dashboard.html';
             }
             return true;
         } catch (error) {
@@ -82,7 +82,7 @@ const Auth = {
                 localStorage.setItem('cognelearn_scoped_user_id', String(response.user.id));
             }
 
-            window.location.href = 'dashboard.html';
+            window.location.href = '/pages/dashboard.html';
             return true;
         } catch (error) {
             alert(error && error.message ? error.message : 'Signup failed. Please try again.');
@@ -105,8 +105,17 @@ const Auth = {
         }
         localStorage.removeItem('cognelearn_scoped_user_id');
         const onAdmin = window.location.pathname.includes('/pages/admin/');
+        const onAuth = window.location.pathname.includes('/pages/auth/');
         const onPages = window.location.pathname.includes('/pages/');
-        window.location.replace(onAdmin ? '../login.html' : onPages ? 'login.html' : 'pages/login.html');
+        let redirectUrl = 'pages/auth/login.html';
+        if (onAdmin) {
+            redirectUrl = '../auth/login.html';
+        } else if (onAuth) {
+            redirectUrl = 'login.html';
+        } else if (onPages) {
+            redirectUrl = 'auth/login.html';
+        }
+        window.location.replace(redirectUrl);
     },
 
     /**

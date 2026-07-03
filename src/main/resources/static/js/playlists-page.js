@@ -233,7 +233,7 @@ function initPlaylistsPage() {
             return true;
         } catch (error) {
             localStorage.removeItem("cognelearn_user");
-            window.location.href = "login.html";
+            window.location.href = "auth/login.html";
             return false;
         }
     }

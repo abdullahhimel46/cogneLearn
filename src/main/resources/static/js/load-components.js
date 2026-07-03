@@ -1,14 +1,13 @@
 async function loadComponents() {
     // 1. Determine level depth prefix
     const pathname = window.location.pathname;
-    let prefix = '';
-    if (pathname.includes('/pages/admin/')) {
-        prefix = '../../';
-    } else if (pathname.includes('/pages/')) {
-        prefix = '../';
-    } else {
-        prefix = '';
+    const cleanPath = pathname.startsWith('/') ? pathname.substring(1) : pathname;
+    const segments = cleanPath.split('/');
+    if (segments.length > 0 && segments[segments.length - 1].includes('.')) {
+        segments.pop();
     }
+    const depth = segments.filter(Boolean).length;
+    const prefix = '../'.repeat(depth);
 
     // 2. Load sidebar if container exists
     const sidebarContainer = document.getElementById('sidebar-container');

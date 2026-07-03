@@ -128,7 +128,7 @@ function make(tag, className, text) {
 async function ensureAdminSession() {
   const res = await fetch('/api/v1/auth/me', Data.fetchDefaults);
   if (!res.ok) {
-    window.location.href = '../login.html?redirect=admin';
+    window.location.href = '../auth/login.html?redirect=admin';
     return false;
   }
   const user = await res.json();
@@ -230,7 +230,7 @@ async function initCommon() {
         window.Auth.logout();
       } else {
         localStorage.removeItem('cognelearn_user');
-        window.location.replace('../login.html');
+        window.location.replace('../auth/login.html');
       }
     });
   }

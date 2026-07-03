@@ -823,7 +823,7 @@ function initPlayer() {
             await Auth.logout();
             return;
         }
-        window.location.replace("login.html");
+        window.location.replace("auth/login.html");
     }
 
     function showPlaylistLoadError(message) {
@@ -847,7 +847,7 @@ function initPlayer() {
             }
         } catch (error) {
             if (error && (error.status === 401 || error.status === 403)) {
-                window.location.href = "login.html";
+                window.location.href = "auth/login.html";
                 return;
             }
             showPlaylistLoadError(error && error.message ? error.message : "Please try again.");

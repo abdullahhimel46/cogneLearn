@@ -456,29 +456,7 @@ body.landing-page {
     background: #f8fbff;
 }
 
-/* ========================================
-   Auth Page
-   ======================================== */
-
-.auth-container {
-    max-width: 400px;
-    margin: 4rem auto;
-    padding: 2rem;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-}
-
-.auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.auth-toggle {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-}
+/* Auth Page styles moved to css/auth/login.css and css/auth/register.css */
 
 /* ========================================
    Footer

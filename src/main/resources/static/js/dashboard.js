@@ -157,7 +157,7 @@ function initDashboard() {
         } catch (error) {
             localStorage.removeItem("cognelearn_user");
             localStorage.removeItem("cognelearn_scoped_user_id");
-            window.location.href = "login.html";
+            window.location.href = "auth/login.html";
             return false;
         }
     }

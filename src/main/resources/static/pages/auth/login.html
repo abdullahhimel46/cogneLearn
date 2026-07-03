@@ -4,22 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="cogneLearn is an AI-powered adaptive learning platform combining YouTube playlists with real-time attention monitoring, Pomodoro timer, and productivity analytics.">
-    <title>cogneLearn - Adaptive Learning Platform</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="Login to your cogneLearn account to start your AI-powered adaptive learning journey.">
+    <title>cogneLearn - Login</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/auth/login.css">
 </head>
 
-<body class="landing-page">
+<body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="index.html" class="navbar-brand" aria-label="cogneLearn home">
+            <a href="../../index.html" class="navbar-brand" aria-label="cogneLearn home">
                 <span class="navbar-brand__mark" aria-hidden="true">CL</span>
                 <span class="navbar-brand__name">cogneLearn</span>
             </a>
             <div class="navbar-right">
-                <ul class="navbar-links" id="navLinks">
-                    <li><a href="pages/auth/login.html">Login</a></li>
-                </ul>
                 <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
                     <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
@@ -40,95 +38,52 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <p class="eyebrow-tag">ESCAPE TUTORIAL HELL</p>
-            <h1>Learn Better. <span class="hero-accent">Focus Smarter.</span></h1>
-            <p>Turn endless tutorials into real progress with distraction-free YouTube learning, AI-powered attention tracking, and built-in productivity tools.</p>
-
-            <div class="hero-buttons">
-                <a href="pages/auth/register.html" class="btn btn-primary">Get Started</a>
-                <a href="pages/our-mission.html" class="btn btn-secondary">Learn More</a>
-            </div>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h2>Login to cogneLearn</h2>
         </div>
-    </section>
 
-    <section id="features" class="container landing-features">
-        <h2>Key Features</h2>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="feature-icon">📚</div>
-                <h3>YouTube Playlists</h3>
-                <p>Import and manage your learning playlists in one distraction-free space.</p>
+        <form id="authForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
             </div>
 
-            <div class="stat-card">
-                <div class="feature-icon">⏱️</div>
-                <h3>Pomodoro Timer</h3>
-                <p>Integrated time management with 25-min work and 5-min break cycles.</p>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
             </div>
 
-            <div class="stat-card">
-                <div class="feature-icon">👁️</div>
-                <h3>Attention Tracking</h3>
-                <p>Real-time focus monitoring using AI—all processed locally for privacy.</p>
-            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
 
-            <div class="stat-card">
-                <div class="feature-icon">📊</div>
-                <h3>Productivity Stats</h3>
-                <p>Track your focus time, sessions, and learning patterns over time.</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Privacy First</h3>
-                <p>All your data stays in your browser. No tracking, no cloud uploads.</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Focus Mode</h3>
-                <p>Block distractions and maintain deep focus during study sessions.</p>
-            </div>
+        <div class="auth-toggle">
+            <span>Don't have an account? </span>
+            <a href="register.html">Sign Up</a>
         </div>
-    </section>
+    </div>
 
-    <section class="landing-cta">
-        <div class="container">
-            <h2>Ready to Transform Your Learning?</h2>
-            <p>Join thousands of self-directed learners who are mastering their focus.</p>
-            <a href="pages/auth/register.html" class="btn btn-primary">Start Learning Today</a>
-        </div>
-    </section>
+    <script src="../../js/User.js"></script>
+    <script src="../../js/playlist.js"></script>
+    <script src="../../js/Video.js"></script>
+    <script src="../../js/StudySession.js"></script>
+    <script src="../../js/ProductivityAnalytics.js"></script>
+    <script src="../../js/AttentionMonitor.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script>
+        const authForm = document.getElementById('authForm');
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            await Auth.login(email, password);
+        });
+    </script>
 
     <div id="footer-container"></div>
-
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/load-components.js"></script>
-    <script>
-        // Session-based auth: check the server session and update the nav.
-        (async () => {
-            try {
-                const me = await Api.get('/api/v1/auth/me');
-                if (me) {
-                    const dashboardLink = me.role === 'ADMIN' ? 'pages/admin/dashboard.html' : 'pages/dashboard.html';
-                    document.getElementById('navLinks').innerHTML = `
-                        <li><a href="${dashboardLink}">Dashboard</a></li>
-                        <li><a href="#" onclick="logout()">Logout</a></li>
-                    `;
-                }
-            } catch (e) {
-                // not logged in → keep Login link
-            }
-        })();
-
-        async function logout() {
-            await Auth.logout();
-        }
-    </script>
+    <script src="../../js/load-components.js"></script>
     <script>
         // Inline Theme Init & Toggle Script
         (() => {
