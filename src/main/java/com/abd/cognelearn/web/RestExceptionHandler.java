@@ -197,6 +197,11 @@ public class RestExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {
+        if (ex.getClass().getName().contains("ClientAbortException")) {
+            log.warn("Client aborted connection: {}", ex.getMessage());
+            return null;
+        }
+
         log.error("Unhandled exception. authPrincipal={}",
                 SecurityContextHolder.getContext().getAuthentication() == null
                         ? "none"

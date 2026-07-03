@@ -2,6 +2,7 @@ package com.abd.cognelearn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 /**
  * CogneLearnApplication — the entry point for the entire Spring Boot application.
@@ -25,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * <p>To run: {@code ./gradlew bootRun} in the {@code server-spring/} directory.
  */
 @SpringBootApplication
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class CogneLearnApplication {
 
     /**
