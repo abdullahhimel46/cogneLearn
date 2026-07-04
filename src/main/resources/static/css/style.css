@@ -485,6 +485,10 @@ body.sidebar-collapsed .site-footer {
 .site-footer.site-footer--compact {
     padding: 1.25rem 0;
 }
+.site-footer .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
 .site-footer.site-footer--compact .footer-main-grid {
     display: flex;
     align-items: center;
@@ -664,6 +668,7 @@ body.sidebar-collapsed .site-footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-self: end;
 }
 
 .social-icons-row {
@@ -755,6 +760,16 @@ body.sidebar-collapsed .site-footer {
     .footer-main-grid {
         grid-template-columns: 1fr;
         gap: 4rem;
+    }
+    .footer-brand-section,
+    .footer-links-section,
+    .footer-social-section {
+        align-items: center;
+        text-align: center;
+        justify-self: center;
+    }
+    .footer-section-links {
+        align-items: center;
     }
     .footer-newsletter-section {
         padding-left: 0;
