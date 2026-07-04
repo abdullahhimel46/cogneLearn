@@ -43,7 +43,9 @@ function initPlayer() {
         modalCycles: document.getElementById("playerCyclesInput"),
         modalSummary: document.getElementById("playerSummaryText"),
         modalStart: document.getElementById("playerSessionStart"),
-        modalCancel: document.getElementById("playerSessionCancel")
+        modalCancel: document.getElementById("playerSessionCancel"),
+        completeModal: document.getElementById("playerCompleteModal"),
+        completeModalOk: document.getElementById("completeModalOk")
     };
 
     let youtubePlayer = null;
@@ -877,7 +879,13 @@ function initPlayer() {
 
         if (state.completedCycles >= state.sessionConfig.cycles) {
             clearSessionConfig();
-            alert("Focus session complete. Great work.");
+            if (dom.completeModal) {
+                dom.completeModal.classList.remove("hidden");
+                dom.completeModal.setAttribute("aria-hidden", "false");
+            } else {
+                alert("Focus session complete. Great work.");
+                redirectToDashboard("session completed fallback");
+            }
             return;
         }
 
@@ -990,6 +998,11 @@ function initPlayer() {
             dom.logoutLink.addEventListener("click", handleLogout);
         }
         dom.modalStart.addEventListener("click", beginConfiguredSession);
+        if (dom.completeModalOk) {
+            dom.completeModalOk.addEventListener("click", function () {
+                redirectToDashboard("user acknowledged session complete");
+            });
+        }
         dom.modalCancel.addEventListener("click", function () {
             closeSessionModal();
             if (!state.sessionConfig) {

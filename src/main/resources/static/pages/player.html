@@ -125,6 +125,21 @@
         </div>
     </div>
 
+    <!-- Complete Session Modal -->
+    <div id="playerCompleteModal" class="player-modal-overlay hidden" aria-hidden="true">
+        <div class="player-modal-card" style="text-align: center; max-width: 400px;">
+            <div class="player-modal-header" style="display: block; margin-bottom: 24px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🏆</div>
+                <p class="player-modal-kicker" style="margin-bottom: 4px;">Success</p>
+                <h2 style="margin: 0 0 8px 0; font-size: 24px;">Focus Session Complete!</h2>
+                <p class="player-modal-subtitle" style="margin: 0;">Amazing dedication! You've successfully finished your focus block. Great work.</p>
+            </div>
+            <div class="player-modal-actions" style="justify-content: center;">
+                <button id="completeModalOk" class="player-primary-btn" type="button" style="width: 100%;">Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/user/localDb.js"></script>
     <script src="../js/utils.js"></script>
     <script src="../js/user/eventOutbox.js"></script>
