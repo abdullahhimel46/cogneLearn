@@ -19,10 +19,26 @@ function initDashboard() {
     const PLAYER_SESSION_STORAGE_KEY = "cognelearn_player_session";
     const PLAYER_LAUNCH_INTENT_KEY = "cognelearn_focus_launch_intent";
 
-    const goals = {
+    const STORAGE_GOALS_KEY = "cognelearn_user_goals";
+    let goals = {
         sessions: 3,
         minutes: 60
     };
+
+    function loadGoals() {
+        try {
+            const raw = localStorage.getItem(STORAGE_GOALS_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === "object") {
+                    goals.sessions = Math.max(1, Number(parsed.sessions) || 3);
+                    goals.minutes = Math.max(5, Number(parsed.minutes) || 60);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load goals", error);
+        }
+    }
 
     const dom = {
         body: document.body,
@@ -30,6 +46,13 @@ function initDashboard() {
         currentDateTime: document.getElementById("currentDateTime"),
         todaySessions: document.getElementById("todaySessions"),
         todayFocus: document.getElementById("todayFocus"),
+        goalSessions: document.getElementById("goalSessions"),
+        goalMinutes: document.getElementById("goalMinutes"),
+        editGoalsBtn: document.getElementById("editGoalsBtn"),
+        goalsModal: document.getElementById("goalsModal"),
+        goalsSessionsInput: document.getElementById("goalsSessionsInput"),
+        goalsMinutesInput: document.getElementById("goalsMinutesInput"),
+        saveGoalsBtn: document.getElementById("saveGoalsBtn"),
         totalFocusHours: document.getElementById("totalFocusHours"),
         totalSessions: document.getElementById("totalSessions"),
         avgAttention: document.getElementById("avgAttention"),
@@ -280,6 +303,8 @@ function initDashboard() {
 
         dom.todaySessions.textContent = todaySessions;
         dom.todayFocus.textContent = todayMinutes;
+        if (dom.goalSessions) dom.goalSessions.textContent = goals.sessions;
+        if (dom.goalMinutes) dom.goalMinutes.textContent = goals.minutes;
         dom.totalFocusHours.textContent = `${totalMinutes}m`;
         dom.totalSessions.textContent = totalSessions;
         dom.avgAttention.textContent = `${avgAttention}%`;
@@ -701,6 +726,26 @@ function initDashboard() {
             });
         }
 
+        if (dom.editGoalsBtn) {
+            dom.editGoalsBtn.addEventListener("click", function () {
+                window.openGoalsModal();
+            });
+        }
+
+        if (dom.saveGoalsBtn) {
+            dom.saveGoalsBtn.addEventListener("click", function () {
+                const s = Math.max(1, Number(dom.goalsSessionsInput.value) || 3);
+                const m = Math.max(5, Number(dom.goalsMinutesInput.value) || 60);
+
+                goals.sessions = s;
+                goals.minutes = m;
+                localStorage.setItem(STORAGE_GOALS_KEY, JSON.stringify(goals));
+
+                renderDashboardMetrics();
+                window.closeGoalsModal();
+            });
+        }
+
         if (dom.sidebarFocusSessionBtn) {
             dom.sidebarFocusSessionBtn.addEventListener("click", function (event) {
                 event.preventDefault();
@@ -779,7 +824,7 @@ function initDashboard() {
             });
         });
 
-        [dom.playlistModal, dom.editPlaylistModal, dom.focusSessionModal, dom.playlistSelectorModal, dom.resumeSessionModal, dom.conflictSessionModal].forEach((modal) => {
+        [dom.playlistModal, dom.editPlaylistModal, dom.focusSessionModal, dom.playlistSelectorModal, dom.resumeSessionModal, dom.conflictSessionModal, dom.goalsModal].forEach((modal) => {
             if (!modal) {
                 return;
             }
@@ -1293,6 +1338,16 @@ function initDashboard() {
         closeModal(dom.conflictSessionModal);
     };
 
+    window.openGoalsModal = function openGoalsModal() {
+        if (dom.goalsSessionsInput) dom.goalsSessionsInput.value = goals.sessions;
+        if (dom.goalsMinutesInput) dom.goalsMinutesInput.value = goals.minutes;
+        openModal(dom.goalsModal);
+    };
+
+    window.closeGoalsModal = function closeGoalsModal() {
+        closeModal(dom.goalsModal);
+    };
+
     window.openFocusSessionSetup = function openFocusSessionSetup(playlistId) {
         state.pendingFocusPlaylistId = playlistId || null;
         dom.focusDurationInput.value = "25";
@@ -1622,6 +1677,7 @@ function initDashboard() {
     async function init() {
         document.body.style.opacity = "1";
         
+        loadGoals();
         bindEvents();
         restoreTheme();
         updateDateTime();
