@@ -157,7 +157,7 @@ function initDashboard() {
         } catch (error) {
             localStorage.removeItem("cognelearn_user");
             localStorage.removeItem("cognelearn_scoped_user_id");
-            window.location.href = "auth/login.html";
+            window.location.href = "../auth/login.html";
             return false;
         }
     }
@@ -695,7 +695,8 @@ function initDashboard() {
 
     function bindEvents() {
         if (dom.startFocusBtn) {
-            dom.startFocusBtn.addEventListener("click", function () {
+            dom.startFocusBtn.addEventListener("click", function (event) {
+                event.preventDefault();
                 handleFocusSessionLaunch(null, "hero_cta");
             });
         }
@@ -995,8 +996,11 @@ function initDashboard() {
             sessionId: entry && entry.sessionId ? entry.sessionId : null,
             source: entry && entry.source ? entry.source : "dashboard"
         });
-        const target = playlistId ? `../player.html?playlistId=${encodeURIComponent(playlistId)}` : "../player.html";
-        window.location.href = target;
+        if (playlistId) {
+            window.location.href = `../player.html?playlist=${encodeURIComponent(playlistId)}`;
+        } else {
+            window.location.href = "../player.html";
+        }
     }
 
     function selectLatestPlaylist() {

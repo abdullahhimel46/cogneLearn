@@ -13,7 +13,7 @@
  * - biometric history
  */
 (function () {
-    const STORES = (window.LocalDB && LocalDB.STORES) || {};
+    const STORES = (typeof LocalDB !== "undefined" && LocalDB.STORES) || {};
 
     const THRESHOLDS = {
         LOW_FOCUS_AVG: 45,
@@ -34,7 +34,7 @@
     }
 
     async function recordAttentionSample(sessionId, score, ts) {
-        if (!window.LocalDB || !sessionId) return;
+        if (typeof LocalDB === "undefined" || !sessionId) return;
 
         await LocalDB.add(STORES.ATTENTION_SAMPLES, {
             sessionId: String(sessionId),
@@ -44,7 +44,7 @@
     }
 
     async function computeAttentionSummary(sessionId) {
-        if (!window.LocalDB || !sessionId) {
+        if (typeof LocalDB === "undefined" || !sessionId) {
             return { avg: 0, min: 0, max: 0, count: 0, distractedCount: 0 };
         }
 
@@ -76,17 +76,17 @@
     }
 
     async function purgeAttentionSamples(sessionId) {
-        if (!window.LocalDB || !sessionId) return;
+        if (typeof LocalDB === "undefined" || !sessionId) return;
         await LocalDB.deleteWhereIndexEquals(STORES.ATTENTION_SAMPLES, "by_sessionId", String(sessionId));
     }
 
     async function upsertSession(sessionRecord) {
-        if (!window.LocalDB) return;
+        if (typeof LocalDB === "undefined") return;
         await LocalDB.put(STORES.STUDY_SESSIONS, sessionRecord);
     }
 
     async function getAllSessions() {
-        if (!window.LocalDB) return [];
+        if (typeof LocalDB === "undefined") return [];
         const sessions = await LocalDB.getAll(STORES.STUDY_SESSIONS);
         return Array.isArray(sessions) ? sessions : [];
     }
@@ -99,7 +99,7 @@
     }
 
     async function recomputeDailyAnalyticsForDate(date) {
-        if (!window.LocalDB) return;
+        if (typeof LocalDB === "undefined") return;
 
         let daySessions;
         try {
@@ -167,7 +167,7 @@
     }
 
     async function upsertAchievementCache(patch) {
-        if (!window.LocalDB) return;
+        if (typeof LocalDB === "undefined") return;
 
         const existing = await LocalDB.get(STORES.ACHIEVEMENT_CACHE, "default") || { id: "default" };
         const next = Object.assign({}, existing, patch || {}, { updatedAt: new Date().toISOString() });
@@ -176,7 +176,7 @@
     }
 
     async function getAchievementCache() {
-        if (!window.LocalDB) return { currentStreak: 0, bestStreak: 0 };
+        if (typeof LocalDB === "undefined") return { currentStreak: 0, bestStreak: 0 };
         return await LocalDB.get(STORES.ACHIEVEMENT_CACHE, "default") || { id: "default", currentStreak: 0, bestStreak: 0 };
     }
 
@@ -355,7 +355,7 @@
     async function bootstrapFromServer() {
         // Optional bootstrap: if local DB is empty, copy minimal session metadata from server.
         // We DO NOT persist attentionScores coming from server.
-        if (!window.Api || !window.StudySession || !window.LocalDB) return;
+        if (typeof Api === "undefined" || typeof StudySession === "undefined" || typeof LocalDB === "undefined") return;
 
         const existing = await getAllSessions();
         if (existing.length > 0) return;
@@ -399,7 +399,7 @@
     }
 
     async function getDailyAnalytics(limit) {
-        if (!window.LocalDB) return [];
+        if (typeof LocalDB === "undefined") return [];
         const n = Math.max(1, Math.min(365, Number(limit) || 90));
         const all = await LocalDB.getAll(STORES.DAILY_ANALYTICS);
         all.sort(function (a, b) {
