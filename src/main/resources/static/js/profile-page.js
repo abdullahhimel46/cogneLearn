@@ -9,7 +9,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileEmail: document.getElementById("profileEmail"),
         profileJoined: document.getElementById("profileJoined"),
         streakDays: document.getElementById("streakDays"),
-        bestStreakDays: document.getElementById("bestStreakDays")
+        bestStreakDays: document.getElementById("bestStreakDays"),
+        profileAvatarContainer: document.getElementById("profileAvatarContainer"),
+        userNameInitials: document.getElementById("userNameInitials")
     };
 
     async function init() {
@@ -70,6 +72,40 @@ document.addEventListener("DOMContentLoaded", async function () {
                     month: 'long',
                     day: 'numeric'
                 });
+            }
+
+            // Generate dynamic initials and gradient background based on name hash
+            if (user.name) {
+                const names = user.name.split(" ").filter(Boolean);
+                let initials = "";
+                if (names.length > 0) {
+                    initials += names[0][0];
+                    if (names.length > 1) {
+                        initials += names[names.length - 1][0];
+                    }
+                }
+                if (dom.userNameInitials) {
+                    dom.userNameInitials.textContent = initials.toUpperCase() || "CL";
+                }
+
+                const gradients = [
+                    "linear-gradient(135deg, #6366f1, #a855f7)", // Indigo to Purple
+                    "linear-gradient(135deg, #ec4899, #f43f5e)", // Pink to Rose
+                    "linear-gradient(135deg, #10b981, #3b82f6)", // Emerald to Blue
+                    "linear-gradient(135deg, #f59e0b, #e11d48)", // Amber to Rose
+                    "linear-gradient(135deg, #3b82f6, #06b6d4)", // Blue to Cyan
+                    "linear-gradient(135deg, #8b5cf6, #ec4899)"  // Violet to Pink
+                ];
+
+                let hash = 0;
+                for (let i = 0; i < user.name.length; i++) {
+                    hash = user.name.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                const index = Math.abs(hash) % gradients.length;
+
+                if (dom.profileAvatarContainer) {
+                    dom.profileAvatarContainer.style.background = gradients[index];
+                }
             }
         }
 

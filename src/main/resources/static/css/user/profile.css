@@ -1,4 +1,203 @@
 /* Profile page specific styles */
-.profile-page {
-    /* Custom styles can go here */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.2rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 960px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Panel customizations to match premium look */
+.profile-card,
+.achievements-panel {
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+    padding: 2.5rem !important;
+}
+
+.dashboard-theme-dark .profile-card,
+.dashboard-theme-dark .achievements-panel {
+    background: var(--dashboard-surface, #1e293b) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Avatar Section styling */
+.profile-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.4);
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.04);
+}
+
+#userNameInitials {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -1px;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Divider inside the cards */
+.profile-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 2rem 0;
+}
+
+.dashboard-theme-dark .profile-divider {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Vertical List Row layouts for Details & Streaks */
+.profile-details-list,
+.streaks-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-item-row:last-child {
+    margin-bottom: 0;
+}
+
+.streak-item-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+}
+
+.streak-item-row:first-child {
+    padding-top: 0;
+}
+
+.streak-item-row:last-child {
+    padding-bottom: 0;
+}
+
+/* Border divider between the streak items */
+.streak-item-row:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-theme-dark .streak-item-row:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Icon Box Design */
+.icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-box svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Color variations for Icon Boxes */
+.icon-box--blue {
+    background-color: rgba(99, 102, 241, 0.08);
+    color: #4f46e5;
+}
+.dashboard-theme-dark .icon-box--blue {
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+}
+
+.icon-box--green {
+    background-color: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+}
+.dashboard-theme-dark .icon-box--green {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+.icon-box--purple {
+    background-color: rgba(139, 92, 246, 0.08);
+    color: #8b5cf6;
+}
+.dashboard-theme-dark .icon-box--purple {
+    background-color: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+}
+
+.icon-box--gold {
+    background-color: rgba(245, 158, 11, 0.08);
+    color: #f59e0b;
+}
+.dashboard-theme-dark .icon-box--gold {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+}
+
+/* Text Content Labels and Values */
+.detail-item-content,
+.streak-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label,
+.streak-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-theme-dark .detail-label,
+.dashboard-theme-dark .streak-label {
+    color: #94a3b8;
+}
+
+.detail-value,
+.streak-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.dashboard-theme-dark .detail-value,
+.dashboard-theme-dark .streak-value {
+    color: #f8fafc;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+.dashboard-theme-dark .text-success {
+    color: #34d399 !important;
 }

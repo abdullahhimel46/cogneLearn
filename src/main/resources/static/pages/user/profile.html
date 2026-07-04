@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View and manage your cogneLearn profile, study achievements, and session settings.">
+    <meta name="description"
+        content="View and manage your cogneLearn profile, study achievements, and session settings.">
     <title>cogneLearn - Profile</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,16 +29,18 @@
                 <section class="hero-header">
                     <div>
                         <p class="eyebrow">Profile</p>
-                        <h1>Account Settings</h1>
-                        <p class="hero-subtitle">Manage your personal information and view achievements.</p>
+                        <h1>Account Details</h1>
+                        <p class="hero-subtitle">View your personal information and view achievements.</p>
                     </div>
                     <div class="header-actions">
                         <div class="date-pill" id="currentDateTime">Loading time...</div>
                         <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
-                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
                             </svg>
-                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
                                 <circle cx="12" cy="12" r="5"></circle>
                                 <line x1="12" y1="1" x2="12" y2="3"></line>
                                 <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -55,7 +58,7 @@
                 <div class="profile-layout">
                     <section class="panel profile-card">
                         <div class="profile-header-main">
-                            <div class="profile-avatar">
+                            <div class="profile-avatar" id="profileAvatarContainer">
                                 <span id="userNameInitials">CL</span>
                             </div>
                             <div class="profile-meta-info">
@@ -64,14 +67,31 @@
                             </div>
                         </div>
                         <hr class="profile-divider">
-                        <div class="profile-details-grid">
-                            <div class="detail-item">
-                                <span class="detail-label">Member Since</span>
-                                <strong class="detail-value" id="profileJoined">Loading...</strong>
+                        <div class="profile-details-list">
+                            <div class="detail-item-row">
+                                <div class="icon-box icon-box--blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="detail-item-content">
+                                    <span class="detail-label">Member Since</span>
+                                    <strong class="detail-value" id="profileJoined">Loading...</strong>
+                                </div>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <strong class="detail-value text-success">Active Member</strong>
+                            <div class="detail-item-row">
+                                <div class="icon-box icon-box--green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                </div>
+                                <div class="detail-item-content">
+                                    <span class="detail-label">Status</span>
+                                    <strong class="detail-value text-success">Active Member</strong>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -83,15 +103,33 @@
                                 <h2>Your Consistency Records</h2>
                             </div>
                         </div>
-                        <div class="streaks-grid">
-                            <article class="streak-card-stat">
-                                <span class="streak-label">Current Streak</span>
-                                <strong class="streak-value" id="streakDays">0 days</strong>
-                            </article>
-                            <article class="streak-card-stat">
-                                <span class="streak-label">Best Streak</span>
-                                <strong class="streak-value" id="bestStreakDays">0 days</strong>
-                            </article>
+                        <div class="streaks-list">
+                            <div class="streak-item-row">
+                                <div class="icon-box icon-box--purple">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                                    </svg>
+                                </div>
+                                <div class="streak-item-content">
+                                    <span class="streak-label">Current Streak</span>
+                                    <strong class="streak-value" id="streakDays">0 days</strong>
+                                </div>
+                            </div>
+                            <div class="streak-item-row">
+                                <div class="icon-box icon-box--gold">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                        <path d="M4 22h16"></path>
+                                        <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
+                                        <path d="M12 2a7 7 0 0 0-7 7v4c0 3.3 2.7 6 6 6s6-2.7 6-6V9a7 7 0 0 0-7-7z"></path>
+                                    </svg>
+                                </div>
+                                <div class="streak-item-content">
+                                    <span class="streak-label">Best Streak</span>
+                                    <strong class="streak-value" id="bestStreakDays">0 days</strong>
+                                </div>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -121,27 +159,27 @@
             } else {
                 document.body.classList.remove(themeClass);
             }
-            
+
             const setupThemeButtons = () => {
                 const buttons = document.querySelectorAll('.theme-toggle-btn');
                 buttons.forEach(btn => {
                     const moonIcon = btn.querySelector('.theme-icon-moon');
                     const sunIcon = btn.querySelector('.theme-icon-sun');
-                    
+
                     const updateIcons = (dark) => {
                         if (moonIcon && sunIcon) {
                             moonIcon.style.display = dark ? 'none' : 'block';
                             sunIcon.style.display = dark ? 'block' : 'none';
                         }
                     };
-                    
+
                     updateIcons(document.body.classList.contains(themeClass));
-                    
+
                     btn.onclick = (e) => {
                         if (e) e.preventDefault();
                         const nowDark = document.body.classList.toggle(themeClass);
                         localStorage.setItem(themeKey, nowDark ? "dark" : "light");
-                        
+
                         document.querySelectorAll('.theme-toggle-btn').forEach(b => {
                             const m = b.querySelector('.theme-icon-moon');
                             const s = b.querySelector('.theme-icon-sun');
@@ -150,7 +188,7 @@
                                 s.style.display = nowDark ? 'block' : 'none';
                             }
                         });
-                        
+
                         const sidebarToggle = document.getElementById('themeToggle');
                         if (sidebarToggle) {
                             sidebarToggle.setAttribute('aria-pressed', String(nowDark));
@@ -158,7 +196,7 @@
                     };
                 });
             };
-            
+
             if (document.readyState === 'loading' || !document.getElementById('sidebar-container').innerHTML) {
                 document.addEventListener('componentsLoaded', setupThemeButtons);
             } else {
