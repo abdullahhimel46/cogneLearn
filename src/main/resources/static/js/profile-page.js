@@ -46,6 +46,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Step 3: Load streaks from local storage (no network)
         loadStreaks();
+
+        // Step 4: Bind Sidebar Toggle (since components are loaded dynamically)
+        document.addEventListener("componentsLoaded", bindSidebarEvents);
+        if (document.getElementById("menuToggle")) {
+            bindSidebarEvents();
+        }
+    }
+
+    function bindSidebarEvents() {
+        const menuToggle = document.getElementById("menuToggle");
+        const appOverlay = document.getElementById("appOverlay");
+        const appSidebar = document.getElementById("appSidebar");
+
+        if (menuToggle && !menuToggle.hasAttribute("data-bound")) {
+            menuToggle.setAttribute("data-bound", "true");
+            menuToggle.addEventListener("click", () => {
+                if (window.innerWidth <= 960) {
+                    if (appSidebar && appSidebar.classList.contains("is-open")) {
+                        appSidebar.classList.remove("is-open");
+                        if (appOverlay) appOverlay.classList.remove("is-visible");
+                    } else {
+                        if (appSidebar) appSidebar.classList.add("is-open");
+                        if (appOverlay) appOverlay.classList.add("is-visible");
+                    }
+                } else {
+                    document.body.classList.toggle("sidebar-collapsed");
+                }
+            });
+        }
+
+        if (appOverlay && !appOverlay.hasAttribute("data-bound")) {
+            appOverlay.setAttribute("data-bound", "true");
+            appOverlay.addEventListener("click", () => {
+                if (appSidebar) appSidebar.classList.remove("is-open");
+                appOverlay.classList.remove("is-visible");
+            });
+        }
     }
 
     async function verifySession() {
