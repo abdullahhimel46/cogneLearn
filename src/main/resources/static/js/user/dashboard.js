@@ -701,7 +701,8 @@ function initDashboard() {
         }
 
         if (dom.sidebarFocusSessionBtn) {
-            dom.sidebarFocusSessionBtn.addEventListener("click", function () {
+            dom.sidebarFocusSessionBtn.addEventListener("click", function (event) {
+                event.preventDefault();
                 handleFocusSessionLaunch(null, "sidebar");
             });
         }
@@ -994,7 +995,7 @@ function initDashboard() {
             sessionId: entry && entry.sessionId ? entry.sessionId : null,
             source: entry && entry.source ? entry.source : "dashboard"
         });
-        const target = playlistId ? `player.html?playlistId=${encodeURIComponent(playlistId)}` : "player.html";
+        const target = playlistId ? `../player.html?playlistId=${encodeURIComponent(playlistId)}` : "../player.html";
         window.location.href = target;
     }
 

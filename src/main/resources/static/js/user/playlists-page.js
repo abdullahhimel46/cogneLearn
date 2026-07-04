@@ -369,7 +369,8 @@ function initPlaylistsPage() {
         }
 
         if (dom.sidebarFocusSessionBtn) {
-            dom.sidebarFocusSessionBtn.addEventListener("click", function () {
+            dom.sidebarFocusSessionBtn.addEventListener("click", function (event) {
+                event.preventDefault();
                 window.location.href = "dashboard.html";
             });
         }
@@ -504,7 +505,7 @@ function initPlaylistsPage() {
     };
 
     window.goToPlayer = function goToPlayer(playlistId) {
-        const target = playlistId ? `player.html?playlistId=${encodeURIComponent(playlistId)}` : "player.html";
+        const target = playlistId ? `../player.html?playlistId=${encodeURIComponent(playlistId)}` : "../player.html";
         window.location.href = target;
     };
 

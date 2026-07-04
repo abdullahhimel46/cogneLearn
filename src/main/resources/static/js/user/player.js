@@ -115,7 +115,7 @@ function initPlayer() {
 
         try {
             const parsed = JSON.parse(raw);
-            if (parsed && parsed.playlistId && parsed.playlistId === state.playlistId) {
+            if (parsed && parsed.playlistId && String(parsed.playlistId) === String(state.playlistId)) {
                 return parsed;
             }
         } catch (error) {
@@ -986,7 +986,9 @@ function initPlayer() {
         });
 
         dom.resetButton.addEventListener("click", resetTimer);
-        dom.logoutLink.addEventListener("click", handleLogout);
+        if (dom.logoutLink) {
+            dom.logoutLink.addEventListener("click", handleLogout);
+        }
         dom.modalStart.addEventListener("click", beginConfiguredSession);
         dom.modalCancel.addEventListener("click", function () {
             closeSessionModal();
@@ -1047,8 +1049,8 @@ function initPlayer() {
         updateTimerUI();
         updateSessionSummary();
         setFocusUI(state.focusScore, "camera_starting");
-        await loadPlaylistFromServer();
         applySessionConfig(launchContext.sessionConfig);
+        await loadPlaylistFromServer();
         await ensureCurrentMediaReady();
         requestSynchronizedRun("resume_or_restore");
     }
