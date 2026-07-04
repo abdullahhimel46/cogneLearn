@@ -1615,6 +1615,8 @@ function initDashboard() {
     }
 
     async function init() {
+        document.body.style.opacity = "1";
+        
         bindEvents();
         restoreTheme();
         updateDateTime();
@@ -1624,8 +1626,6 @@ function initDashboard() {
         const ok = await ensureLoggedIn();
         if (ok) {
             await loadDashboardData();
-            // Standard Karpathy level: Ensure visibility only after data is ready to prevent flash
-            document.body.style.opacity = "1";
         }
     }
 

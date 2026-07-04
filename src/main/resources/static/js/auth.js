@@ -105,10 +105,11 @@ const Auth = {
         }
         localStorage.removeItem('cognelearn_scoped_user_id');
         const onAdmin = window.location.pathname.includes('/pages/admin/');
+        const onUser = window.location.pathname.includes('/pages/user/');
         const onAuth = window.location.pathname.includes('/pages/auth/');
         const onPages = window.location.pathname.includes('/pages/');
         let redirectUrl = 'pages/auth/login.html';
-        if (onAdmin) {
+        if (onAdmin || onUser) {
             redirectUrl = '../auth/login.html';
         } else if (onAuth) {
             redirectUrl = 'login.html';

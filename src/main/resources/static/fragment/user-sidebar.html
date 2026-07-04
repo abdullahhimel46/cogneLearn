@@ -97,6 +97,39 @@
           link.removeAttribute('aria-current');
         }
       });
+
+      // Bind theme toggle globally from sidebar
+      const themeToggle = sidebar.querySelector('#themeToggle');
+      if (themeToggle) {
+        const themeKey = "cognelearn_dashboard_theme";
+        const themeClass = "dashboard-theme-dark";
+        
+        // Sync button attribute on load
+        const isDark = document.body.classList.contains(themeClass);
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        
+        themeToggle.addEventListener('click', (e) => {
+          if (e) e.preventDefault();
+          const nowDark = document.body.classList.toggle(themeClass);
+          localStorage.setItem(themeKey, nowDark ? "dark" : "light");
+          themeToggle.setAttribute('aria-pressed', String(nowDark));
+          
+          // Sync header theme buttons
+          document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+            const moonIcon = btn.querySelector('.theme-icon-moon');
+            const sunIcon = btn.querySelector('.theme-icon-sun');
+            if (moonIcon && sunIcon) {
+              moonIcon.style.display = nowDark ? 'none' : 'block';
+              sunIcon.style.display = nowDark ? 'block' : 'none';
+            }
+          });
+          
+          // Re-render chart if Chart.js is loaded
+          if (window.Chart && typeof renderAnalyticsChart === 'function') {
+            renderAnalyticsChart();
+          }
+        });
+      }
     }
   })();
 </script>
