@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your cogneLearn dashboard — track focus sessions, playlists, streaks, and productivity analytics.">
+    <title>cogneLearn - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/user/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-body sidebar-collapsed" style="opacity: 0; transition: opacity 0.4s ease-in-out;">
+    <div class="app-shell">
+        <div id="sidebar-container"></div>
+
+        <div class="app-overlay" id="appOverlay"></div>
+        <div class="fab-container">
+            <button class="fab" id="floatingAnalyticsBtn" type="button" aria-expanded="false"
+                aria-controls="analyticsSection" data-tooltip="Toggle Analytics">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <rect x="3" y="13" width="4" height="8"></rect>
+                    <rect x="10" y="5" width="4" height="16"></rect>
+                    <rect x="17" y="9" width="4" height="12"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <main class="app-main">
+            <header class="mobile-header">
+                <div class="mobile-brand">cogneLearn</div>
+            </header>
+
+            <div class="dashboard-page">
+                <section class="hero-header">
+                    <div>
+                        <p class="eyebrow">Dashboard</p>
+                        <h1>Welcome back, <span id="userName">User</span></h1>
+                        <p class="hero-subtitle">Here's your learning overview today</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="date-pill" id="currentDateTime">Loading time...</div>
+                        <button class="btn btn-secondary btn-icon" id="addPlaylistTrigger" type="button">+ Add
+                            Playlist</button>
+                        <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
+                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+                            </svg>
+                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="hero-grid">
+                    <article class="feature-card focus-card">
+                        <div class="feature-card__content">
+                            <p class="section-kicker">Ready to focus?</p>
+                            <h2>Start a deep work session</h2>
+                            <p>Play your playlist with focus tracking.</p>
+                        </div>
+                        <div class="feature-card__actions">
+                            <button class="btn btn-primary" id="startFocusBtn" type="button">Start Focus
+                                Session</button>
+                        </div>
+                    </article>
+
+                    <article class="feature-card progress-card">
+                        <div class="section-heading">
+                            <div>
+                                <p class="section-kicker">Today's Progress</p>
+                                <h2>Stay on pace</h2>
+                            </div>
+                            <span class="pill pill-soft">Today</span>
+                        </div>
+
+                        <div class="progress-metrics">
+                            <div class="metric-inline">
+                                <span class="metric-inline__label">Sessions</span>
+                                <span class="metric-inline__value"><span id="todaySessions">0</span> / 3</span>
+                            </div>
+                            <div class="metric-inline">
+                                <span class="metric-inline__label">Focus Time</span>
+                                <span class="metric-inline__value"><span id="todayFocus">0</span>m / 60m</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-stack">
+                            <div class="progress-group">
+                                <div class="progress-labels">
+                                    <span>Focus Goal Progress</span>
+                                    <span id="todayMinutesPercent">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="todayMinutesProgress"></div>
+                                </div>
+                            </div>
+
+                            <div class="progress-group">
+                                <div class="progress-labels">
+                                    <span>Session Goal</span>
+                                    <span id="todaySessionsPercent">0%</span>
+                                </div>
+                                <div class="progress-bar progress-bar--muted">
+                                    <div class="progress-fill progress-fill--secondary" id="todaySessionsProgress">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="insight-banner" id="journeyBanner">
+                    <div class="insight-banner__icon">New</div>
+                    <div>
+                        <p class="section-kicker">Start Your Journey</p>
+                        <h2>You haven't started any sessions yet.</h2>
+                        <p>Click "Start Focus Session" above to begin your first deep work block.</p>
+                    </div>
+                    <span class="pill">New</span>
+                </section>
+
+                <section class="panel analytics-panel hidden" id="analyticsSection">
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-kicker">Focus Analytics</p>
+                            <h2>Patterns in your attention</h2>
+                        </div>
+                        <div class="segmented-control" role="tablist" aria-label="Analytics timeframe">
+                            <button class="segment is-active" type="button" data-range="week">This Week</button>
+                            <button class="segment" type="button" data-range="month">This Month</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="focusAnalyticsChart" aria-label="Focus analytics chart"></canvas>
+                    </div>
+
+                    <div class="heatmap-panel" id="heatmapSection">
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-kicker">Consistency</p>
+                            <h3>Focus Heatmap</h3>
+                            <p class="section-subtitle">Your study patterns over the last 3 months</p>
+                        </div>
+                    </div>
+                    <div class="heatmap-container" id="focusHeatmap">
+                        <div class="heatmap-loading">Loading consistency data...</div>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>Less</span>
+                        <div class="legend-cells">
+                            <div class="heatmap-cell level-0"></div>
+                            <div class="heatmap-cell level-1"></div>
+                            <div class="heatmap-cell level-2"></div>
+                            <div class="heatmap-cell level-3"></div>
+                            <div class="heatmap-cell level-4"></div>
+                        </div>
+                        <span>More</span>
+                    </div>
+                    </div>
+                </section>
+
+                <section class="stats-grid premium-stats">
+                    <article class="stat-card premium-stat">
+                        <div class="stat-value" id="totalFocusHours">0m</div>
+                        <div class="stat-label">Total Focus Time</div>
+                    </article>
+                    <article class="stat-card premium-stat">
+                        <div class="stat-value" id="avgAttention">0%</div>
+                        <div class="stat-label">Avg Attention</div>
+                    </article>
+                    <article class="stat-card premium-stat">
+                        <div class="stat-value" id="totalSessions">0</div>
+                        <div class="stat-label">Sessions Completed</div>
+                    </article>
+                    <article class="stat-card premium-stat">
+                        <div class="stat-value" id="dayStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </article>
+                </section>
+
+                <section class="content-grid">
+                    <article class="panel sessions-panel">
+                        <div class="section-heading">
+                            <div>
+                                <p class="section-kicker">Recent Sessions</p>
+                                <h2>Your latest focus blocks</h2>
+                            </div>
+                            <button class="btn btn-secondary btn-small hidden" id="showMoreSessionsBtn"
+                                type="button">Show More</button>
+                        </div>
+                        <div class="scroll-row-wrap">
+                            <div class="session-list scroll-row" id="recentSessionsBody">
+                                <div class="empty-state">
+                                    <div class="empty-state__icon">--</div>
+                                    <p>No sessions yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <section class="panel playlists-panel" id="playlistsSection">
+                        <div class="section-heading">
+                            <div>
+                                <p class="section-kicker">Your Playlists</p>
+                                <h2>Study-ready collections</h2>
+                            </div>
+                            <div class="section-actions">
+                                <button class="btn btn-secondary btn-small hidden" id="showMorePlaylistsBtn"
+                                    type="button">Show More</button>
+                                <a class="btn btn-secondary btn-icon" href="playlist.html">Open Full Page</a>
+                            </div>
+                        </div>
+                        <div class="playlist-list premium-playlist-list scroll-row" id="playlistList">
+                            <div class="empty-state">
+                                <div class="empty-state__icon">PL</div>
+                                <p>No playlists yet. Add one to get started!</p>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="playlistModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Create Playlist</p>
+                    <h2>Add Videos to Playlist</h2>
+                </div>
+                <button class="modal-close" type="button" onclick="closePlaylistModal()" aria-label="Close">×</button>
+            </div>
+
+            <div class="form-group">
+                <label for="playlistName">Playlist Name</label>
+                <input type="text" id="playlistName" placeholder="e.g., Python Basics">
+            </div>
+
+            <div class="form-group">
+                <label for="videoUrlInput">Add Videos</label>
+                <div class="smart-input-row">
+                    <input type="url" id="videoUrlInput" placeholder="Paste YouTube video or playlist link">
+                    <button class="btn btn-secondary" type="button" id="addVideoBtn">+ Add</button>
+                </div>
+                <small class="form-hint">Paste YouTube links (videos or playlists)</small>
+                <p class="inline-feedback inline-feedback--error hidden" id="videoInputError"></p>
+                <p class="inline-feedback hidden" id="videoInputStatus"></p>
+            </div>
+
+            <div class="form-group">
+                <div class="added-list-header">
+                    <label>Added Videos</label>
+                    <span class="added-list-summary" id="addedVideosSummary">0 videos · 0m</span>
+                </div>
+                <div class="added-items-list" id="addedVideosList">
+                    <p class="added-items-empty">No videos added yet.</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" onclick="addPlaylist()">Create Study Playlist</button>
+                <button class="btn btn-secondary" type="button" onclick="closePlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editPlaylistModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Manage Playlist</p>
+                    <h2>Edit Playlist</h2>
+                    <p id="editPlaylistTitle" class="modal-subtitle"></p>
+                </div>
+                <button class="modal-close" type="button" onclick="closeEditPlaylistModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div class="form-group">
+                <label for="addVideoLinks">Add videos (links or IDs, one per line)</label>
+                <textarea id="addVideoLinks"
+                    placeholder="https://youtu.be/jNQXAC9IVRw&#10;https://www.youtube.com/watch?v=dQw4w9WgXcQ&#10;https://www.youtube.com/playlist?list=PLxxxxxx"
+                    rows="5"></textarea>
+                <small class="form-hint">Single videos and playlist links are both supported.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="removeVideoLinks">Remove videos (links or IDs, one per line)</label>
+                <textarea id="removeVideoLinks" placeholder="https://youtu.be/jNQXAC9IVRw&#10;W_lqV7mVbiw"
+                    rows="5"></textarea>
+                <small class="form-hint">Only individual videos can be removed.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" onclick="updatePlaylistVideos()">Save Changes</button>
+                <button class="btn btn-secondary" type="button" onclick="closeEditPlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="focusSessionModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card modal-card--compact">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Start Focus Session</p>
+                    <h2>Set up your next deep work block</h2>
+                    <p class="modal-subtitle">Choose your study duration and session count before entering the player.
+                    </p>
+                </div>
+                <button class="modal-close" type="button" onclick="closeFocusSessionModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div class="form-group">
+                <label for="focusDurationInput">How long do you want to study?</label>
+                <input type="number" id="focusDurationInput" min="5" step="1" value="25" placeholder="25">
+                <small class="form-hint">Minimum 5 minutes.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="focusCyclesInput">How many sessions do you want to complete?</label>
+                <input type="number" id="focusCyclesInput" min="1" step="1" value="2" placeholder="2">
+            </div>
+
+            <div class="session-summary">
+                <span>Total Study Time</span>
+                <strong id="focusSummaryText">~50 minutes</strong>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" id="confirmFocusSessionBtn">Start Session</button>
+                <button class="btn btn-secondary" type="button" onclick="closeFocusSessionModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="playlistSelectorModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card modal-card--compact">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Choose Playlist</p>
+                    <h2>Select a playlist for this session</h2>
+                    <p class="modal-subtitle">Pick the playlist you want to use before configuring your Pomodoro
+                        session.</p>
+                </div>
+                <button class="modal-close" type="button" onclick="closePlaylistSelectorModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div id="playlistSelectorList" class="selection-list"></div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" type="button" onclick="closePlaylistSelectorModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resumeSessionModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card modal-card--compact">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Resume Session</p>
+                    <h2>You have an unfinished focus session</h2>
+                    <p class="modal-subtitle">Resume where you left off or start a fresh session with a new
+                        configuration.</p>
+                </div>
+                <button class="modal-close" type="button" onclick="closeResumeSessionModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div class="session-summary">
+                <span>Current Session</span>
+                <strong id="resumeSessionSummary">25 min x 2 cycles</strong>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" id="resumeSessionBtn">Resume Session</button>
+                <button class="btn btn-secondary" type="button" id="startNewSessionBtn">Start New Session</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="conflictSessionModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card modal-card--compact">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Unfinished Session Detected</p>
+                    <h2>You have an unfinished session from another playlist</h2>
+                    <p id="conflictSessionHint" class="modal-subtitle">Choose whether to resume it or start fresh with
+                        your newly selected playlist.</p>
+                </div>
+                <button class="modal-close" type="button" onclick="closeConflictSessionModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div class="conflict-panel">
+                <div class="conflict-card">
+                    <span class="conflict-label">Previous Session</span>
+                    <strong id="previousSessionPlaylist">Unknown Playlist</strong>
+                    <span id="previousSessionMeta" class="conflict-meta">1 min remaining · 1 cycle left</span>
+                </div>
+                <div class="conflict-card">
+                    <span class="conflict-label">Current Playlist</span>
+                    <strong id="currentSessionPlaylist">Selected Playlist</strong>
+                    <span class="conflict-meta">This is the playlist you just chose.</span>
+                </div>
+            </div>
+
+            <div class="modal-actions modal-actions--stacked">
+                <button class="btn btn-primary" type="button" id="startCurrentConflictBtn">Start New Session With
+                    Current Playlist</button>
+                <button class="btn btn-secondary" type="button" id="resumePreviousConflictBtn">Resume Previous
+                    Session</button>
+                <button class="btn btn-secondary" type="button" id="discardPreviousConflictBtn">Discard Previous
+                    Session</button>
+                <button class="btn btn-secondary" type="button" onclick="closeConflictSessionModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/localDb.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/eventOutbox.js"></script>
+    <script src="../../js/localAnalytics.js"></script>
+    <script src="../../js/notificationManager.js"></script>
+
+    <script src="../../js/User.js"></script>
+    <script src="../../js/playlist.js"></script>
+    <script src="../../js/Video.js"></script>
+    <script src="../../js/StudySession.js"></script>
+    <script src="../../js/ProductivityAnalytics.js"></script>
+    <script src="../../js/AttentionMonitor.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/SimpleAnalytics.js"></script>
+    <script src="../../js/dashboard.js"></script>
+    <script src="../../js/load-components.js"></script>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    <script>
+        // Inline Theme Init & Toggle Script
+        (() => {
+            const themeKey = "cognelearn_dashboard_theme";
+            const themeClass = "dashboard-theme-dark";
+            const currentTheme = localStorage.getItem(themeKey);
+            const isDark = currentTheme === "dark";
+            if (isDark) {
+                document.body.classList.add(themeClass);
+            } else {
+                document.body.classList.remove(themeClass);
+            }
+            
+            const setupThemeButtons = () => {
+                const buttons = document.querySelectorAll('.theme-toggle-btn');
+                buttons.forEach(btn => {
+                    const moonIcon = btn.querySelector('.theme-icon-moon');
+                    const sunIcon = btn.querySelector('.theme-icon-sun');
+                    
+                    const updateIcons = (dark) => {
+                        if (moonIcon && sunIcon) {
+                            moonIcon.style.display = dark ? 'none' : 'block';
+                            sunIcon.style.display = dark ? 'block' : 'none';
+                        }
+                    };
+                    
+                    updateIcons(document.body.classList.contains(themeClass));
+                    
+                    btn.onclick = (e) => {
+                        if (e) e.preventDefault();
+                        const nowDark = document.body.classList.toggle(themeClass);
+                        localStorage.setItem(themeKey, nowDark ? "dark" : "light");
+                        
+                        document.querySelectorAll('.theme-toggle-btn').forEach(b => {
+                            const m = b.querySelector('.theme-icon-moon');
+                            const s = b.querySelector('.theme-icon-sun');
+                            if (m && s) {
+                                m.style.display = nowDark ? 'none' : 'block';
+                                s.style.display = nowDark ? 'block' : 'none';
+                            }
+                        });
+                        
+                        // Sync legacy sidebar theme toggle if it exists
+                        const sidebarToggle = document.getElementById('themeToggle');
+                        if (sidebarToggle) {
+                            sidebarToggle.setAttribute('aria-pressed', String(nowDark));
+                        }
+                        
+                        // Trigger chart render if applicable
+                        if (window.Chart && typeof renderAnalyticsChart === 'function') {
+                            renderAnalyticsChart();
+                        }
+                    };
+                });
+                
+                // Sync from sidebar legacy themeToggle
+                const sidebarToggle = document.getElementById('themeToggle');
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', () => {
+                        setTimeout(() => {
+                            const nowDark = document.body.classList.contains(themeClass);
+                            buttons.forEach(btn => {
+                                const moonIcon = btn.querySelector('.theme-icon-moon');
+                                const sunIcon = btn.querySelector('.theme-icon-sun');
+                                if (moonIcon && sunIcon) {
+                                    moonIcon.style.display = nowDark ? 'none' : 'block';
+                                    sunIcon.style.display = nowDark ? 'block' : 'none';
+                                }
+                            });
+                        }, 50);
+                    });
+                }
+            };
+            
+            if (document.readyState === 'loading' || !document.getElementById('sidebar-container').innerHTML) {
+                document.addEventListener('componentsLoaded', setupThemeButtons);
+            } else {
+                setupThemeButtons();
+            }
+        })();
+    </script>
+</body>
+
+</html>

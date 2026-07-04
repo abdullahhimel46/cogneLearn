@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cogneLearn - Playlist Player</title>
-    <link rel="icon" href="data:,">
+    <title>cogneLearn - Playlists</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/player.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/user/playlist.css">
 </head>
-<body class="dashboard-body sidebar-collapsed player-body">
+
+<body class="dashboard-body sidebar-collapsed">
     <div class="app-shell">
         <div id="sidebar-container"></div>
 
@@ -22,15 +23,17 @@
                 <div class="mobile-brand">cogneLearn</div>
             </header>
 
-            <div class="dashboard-page player-page">
+            <div class="dashboard-page">
                 <section class="hero-header">
                     <div>
-                        <p class="eyebrow">Focus Session</p>
-                        <h1>Stay in the zone</h1>
-<!--                        <p class="hero-subtitle">Timer + attention monitoring + playlist playback in one place.</p>-->
+                        <p class="eyebrow">Playlists</p>
+                        <h1>Manage your study collections</h1>
+                        <p class="hero-subtitle">Create, edit, and launch your curated focus playlists from one page.
+                        </p>
                     </div>
                     <div class="header-actions">
-                        <a class="btn btn-secondary btn-small" href="user/dashboard.html">Back to Dashboard</a>
+                        <button class="btn btn-primary" type="button" onclick="showAddPlaylistModal()">+ Add
+                            Playlist</button>
                         <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
                             <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
@@ -50,95 +53,95 @@
                     </div>
                 </section>
 
-                <section class="main-grid">
-                    <article class="panel video-card">
-                        <div class="video-shell">
-                            <video id="mainVideo" preload="metadata" controls playsinline></video>
-                            <button id="centerPlayButton" class="center-play" type="button" aria-label="Play video">▶</button>
-                        </div>
-                    </article>
-
-                    <aside class="right-sidebar">
-                        <section class="panel timer-card">
-                            <div id="timerDisplay" class="timer-display">24:13</div>
-                            <div class="timer-label">FOCUS TIME - KEEP GOING!</div>
-                            <div class="timer-actions">
-                                <button id="pauseButton" class="btn btn-secondary btn-small" type="button">Pause</button>
-                                <button id="resetButton" class="btn btn-secondary btn-small" type="button">Reset</button>
-                            </div>
-                        </section>
-
-                        <section class="panel attention-card">
-                            <h3>Focus Level</h3>
-                            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                                <div id="focusFill" class="progress-fill" style="width: 0%;"></div>
-                            </div>
-                            <div id="focusLabel" class="focus-label">Initializing Camera...</div>
-                        </section>
-                    </aside>
-                </section>
-
-                <section class="panel playlist-bottom">
-                    <div class="section-heading player-playlist-heading">
-                        <div>
-                            <p class="section-kicker">Playlist</p>
-                            <h2>Up next</h2>
-                        </div>
+                <section class="panel playlists-page-panel">
+                    <div class="playlist-list premium-playlist-list" id="playlistList">
+                        <p class="playlist-empty">No playlists yet. Add one to get started!</p>
                     </div>
-                    <div id="playlistContainer" class="playlist-list"></div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="playerSessionModal" class="player-modal-overlay hidden" aria-hidden="true">
-        <div class="player-modal-card">
-            <div class="player-modal-header">
+    <div id="playlistModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
                 <div>
-                    <p class="player-modal-kicker">Start Focus Session</p>
-                    <h2>Choose your study setup</h2>
-                    <p class="player-modal-subtitle">We will start the timer, initialize the session, and begin playback after you confirm.</p>
+                    <p class="section-kicker">Create Playlist</p>
+                    <h2>Add Videos to Playlist</h2>
                 </div>
-                <button id="playerModalClose" class="player-modal-close" type="button" aria-label="Close">×</button>
+                <button class="modal-close" type="button" onclick="closePlaylistModal()" aria-label="Close">×</button>
             </div>
 
-            <div class="player-form-group">
-                <label for="playerDurationInput">How long do you want to study?</label>
-                <input id="playerDurationInput" type="number" min="5" step="1" value="25">
-                <small>Minimum 5 minutes.</small>
+            <div class="form-group">
+                <label for="playlistName">Playlist Name</label>
+                <input type="text" id="playlistName" placeholder="e.g., Python Basics">
             </div>
 
-            <div class="player-form-group">
-                <label for="playerCyclesInput">How many sessions do you want to complete?</label>
-                <input id="playerCyclesInput" type="number" min="1" step="1" value="2">
+            <div class="form-group">
+                <label for="videoUrlInput">Add Videos</label>
+                <div class="smart-input-row">
+                    <input type="url" id="videoUrlInput" placeholder="Paste YouTube video or playlist link">
+                    <button class="btn btn-secondary" type="button" id="addVideoBtn">+ Add</button>
+                </div>
+                <small class="form-hint">Paste YouTube links (videos or playlists)</small>
+                <p class="inline-feedback inline-feedback--error hidden" id="videoInputError"></p>
+                <p class="inline-feedback hidden" id="videoInputStatus"></p>
             </div>
 
-            <div class="player-session-summary">
-                <span>Total Study Time</span>
-                <strong id="playerSummaryText">~50 minutes</strong>
+            <div class="form-group">
+                <div class="added-list-header">
+                    <label>Added Videos</label>
+                    <span class="added-list-summary" id="addedVideosSummary">0 videos · 0m</span>
+                </div>
+                <div class="added-items-list" id="addedVideosList">
+                    <p class="added-items-empty">No videos added yet.</p>
+                </div>
             </div>
 
-            <div class="player-modal-actions">
-                <button id="playerSessionStart" class="player-primary-btn" type="button">Start Session</button>
-                <button id="playerSessionCancel" class="player-secondary-btn" type="button">Cancel</button>
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" onclick="addPlaylist()">Create Study Playlist</button>
+                <button class="btn btn-secondary" type="button" onclick="closePlaylistModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <script src="../js/localDb.js"></script>
-    <script src="../js/utils.js"></script>
-    <script src="../js/eventOutbox.js"></script>
-    <script src="../js/localAnalytics.js"></script>
-    <script src="../js/notificationManager.js"></script>
-    <script src="../js/User.js"></script>
-    <script src="../js/playlist.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/StudySession.js"></script>
-    <script src="../js/pomodoro.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <script src="../js/AttentionMonitor.js"></script>
-    <script src="../js/player.js"></script>
-    <script src="../js/load-components.js"></script>
+    <div id="editPlaylistModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="section-kicker">Manage Playlist</p>
+                    <h2>Edit Playlist</h2>
+                    <p id="editPlaylistTitle" class="modal-subtitle"></p>
+                </div>
+                <button class="modal-close" type="button" onclick="closeEditPlaylistModal()"
+                    aria-label="Close">×</button>
+            </div>
+
+            <div class="form-group">
+                <label for="addVideoLinks">Add videos (links or IDs, one per line)</label>
+                <textarea id="addVideoLinks" rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="removeVideoLinks">Remove videos (links or IDs, one per line)</label>
+                <textarea id="removeVideoLinks" rows="5"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" type="button" onclick="updatePlaylistVideos()">Save Changes</button>
+                <button class="btn btn-secondary" type="button" onclick="closeEditPlaylistModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/User.js"></script>
+    <script src="../../js/playlist.js"></script>
+    <script src="../../js/Video.js"></script>
+    <script src="../../js/StudySession.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/playlists-page.js"></script>
+    <script src="../../js/load-components.js"></script>
 
     <!-- Footer -->
     <div id="footer-container"></div>
@@ -219,4 +222,5 @@
         })();
     </script>
 </body>
+
 </html>

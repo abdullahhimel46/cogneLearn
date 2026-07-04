@@ -133,7 +133,7 @@ async function ensureAdminSession() {
   }
   const user = await res.json();
   if (user.role !== 'ADMIN') {
-    window.location.href = '../dashboard.html';
+    window.location.href = '../user/dashboard.html';
     return false;
   }
   return true;
