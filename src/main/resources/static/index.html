@@ -114,7 +114,7 @@
             try {
                 const me = await Api.get('/api/v1/auth/me');
                 if (me) {
-                    const dashboardLink = me.role === 'ADMIN' ? 'pages/admin/dashboard.html' : 'pages/dashboard.html';
+                    const dashboardLink = me.role === 'ADMIN' ? 'pages/admin/admin-dashboard.html' : 'pages/user/user-dashboard.html';
                     document.getElementById('navLinks').innerHTML = `
                         <li><a href="${dashboardLink}">Dashboard</a></li>
                         <li><a href="#" onclick="logout()">Logout</a></li>

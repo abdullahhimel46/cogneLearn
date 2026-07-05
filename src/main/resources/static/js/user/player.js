@@ -156,7 +156,7 @@ function initPlayer() {
     function redirectToDashboard(reason) {
         console.warn("[player] Redirecting to dashboard because:", reason);
         clearLaunchIntent();
-        window.location.href = "user/dashboard.html";
+        window.location.href = "user/user-dashboard.html";
     }
 
     function resolveLaunchContext() {

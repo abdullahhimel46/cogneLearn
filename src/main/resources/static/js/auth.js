@@ -33,9 +33,9 @@ const Auth = {
             }
 
             if (response.user && response.user.role === 'ADMIN') {
-                window.location.href = '/pages/admin/dashboard.html';
+                window.location.href = '/pages/admin/admin-dashboard.html';
             } else {
-                window.location.href = '/pages/user/dashboard.html';
+                window.location.href = '/pages/user/user-dashboard.html';
             }
             return true;
         } catch (error) {
@@ -82,7 +82,7 @@ const Auth = {
                 localStorage.setItem('cognelearn_scoped_user_id', String(response.user.id));
             }
 
-            window.location.href = '/pages/user/dashboard.html';
+            window.location.href = '/pages/user/user-dashboard.html';
             return true;
         } catch (error) {
             alert(error && error.message ? error.message : 'Signup failed. Please try again.');

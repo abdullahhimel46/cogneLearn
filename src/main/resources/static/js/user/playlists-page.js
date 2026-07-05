@@ -376,7 +376,7 @@ function initPlaylistsPage() {
         if (dom.sidebarFocusSessionBtn) {
             dom.sidebarFocusSessionBtn.addEventListener("click", function (event) {
                 event.preventDefault();
-                window.location.href = "dashboard.html";
+                window.location.href = "user-dashboard.html";
             });
         }
 
