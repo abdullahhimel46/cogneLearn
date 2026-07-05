@@ -2167,6 +2167,7 @@ body.sidebar-collapsed .sidebar-control {
 .modal-actions {
     display: flex;
     gap: 12px;
+    margin-top: 20px;
 }
 
 .modal-actions--stacked {
