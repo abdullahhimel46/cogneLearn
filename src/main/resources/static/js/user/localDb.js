@@ -152,6 +152,11 @@
         });
     }
 
+    async function clearStore(storeName) {
+        const db = await open();
+        return requestToPromise(tx(db, storeName, "readwrite").clear());
+    }
+
     window.LocalDB = {
         STORES,
         setUserScope,
@@ -163,6 +168,7 @@
         delete: del,
         getAll,
         getAllFromIndex,
-        deleteWhereIndexEquals
+        deleteWhereIndexEquals,
+        clearStore
     };
 })();

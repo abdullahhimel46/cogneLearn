@@ -36,6 +36,8 @@ spring:
             enable: true
 
 cognelearn:
+  attention:
+    store-on-server: true
   email:
     # Set to true only when MAIL_USERNAME and MAIL_PASSWORD env vars are configured.
     enabled: ${COGNELEARN_EMAIL_ENABLED:false}

@@ -297,8 +297,9 @@
         const totalFocusMinutes = sessions.reduce(function (sum, s) { return sum + safeNumber(s.completedDuration, 0); }, 0);
         const totalSessions = sessions.length;
 
-        const avgAttentionScore = totalSessions > 0
-            ? Math.round(sessions.reduce(function (sum, s) { return sum + safeNumber(s.avgAttention, 0); }, 0) / totalSessions)
+        const sessionsWithAttention = sessions.filter(function (s) { return safeNumber(s.avgAttention, 0) > 0; });
+        const avgAttentionScore = sessionsWithAttention.length > 0
+            ? Math.round(sessionsWithAttention.reduce(function (sum, s) { return sum + safeNumber(s.avgAttention, 0); }, 0) / sessionsWithAttention.length)
             : 0;
 
         const today = isoDateOnly(new Date());
@@ -357,22 +358,46 @@
     async function bootstrapFromServer() {
         if (typeof Api === "undefined" || typeof StudySession === "undefined" || typeof LocalDB === "undefined") return;
 
+        const MIGRATION_KEY = "cognelearn_idb_version";
+        const CURRENT_VERSION = 2;
+
         try {
+            const storedVersion = Number(localStorage.getItem(MIGRATION_KEY) || 0);
+
+            // If local cache is stale, wipe everything and rebuild from server
+            if (storedVersion < CURRENT_VERSION) {
+                console.info("[LocalAnalytics] Stale cache detected (v" + storedVersion + " → v" + CURRENT_VERSION + "). Clearing IndexedDB for clean re-sync.");
+                await LocalDB.clearStore(STORES.STUDY_SESSIONS);
+                await LocalDB.clearStore(STORES.DAILY_ANALYTICS);
+                await LocalDB.clearStore(STORES.ACHIEVEMENT_CACHE);
+                await LocalDB.clearStore(STORES.ATTENTION_SAMPLES);
+                localStorage.setItem(MIGRATION_KEY, String(CURRENT_VERSION));
+            }
+
             const serverSessions = await StudySession.getAll();
             if (!Array.isArray(serverSessions)) return;
 
             const existingSessions = await getAllSessions();
-            const existingIds = new Set(existingSessions.map(s => String(s.sessionId)));
 
             let updated = false;
             for (const s of serverSessions) {
                 if (!s || !s.sessionId) continue;
                 const sessionIdStr = String(s.sessionId);
-                if (existingIds.has(sessionIdStr)) continue;
+
+                const existing = existingSessions.find(ex => String(ex.sessionId) === sessionIdStr);
+                if (existing && existing.avgAttention > 0) continue;
+
+                let computedAvg = 0;
+                if (Array.isArray(s.attentionScores) && s.attentionScores.length > 0) {
+                    const total = s.attentionScores.reduce((sum, score) => sum + (Number(score) || 0), 0);
+                    computedAvg = Math.round(total / s.attentionScores.length);
+                }
 
                 const date = isoDateOnly(s.endTime || s.startTime || new Date());
                 const scopedUserId = localStorage.getItem("cognelearn_scoped_user_id");
+
                 await upsertSession({
+                    ...(existing || {}),
                     sessionId: sessionIdStr,
                     userId: scopedUserId || null,
                     playlistId: s.playlistId || null,
@@ -384,7 +409,8 @@
                     status: s.status || "unknown",
                     completed: String(s.status || "").toLowerCase() === "completed",
                     date,
-                    avgAttention: 0,
+                    avgAttention: computedAvg,
+                    attentionScores: s.attentionScores || [],
                     updatedAt: new Date().toISOString(),
                     source: "server-bootstrap"
                 });
@@ -397,7 +423,7 @@
                 await upsertAchievementCache({ currentStreak: streaks.currentStreak, bestStreak: streaks.bestStreak });
             }
         } catch (e) {
-            // ignore bootstrap errors; dashboard can still use server analytics as fallback.
+            console.error("[LocalAnalytics] Bootstrap error:", e);
         }
     }
 

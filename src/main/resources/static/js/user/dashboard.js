@@ -508,7 +508,8 @@ function initDashboard() {
                 label: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
                 minutes: 0,
                 focusTotal: 0,
-                count: 0
+                count: 0,
+                attentionCount: 0
             });
         }
 
@@ -525,14 +526,18 @@ function initDashboard() {
             }
 
             bucket.minutes += getSessionDuration(session);
-            bucket.focusTotal += getSessionAttentionAverage(session);
+            const attn = getSessionAttentionAverage(session);
+            if (attn > 0) {
+                bucket.focusTotal += attn;
+                bucket.attentionCount += 1;
+            }
             bucket.count += 1;
         });
 
         return {
             labels: buckets.map((bucket) => bucket.label),
             minutesSeries: buckets.map((bucket) => bucket.minutes),
-            attentionSeries: buckets.map((bucket) => bucket.count > 0 ? Math.round(bucket.focusTotal / bucket.count) : 0)
+            attentionSeries: buckets.map((bucket) => bucket.attentionCount > 0 ? Math.round(bucket.focusTotal / bucket.attentionCount) : 0)
         };
     }
 

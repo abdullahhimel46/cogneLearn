@@ -40,15 +40,23 @@ const StudySession = {
             completedDuration: completedMinutes
         });
         localStorage.removeItem('cognelearn_session');
-        this.recordSessionHistory(session);
+        // Note: caller (player.js) is responsible for calling recordSessionHistory
+        // after this resolves, so that attention samples are still available.
         return session;
     },
 
     addAttentionScore: async function(sessionId, score) {
-        // Legacy method name kept for compatibility with older UI code.
-        // New behavior: store locally only.
+        // Store locally for real-time processing.
         if (window.LocalAnalytics) {
             await LocalAnalytics.recordAttentionSample(String(sessionId), Number(score) || 0, Date.now());
+        }
+        // Also persist to server so bootstrap sync can recover attention data.
+        try {
+            if (window.Api) {
+                await Api.post(`/api/v1/sessions/${sessionId}/attention`, { score: Number(score) || 0 });
+            }
+        } catch (e) {
+            // Non-critical: local data is the source of truth during active session.
         }
         return { ok: true };
     },
