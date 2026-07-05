@@ -11,13 +11,14 @@
 
         <div class="form-group">
             <label for="focusDurationInput">How long do you want to study?</label>
-            <input type="number" id="focusDurationInput" min="5" step="1" value="25" placeholder="25">
-            <small class="form-hint">Minimum 5 minutes.</small>
+            <input type="number" id="focusDurationInput" min="1" step="1" value="25" placeholder="25">
+            <div id="focusDurationError" class="error-feedback hidden">⚠️ Duration must be at least 5 minutes.</div>
         </div>
 
         <div class="form-group">
             <label for="focusCyclesInput">How many sessions do you want to complete?</label>
             <input type="number" id="focusCyclesInput" min="1" step="1" value="2" placeholder="2">
+            <div id="focusCyclesError" class="error-feedback hidden">⚠️ Sessions count must be at least 1.</div>
         </div>
 
         <div class="session-summary">

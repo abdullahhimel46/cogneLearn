@@ -45,12 +45,47 @@
             const confirmBtn = document.getElementById("confirmFocusSessionBtn");
             const closeBtn = document.getElementById("closeFocusSessionModalBtn");
             const cancelBtn = document.getElementById("cancelFocusSessionModalBtn");
+            const durationError = document.getElementById("focusDurationError");
+            const cyclesError = document.getElementById("focusCyclesError");
+
+            const validateInputs = () => {
+                if (!durationInput || !cyclesInput) return;
+                const duration = Number(durationInput.value);
+                const cycles = Number(cyclesInput.value);
+
+                const isDurationValid = Number.isFinite(duration) && duration >= 5;
+                const isCyclesValid = Number.isFinite(cycles) && cycles >= 1;
+
+                // Duration validation UI
+                if (durationInput.value === "" || isDurationValid) {
+                    durationInput.classList.remove("is-invalid");
+                    if (durationError) durationError.classList.add("hidden");
+                } else {
+                    durationInput.classList.add("is-invalid");
+                    if (durationError) durationError.classList.remove("hidden");
+                }
+
+                // Cycles validation UI
+                if (cyclesInput.value === "" || isCyclesValid) {
+                    cyclesInput.classList.remove("is-invalid");
+                    if (cyclesError) cyclesError.classList.add("hidden");
+                } else {
+                    cyclesInput.classList.add("is-invalid");
+                    if (cyclesError) cyclesError.classList.remove("hidden");
+                }
+
+                const currentConfirmBtn = document.getElementById("confirmFocusSessionBtn");
+                if (currentConfirmBtn) {
+                    currentConfirmBtn.disabled = !isDurationValid || !isCyclesValid;
+                }
+            };
 
             const updateSummary = () => {
                 if (!durationInput || !cyclesInput || !summaryText) return;
                 const duration = Math.max(5, Number(durationInput.value) || 25);
                 const cycles = Math.max(1, Number(cyclesInput.value) || 1);
                 summaryText.textContent = `~${duration * cycles} minutes`;
+                validateInputs();
             };
 
             if (durationInput) durationInput.addEventListener("input", updateSummary);
@@ -80,18 +115,6 @@
                 newConfirmBtn.addEventListener("click", async () => {
                     const duration = Number(durationInput.value);
                     const cycles = Number(cyclesInput.value);
-
-                    if (!Number.isFinite(duration) || duration < 5) {
-                        alert("Study duration must be at least 5 minutes.");
-                        durationInput.focus();
-                        return;
-                    }
-
-                    if (!Number.isFinite(cycles) || cycles < 1) {
-                        alert("Number of sessions must be at least 1.");
-                        cyclesInput.focus();
-                        return;
-                    }
 
                     if (this.onStart) {
                         this.onStart({ playlistId: this.playlistId, duration, cycles });
