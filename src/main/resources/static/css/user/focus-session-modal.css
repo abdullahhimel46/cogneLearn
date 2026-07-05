@@ -1,0 +1,18 @@
+/* Focus Session Modal Specific Styles */
+
+.session-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(244, 247, 251, 0.96), rgba(255, 255, 255, 0.88));
+    border: 1px solid rgba(229, 231, 235, 0.9);
+    color: var(--dashboard-muted, #6b7280);
+}
+
+.session-summary strong {
+    color: var(--dashboard-text, #111827);
+    font-size: 1rem;
+}

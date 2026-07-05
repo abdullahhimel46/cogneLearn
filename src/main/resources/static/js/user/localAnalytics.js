@@ -302,6 +302,7 @@
             : 0;
 
         const today = isoDateOnly(new Date());
+        const todaySessions = sessions.filter(function (s) { return s.date === today; }).length;
         const todayFocusMinutes = sessions
             .filter(function (s) { return s.date === today; })
             .reduce(function (sum, s) { return sum + safeNumber(s.completedDuration, 0); }, 0);
@@ -335,6 +336,7 @@
             totalSessions,
             avgAttentionScore,
             todayFocusMinutes,
+            todaySessions,
             totalPlaylists: 0,
             focusScore,
             completionRate,
@@ -353,23 +355,25 @@
     }
 
     async function bootstrapFromServer() {
-        // Optional bootstrap: if local DB is empty, copy minimal session metadata from server.
-        // We DO NOT persist attentionScores coming from server.
         if (typeof Api === "undefined" || typeof StudySession === "undefined" || typeof LocalDB === "undefined") return;
-
-        const existing = await getAllSessions();
-        if (existing.length > 0) return;
 
         try {
             const serverSessions = await StudySession.getAll();
             if (!Array.isArray(serverSessions)) return;
 
+            const existingSessions = await getAllSessions();
+            const existingIds = new Set(existingSessions.map(s => String(s.sessionId)));
+
+            let updated = false;
             for (const s of serverSessions) {
                 if (!s || !s.sessionId) continue;
+                const sessionIdStr = String(s.sessionId);
+                if (existingIds.has(sessionIdStr)) continue;
+
                 const date = isoDateOnly(s.endTime || s.startTime || new Date());
                 const scopedUserId = localStorage.getItem("cognelearn_scoped_user_id");
                 await upsertSession({
-                    sessionId: String(s.sessionId),
+                    sessionId: sessionIdStr,
                     userId: scopedUserId || null,
                     playlistId: s.playlistId || null,
                     videoId: s.videoId || null,
@@ -384,15 +388,14 @@
                     updatedAt: new Date().toISOString(),
                     source: "server-bootstrap"
                 });
+                await recomputeDailyAnalyticsForDate(date);
+                updated = true;
             }
 
-            // Recompute daily rollups and streak cache.
-            const dates = Array.from(new Set((await getAllSessions()).map(function (x) { return x.date; }).filter(Boolean)));
-            for (const date of dates) {
-                await recomputeDailyAnalyticsForDate(date);
+            if (updated) {
+                const streaks = await computeStreaks();
+                await upsertAchievementCache({ currentStreak: streaks.currentStreak, bestStreak: streaks.bestStreak });
             }
-            const streaks = await computeStreaks();
-            await upsertAchievementCache({ currentStreak: streaks.currentStreak, bestStreak: streaks.bestStreak });
         } catch (e) {
             // ignore bootstrap errors; dashboard can still use server analytics as fallback.
         }

@@ -1,0 +1,33 @@
+<div id="focusSessionModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card modal-card--compact">
+        <div class="modal-header">
+            <div>
+                <p class="section-kicker">Start Focus Session</p>
+                <h2>Set up your next deep work block</h2>
+                <p class="modal-subtitle">Choose your study duration and session count before entering the player.</p>
+            </div>
+            <button class="modal-close" type="button" id="closeFocusSessionModalBtn" aria-label="Close">×</button>
+        </div>
+
+        <div class="form-group">
+            <label for="focusDurationInput">How long do you want to study?</label>
+            <input type="number" id="focusDurationInput" min="5" step="1" value="25" placeholder="25">
+            <small class="form-hint">Minimum 5 minutes.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="focusCyclesInput">How many sessions do you want to complete?</label>
+            <input type="number" id="focusCyclesInput" min="1" step="1" value="2" placeholder="2">
+        </div>
+
+        <div class="session-summary">
+            <span>Total Study Time</span>
+            <strong id="focusSummaryText">~50 minutes</strong>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" type="button" id="confirmFocusSessionBtn">Start Session</button>
+            <button class="btn btn-secondary" type="button" id="cancelFocusSessionModalBtn">Cancel</button>
+        </div>
+    </div>
+</div>

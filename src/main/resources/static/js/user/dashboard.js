@@ -299,7 +299,7 @@ function initDashboard() {
         const totalSessions = extractDashboardValue(dashboard, "totalSessions");
         const avgAttention = extractDashboardValue(dashboard, "avgAttention", "avgAttentionScore");
         const dayStreak = extractDashboardValue(dashboard, "streak", "maxStreak");
-        const todaySessions = Math.min(totalSessions, goals.sessions);
+        const todaySessions = extractDashboardValue(dashboard, "todaySessions");
 
         dom.todaySessions.textContent = todaySessions;
         dom.todayFocus.textContent = todayMinutes;
@@ -824,7 +824,7 @@ function initDashboard() {
             });
         });
 
-        [dom.playlistModal, dom.editPlaylistModal, dom.focusSessionModal, dom.playlistSelectorModal, dom.resumeSessionModal, dom.conflictSessionModal, dom.goalsModal].forEach((modal) => {
+        [dom.playlistModal, dom.editPlaylistModal, dom.playlistSelectorModal, dom.resumeSessionModal, dom.conflictSessionModal, dom.goalsModal].forEach((modal) => {
             if (!modal) {
                 return;
             }
@@ -835,18 +835,6 @@ function initDashboard() {
                 }
             });
         });
-
-        if (dom.focusDurationInput) {
-            dom.focusDurationInput.addEventListener("input", updateFocusSummary);
-        }
-
-        if (dom.focusCyclesInput) {
-            dom.focusCyclesInput.addEventListener("input", updateFocusSummary);
-        }
-
-        if (dom.confirmFocusSessionBtn) {
-            dom.confirmFocusSessionBtn.addEventListener("click", startConfiguredFocusSession);
-        }
 
         if (dom.resumeSessionBtn) {
             dom.resumeSessionBtn.addEventListener("click", resumeExistingSession);
@@ -1157,11 +1145,7 @@ function initDashboard() {
         openModal(dom.playlistSelectorModal);
     }
 
-    function updateFocusSummary() {
-        const duration = Math.max(5, Number(dom.focusDurationInput.value) || 25);
-        const cycles = Math.max(1, Number(dom.focusCyclesInput.value) || 1);
-        dom.focusSummaryText.textContent = `~${duration * cycles} minutes`;
-    }
+
 
     function showPlaylistInputError(message) {
         dom.videoInputError.textContent = message;
@@ -1349,16 +1333,48 @@ function initDashboard() {
     };
 
     window.openFocusSessionSetup = function openFocusSessionSetup(playlistId) {
-        state.pendingFocusPlaylistId = playlistId || null;
-        dom.focusDurationInput.value = "25";
-        dom.focusCyclesInput.value = "2";
-        updateFocusSummary();
-        openModal(dom.focusSessionModal);
+        if (window.FocusSessionModal) {
+            window.FocusSessionModal.open(playlistId, async ({ playlistId, duration, cycles }) => {
+                try {
+                    const session = await StudySession.create({
+                        playlistId,
+                        duration,
+                        cycles
+                    });
+
+                    localStorage.setItem(PLAYER_SESSION_STORAGE_KEY, JSON.stringify({
+                        playlistId,
+                        playlistName: getPlaylistNameById(playlistId),
+                        duration,
+                        cycles,
+                        currentCycle: 1,
+                        remainingTime: duration * 60,
+                        cyclesLeft: cycles,
+                        startedAt: new Date().toISOString(),
+                        status: "running",
+                        updatedAt: new Date().toISOString(),
+                        sessionId: session && session.sessionId ? session.sessionId : null
+                    }));
+
+                    window.FocusSessionModal.close();
+                    navigateToPlayer({
+                        type: "new_session",
+                        playlistId,
+                        sessionId: session && session.sessionId ? session.sessionId : null,
+                        source: "setup_modal"
+                    });
+                } catch (error) {
+                    console.error(error);
+                    alert(error && error.message ? error.message : "Failed to start session.");
+                }
+            });
+        }
     };
 
     window.closeFocusSessionModal = function closeFocusSessionModal() {
-        state.pendingFocusPlaylistId = null;
-        closeModal(dom.focusSessionModal);
+        if (window.FocusSessionModal) {
+            window.FocusSessionModal.close();
+        }
     };
 
     function resumeExistingSession() {
@@ -1418,56 +1434,7 @@ function initDashboard() {
         }
     }
 
-    async function startConfiguredFocusSession() {
-        const duration = Number(dom.focusDurationInput.value);
-        const cycles = Number(dom.focusCyclesInput.value);
-        const targetPlaylistId = state.pendingFocusPlaylistId;
 
-        if (!Number.isFinite(duration) || duration < 5) {
-            alert("Study duration must be at least 5 minutes.");
-            dom.focusDurationInput.focus();
-            return;
-        }
-
-        if (!Number.isFinite(cycles) || cycles < 1) {
-            alert("Number of sessions must be at least 1.");
-            dom.focusCyclesInput.focus();
-            return;
-        }
-
-        try {
-            const session = await StudySession.create({
-                playlistId: targetPlaylistId,
-                duration,
-                cycles
-            });
-
-            localStorage.setItem(PLAYER_SESSION_STORAGE_KEY, JSON.stringify({
-                playlistId: targetPlaylistId,
-                playlistName: getPlaylistNameById(targetPlaylistId),
-                duration,
-                cycles,
-                currentCycle: 1,
-                remainingTime: duration * 60,
-                cyclesLeft: cycles,
-                startedAt: new Date().toISOString(),
-                status: "running",
-                updatedAt: new Date().toISOString(),
-                sessionId: session && session.sessionId ? session.sessionId : null
-            }));
-
-            window.closeFocusSessionModal();
-            navigateToPlayer({
-                type: "new_session",
-                playlistId: targetPlaylistId,
-                sessionId: session && session.sessionId ? session.sessionId : null,
-                source: "setup_modal"
-            });
-        } catch (error) {
-            console.error(error);
-            alert(error && error.message ? error.message : "Failed to start session.");
-        }
-    }
 
     function normalizeYouTubeInput(input) {
         if (!input) {
@@ -1681,7 +1648,6 @@ function initDashboard() {
         bindEvents();
         restoreTheme();
         updateDateTime();
-        updateFocusSummary();
         window.setInterval(updateDateTime, 60000);
 
         const ok = await ensureLoggedIn();
