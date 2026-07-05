@@ -25,7 +25,12 @@ function initPlaylistsPage() {
         addedVideosSummary: document.getElementById("addedVideosSummary"),
         addVideoLinks: document.getElementById("addVideoLinks"),
         removeVideoLinks: document.getElementById("removeVideoLinks"),
-        editPlaylistTitle: document.getElementById("editPlaylistTitle")
+        editPlaylistTitle: document.getElementById("editPlaylistTitle"),
+        focusSessionModal: document.getElementById("focusSessionModal"),
+        focusDurationInput: document.getElementById("focusDurationInput"),
+        focusCyclesInput: document.getElementById("focusCyclesInput"),
+        focusSummaryText: document.getElementById("focusSummaryText"),
+        confirmFocusSessionBtn: document.getElementById("confirmFocusSessionBtn")
     };
 
     function openSidebar() {
@@ -375,13 +380,28 @@ function initPlaylistsPage() {
             });
         }
 
-        [dom.playlistModal, dom.editPlaylistModal].forEach((modal) => {
-            modal.addEventListener("click", function (event) {
-                if (event.target === modal) {
-                    closeModal(modal);
-                }
-            });
+        [dom.playlistModal, dom.editPlaylistModal, dom.focusSessionModal].forEach((modal) => {
+            if (modal) {
+                modal.addEventListener("click", function (event) {
+                    if (event.target === modal) {
+                        modal.classList.add("hidden");
+                        modal.setAttribute("aria-hidden", "true");
+                    }
+                });
+            }
         });
+
+        if (dom.focusDurationInput) {
+            dom.focusDurationInput.addEventListener("input", updateFocusSummary);
+        }
+
+        if (dom.focusCyclesInput) {
+            dom.focusCyclesInput.addEventListener("input", updateFocusSummary);
+        }
+
+        if (dom.confirmFocusSessionBtn) {
+            dom.confirmFocusSessionBtn.addEventListener("click", startConfiguredFocusSession);
+        }
     }
 
     window.showAddPlaylistModal = function showAddPlaylistModal() {
@@ -505,9 +525,83 @@ function initPlaylistsPage() {
     };
 
     window.goToPlayer = function goToPlayer(playlistId) {
-        const target = playlistId ? `../player.html?playlistId=${encodeURIComponent(playlistId)}` : "../player.html";
-        window.location.href = target;
+        window.openFocusSessionModal(playlistId);
     };
+
+    let pendingFocusPlaylistId = null;
+
+    window.openFocusSessionModal = function openFocusSessionModal(playlistId) {
+        pendingFocusPlaylistId = playlistId || null;
+        if (dom.focusDurationInput) dom.focusDurationInput.value = "25";
+        if (dom.focusCyclesInput) dom.focusCyclesInput.value = "2";
+        updateFocusSummary();
+        openModal(dom.focusSessionModal);
+    };
+
+    window.closeFocusSessionModal = function closeFocusSessionModal() {
+        pendingFocusPlaylistId = null;
+        closeModal(dom.focusSessionModal);
+    };
+
+    function updateFocusSummary() {
+        if (!dom.focusDurationInput || !dom.focusCyclesInput || !dom.focusSummaryText) return;
+        const duration = Math.max(5, Number(dom.focusDurationInput.value) || 25);
+        const cycles = Math.max(1, Number(dom.focusCyclesInput.value) || 1);
+        dom.focusSummaryText.textContent = `~${duration * cycles} minutes`;
+    }
+
+    async function startConfiguredFocusSession() {
+        if (!dom.focusDurationInput || !dom.focusCyclesInput) return;
+        
+        const duration = Number(dom.focusDurationInput.value);
+        const cycles = Number(dom.focusCyclesInput.value);
+        const targetPlaylistId = pendingFocusPlaylistId;
+
+        if (!Number.isFinite(duration) || duration < 5) {
+            alert("Study duration must be at least 5 minutes.");
+            dom.focusDurationInput.focus();
+            return;
+        }
+
+        if (!Number.isFinite(cycles) || cycles < 1) {
+            alert("Number of sessions must be at least 1.");
+            dom.focusCyclesInput.focus();
+            return;
+        }
+
+        try {
+            const session = await StudySession.create({
+                playlistId: targetPlaylistId,
+                duration,
+                cycles
+            });
+
+            const PLAYER_SESSION_STORAGE_KEY = "cognelearn_current_player_session";
+            localStorage.setItem(PLAYER_SESSION_STORAGE_KEY, JSON.stringify({
+                playlistId: targetPlaylistId,
+                playlistName: "",
+                duration,
+                cycles,
+                currentCycle: 1,
+                remainingTime: duration * 60,
+                cyclesLeft: cycles,
+                startedAt: new Date().toISOString(),
+                status: "running",
+                updatedAt: new Date().toISOString(),
+                sessionId: session && session.sessionId ? session.sessionId : null
+            }));
+
+            window.closeFocusSessionModal();
+            let target = targetPlaylistId ? `../player.html?playlistId=${encodeURIComponent(targetPlaylistId)}` : "../player.html";
+            if (session && session.sessionId) {
+                target += (target.includes('?') ? '&' : '?') + `sessionId=${encodeURIComponent(session.sessionId)}`;
+            }
+            window.location.href = target;
+        } catch (error) {
+            console.error(error);
+            alert(error && error.message ? error.message : "Failed to start session.");
+        }
+    }
 
     window.logout = async function logout() {
         await Auth.logout();
