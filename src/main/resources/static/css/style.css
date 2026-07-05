@@ -1744,6 +1744,20 @@ body.sidebar-collapsed .sidebar-control {
     align-items: center;
 }
 
+.section-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    min-width: 130px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    font-size: 0.85rem !important;
+    white-space: nowrap;
+    margin: 0;
+    line-height: 1;
+}
+
 .session-row {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(80px, auto));
