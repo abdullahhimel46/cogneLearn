@@ -53,7 +53,7 @@
                 const duration = Number(durationInput.value);
                 const cycles = Number(cyclesInput.value);
 
-                const isDurationValid = Number.isFinite(duration) && duration >= 1;
+                const isDurationValid = Number.isFinite(duration) && duration >= 5;
                 const isCyclesValid = Number.isFinite(cycles) && cycles >= 1;
 
                 // Duration validation UI
