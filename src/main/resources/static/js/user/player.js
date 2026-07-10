@@ -548,7 +548,9 @@ function initPlayer() {
             timerRunning: state.timerRunning
         });
         beginPlaybackStartWindow();
-        setTimerRunning(true);
+        if (player) {
+            player.play();
+        }
     }
 
     function clearPlaybackStartTimeout() {
