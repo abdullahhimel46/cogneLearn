@@ -4,12 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Your cogneLearn dashboard — track focus sessions, playlists, streaks, and productivity analytics.">
+    <meta name="description"
+        content="Your cogneLearn dashboard — track focus sessions, playlists, streaks, and productivity analytics.">
     <title>cogneLearn - Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/user/dashboard.css">
     <link rel="stylesheet" href="../../css/user/focus-session-modal.css">
@@ -51,10 +56,12 @@
                         <button class="btn btn-secondary btn-icon" id="addPlaylistTrigger" type="button">+ Add
                             Playlist</button>
                         <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
-                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
                             </svg>
-                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
                                 <circle cx="12" cy="12" r="5"></circle>
                                 <line x1="12" y1="1" x2="12" y2="3"></line>
                                 <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -86,47 +93,56 @@
                         <div class="section-heading">
                             <div>
                                 <p class="section-kicker">Today's Progress</p>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <h2>Stay on pace</h2>
-                                <button id="editGoalsBtn" style="background: none; border: none; cursor: pointer; color: var(--dashboard-muted, #6b7280); padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;" title="Edit Daily Goals">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="progress-metrics">
-                            <div class="metric-inline">
-                                <span class="metric-inline__label">Sessions</span>
-                                <span class="metric-inline__value"><span id="todaySessions">0</span> / <span id="goalSessions">3</span></span>
-                            </div>
-                            <div class="metric-inline">
-                                <span class="metric-inline__label">Focus Time</span>
-                                <span class="metric-inline__value"><span id="todayFocus">0</span>m / <span id="goalMinutes">60</span>m</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-stack">
-                            <div class="progress-group">
-                                <div class="progress-labels">
-                                    <span>Focus Goal Progress</span>
-                                    <span id="todayMinutesPercent">0%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="todayMinutesProgress"></div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <h2>Stay on pace</h2>
+                                    <button id="editGoalsBtn"
+                                        style="background: none; border: none; cursor: pointer; color: var(--dashboard-muted, #6b7280); padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;"
+                                        title="Edit Daily Goals">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="progress-group">
-                                <div class="progress-labels">
-                                    <span>Session Goal</span>
-                                    <span id="todaySessionsPercent">0%</span>
+                            <div class="progress-metrics">
+                                <div class="metric-inline">
+                                    <span class="metric-inline__label">Sessions</span>
+                                    <span class="metric-inline__value"><span id="todaySessions">0</span> / <span
+                                            id="goalSessions">3</span></span>
                                 </div>
-                                <div class="progress-bar progress-bar--muted">
-                                    <div class="progress-fill progress-fill--secondary" id="todaySessionsProgress">
+                                <div class="metric-inline">
+                                    <span class="metric-inline__label">Focus Time</span>
+                                    <span class="metric-inline__value"><span id="todayFocus">0</span>m / <span
+                                            id="goalMinutes">60</span>m</span>
+                                </div>
+                            </div>
+
+                            <div class="progress-stack">
+                                <div class="progress-group">
+                                    <div class="progress-labels">
+                                        <span>Focus Goal Progress</span>
+                                        <span id="todayMinutesPercent">0%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="todayMinutesProgress"></div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-group">
+                                    <div class="progress-labels">
+                                        <span>Session Goal</span>
+                                        <span id="todaySessionsPercent">0%</span>
+                                    </div>
+                                    <div class="progress-bar progress-bar--muted">
+                                        <div class="progress-fill progress-fill--secondary" id="todaySessionsProgress">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </article>
                 </section>
 
@@ -156,27 +172,27 @@
                     </div>
 
                     <div class="heatmap-panel" id="heatmapSection">
-                    <div class="section-heading">
-                        <div>
-                            <p class="section-kicker">Consistency</p>
-                            <h3>Focus Heatmap</h3>
-                            <p class="section-subtitle">Your study patterns over the last 3 months</p>
+                        <div class="section-heading">
+                            <div>
+                                <p class="section-kicker">Consistency</p>
+                                <h3>Focus Heatmap</h3>
+                                <p class="section-subtitle">Your study patterns over the last 3 months</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="heatmap-container" id="focusHeatmap">
-                        <div class="heatmap-loading">Loading consistency data...</div>
-                    </div>
-                    <div class="heatmap-legend">
-                        <span>Less</span>
-                        <div class="legend-cells">
-                            <div class="heatmap-cell level-0"></div>
-                            <div class="heatmap-cell level-1"></div>
-                            <div class="heatmap-cell level-2"></div>
-                            <div class="heatmap-cell level-3"></div>
-                            <div class="heatmap-cell level-4"></div>
+                        <div class="heatmap-container" id="focusHeatmap">
+                            <div class="heatmap-loading">Loading consistency data...</div>
                         </div>
-                        <span>More</span>
-                    </div>
+                        <div class="heatmap-legend">
+                            <span>Less</span>
+                            <div class="legend-cells">
+                                <div class="heatmap-cell level-0"></div>
+                                <div class="heatmap-cell level-1"></div>
+                                <div class="heatmap-cell level-2"></div>
+                                <div class="heatmap-cell level-3"></div>
+                                <div class="heatmap-cell level-4"></div>
+                            </div>
+                            <span>More</span>
+                        </div>
                     </div>
                 </section>
 
@@ -465,27 +481,27 @@
             } else {
                 document.body.classList.remove(themeClass);
             }
-            
+
             const setupThemeButtons = () => {
                 const buttons = document.querySelectorAll('.theme-toggle-btn');
                 buttons.forEach(btn => {
                     const moonIcon = btn.querySelector('.theme-icon-moon');
                     const sunIcon = btn.querySelector('.theme-icon-sun');
-                    
+
                     const updateIcons = (dark) => {
                         if (moonIcon && sunIcon) {
                             moonIcon.style.display = dark ? 'none' : 'block';
                             sunIcon.style.display = dark ? 'block' : 'none';
                         }
                     };
-                    
+
                     updateIcons(document.body.classList.contains(themeClass));
-                    
+
                     btn.onclick = (e) => {
                         if (e) e.preventDefault();
                         const nowDark = document.body.classList.toggle(themeClass);
                         localStorage.setItem(themeKey, nowDark ? "dark" : "light");
-                        
+
                         document.querySelectorAll('.theme-toggle-btn').forEach(b => {
                             const m = b.querySelector('.theme-icon-moon');
                             const s = b.querySelector('.theme-icon-sun');
@@ -494,20 +510,20 @@
                                 s.style.display = nowDark ? 'block' : 'none';
                             }
                         });
-                        
+
                         // Sync legacy sidebar theme toggle if it exists
                         const sidebarToggle = document.getElementById('themeToggle');
                         if (sidebarToggle) {
                             sidebarToggle.setAttribute('aria-pressed', String(nowDark));
                         }
-                        
+
                         // Trigger chart render if applicable
                         if (window.Chart && typeof renderAnalyticsChart === 'function') {
                             renderAnalyticsChart();
                         }
                     };
                 });
-                
+
                 // Sync from sidebar legacy themeToggle
                 const sidebarToggle = document.getElementById('themeToggle');
                 if (sidebarToggle) {
@@ -526,7 +542,7 @@
                     });
                 }
             };
-            
+
             if (document.readyState === 'loading' || !document.getElementById('sidebar-container').innerHTML) {
                 document.addEventListener('componentsLoaded', setupThemeButtons);
             } else {

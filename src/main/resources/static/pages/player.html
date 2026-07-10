@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/player.css">
 </head>
+
 <body class="dashboard-body sidebar-collapsed player-body">
     <div class="app-shell">
         <div id="sidebar-container"></div>
@@ -27,15 +29,17 @@
                     <div>
                         <p class="eyebrow">Focus Session</p>
                         <h1>Stay in the zone</h1>
-<!--                        <p class="hero-subtitle">Timer + attention monitoring + playlist playback in one place.</p>-->
+                        <!--                        <p class="hero-subtitle">Timer + attention monitoring + playlist playback in one place.</p>-->
                     </div>
                     <div class="header-actions">
                         <a class="btn btn-secondary btn-small" href="user/user-dashboard.html">Back to Dashboard</a>
                         <button class="theme-toggle-btn" type="button" aria-label="Toggle theme">
-                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
                             </svg>
-                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
                                 <circle cx="12" cy="12" r="5"></circle>
                                 <line x1="12" y1="1" x2="12" y2="3"></line>
                                 <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -54,7 +58,8 @@
                     <article class="panel video-card">
                         <div class="video-shell">
                             <video id="mainVideo" preload="metadata" controls playsinline></video>
-                            <button id="centerPlayButton" class="center-play" type="button" aria-label="Play video">▶</button>
+                            <button id="centerPlayButton" class="center-play" type="button"
+                                aria-label="Play video">▶</button>
                         </div>
                     </article>
 
@@ -63,14 +68,17 @@
                             <div id="timerDisplay" class="timer-display">24:13</div>
                             <div class="timer-label">FOCUS TIME - KEEP GOING!</div>
                             <div class="timer-actions">
-                                <button id="pauseButton" class="btn btn-secondary btn-small" type="button">Pause</button>
-                                <button id="resetButton" class="btn btn-secondary btn-small" type="button">Reset</button>
+                                <button id="pauseButton" class="btn btn-secondary btn-small"
+                                    type="button">Pause</button>
+                                <button id="resetButton" class="btn btn-secondary btn-small"
+                                    type="button">Reset</button>
                             </div>
                         </section>
 
                         <section class="panel attention-card">
                             <h3>Focus Level</h3>
-                            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                aria-valuenow="0">
                                 <div id="focusFill" class="progress-fill" style="width: 0%;"></div>
                             </div>
                             <div id="focusLabel" class="focus-label">Initializing Camera...</div>
@@ -97,7 +105,8 @@
                 <div>
                     <p class="player-modal-kicker">Start Focus Session</p>
                     <h2>Choose your study setup</h2>
-                    <p class="player-modal-subtitle">We will start the timer, initialize the session, and begin playback after you confirm.</p>
+                    <p class="player-modal-subtitle">We will start the timer, initialize the session, and begin playback
+                        after you confirm.</p>
                 </div>
                 <button id="playerModalClose" class="player-modal-close" type="button" aria-label="Close">×</button>
             </div>
@@ -132,10 +141,12 @@
                 <div style="font-size: 48px; margin-bottom: 16px;">🏆</div>
                 <p class="player-modal-kicker" style="margin-bottom: 4px;">Success</p>
                 <h2 style="margin: 0 0 8px 0; font-size: 24px;">Focus Session Complete!</h2>
-                <p class="player-modal-subtitle" style="margin: 0;">Amazing dedication! You've successfully finished your focus block. Great work.</p>
+                <p class="player-modal-subtitle" style="margin: 0;">Amazing dedication! You've successfully finished
+                    your focus block. Great work.</p>
             </div>
             <div class="player-modal-actions" style="justify-content: center;">
-                <button id="completeModalOk" class="player-primary-btn" type="button" style="width: 100%;">Back to Dashboard</button>
+                <button id="completeModalOk" class="player-primary-btn" type="button" style="width: 100%;">Back to
+                    Dashboard</button>
             </div>
         </div>
     </div>
@@ -169,27 +180,27 @@
             } else {
                 document.body.classList.remove(themeClass);
             }
-            
+
             const setupThemeButtons = () => {
                 const buttons = document.querySelectorAll('.theme-toggle-btn');
                 buttons.forEach(btn => {
                     const moonIcon = btn.querySelector('.theme-icon-moon');
                     const sunIcon = btn.querySelector('.theme-icon-sun');
-                    
+
                     const updateIcons = (dark) => {
                         if (moonIcon && sunIcon) {
                             moonIcon.style.display = dark ? 'none' : 'block';
                             sunIcon.style.display = dark ? 'block' : 'none';
                         }
                     };
-                    
+
                     updateIcons(document.body.classList.contains(themeClass));
-                    
+
                     btn.onclick = (e) => {
                         if (e) e.preventDefault();
                         const nowDark = document.body.classList.toggle(themeClass);
                         localStorage.setItem(themeKey, nowDark ? "dark" : "light");
-                        
+
                         document.querySelectorAll('.theme-toggle-btn').forEach(b => {
                             const m = b.querySelector('.theme-icon-moon');
                             const s = b.querySelector('.theme-icon-sun');
@@ -198,7 +209,7 @@
                                 s.style.display = nowDark ? 'block' : 'none';
                             }
                         });
-                        
+
                         // Sync legacy sidebar theme toggle if it exists
                         const sidebarToggle = document.getElementById('themeToggle');
                         if (sidebarToggle) {
@@ -206,7 +217,7 @@
                         }
                     };
                 });
-                
+
                 // Sync from sidebar legacy themeToggle
                 const sidebarToggle = document.getElementById('themeToggle');
                 if (sidebarToggle) {
@@ -225,7 +236,7 @@
                     });
                 }
             };
-            
+
             if (document.readyState === 'loading' || (document.getElementById('sidebar-container') && !document.getElementById('sidebar-container').innerHTML)) {
                 document.addEventListener('componentsLoaded', setupThemeButtons);
             } else {
@@ -234,4 +245,5 @@
         })();
     </script>
 </body>
+
 </html>

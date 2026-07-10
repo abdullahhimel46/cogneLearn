@@ -791,14 +791,9 @@ function initDashboard() {
             });
         }
 
-        if (dom.themeToggle) {
-            dom.themeToggle.addEventListener("click", function () {
-                const isDark = dom.body.classList.toggle("dashboard-theme-dark");
-                dom.themeToggle.setAttribute("aria-pressed", String(isDark));
-                localStorage.setItem("cognelearn_dashboard_theme", isDark ? "dark" : "light");
-                renderAnalyticsChart();
-            });
-        }
+        window.addEventListener("cognelearn:theme-changed", function () {
+            renderAnalyticsChart();
+        });
 
         if (dom.floatingAnalyticsBtn) {
             dom.floatingAnalyticsBtn.addEventListener("click", toggleAnalyticsPanel);

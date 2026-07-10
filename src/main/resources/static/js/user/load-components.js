@@ -16,7 +16,7 @@ async function loadComponents() {
             const sidebarRes = await fetch(prefix + 'fragment/user-sidebar.html');
             const sidebarHtml = await sidebarRes.text();
             sidebarContainer.innerHTML = sidebarHtml;
-            
+
             // Execute scripts inside sidebar
             const scripts = sidebarContainer.querySelectorAll('script');
             scripts.forEach(oldScript => {
@@ -24,6 +24,33 @@ async function loadComponents() {
                 newScript.textContent = oldScript.textContent;
                 document.body.appendChild(newScript);
             });
+
+            // Load theme toggle component
+            const themeContainer = sidebarContainer.querySelector('#themeToggleContainer');
+            if (themeContainer) {
+                try {
+                    const themeRes = await fetch(prefix + 'fragment/theme-toggle.html');
+                    const themeHtml = await themeRes.text();
+                    themeContainer.innerHTML = themeHtml;
+
+                    const initThemeToggle = () => {
+                        if (window.ThemeManager) {
+                            ThemeManager.bootstrap(themeContainer);
+                        }
+                    };
+
+                    if (!window.ThemeManager) {
+                        const themeScript = document.createElement('script');
+                        themeScript.src = prefix + 'js/theme-manager.js';
+                        themeScript.onload = initThemeToggle;
+                        document.head.appendChild(themeScript);
+                    } else {
+                        initThemeToggle();
+                    }
+                } catch (themeErr) {
+                    console.error("Failed to load theme toggle:", themeErr);
+                }
+            }
         } catch (err) {
             console.error("Failed to load user-sidebar:", err);
         }
@@ -36,7 +63,7 @@ async function loadComponents() {
             const footerRes = await fetch(prefix + 'fragment/footer.html');
             const footerHtml = await footerRes.text();
             footerContainer.innerHTML = footerHtml;
-            
+
             // Execute scripts inside footer
             const scripts = footerContainer.querySelectorAll('script');
             scripts.forEach(oldScript => {
