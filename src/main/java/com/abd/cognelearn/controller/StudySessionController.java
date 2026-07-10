@@ -173,4 +173,17 @@ public class StudySessionController {
     ) {
         return ResponseEntity.ok(studySessionService.addAttentionScore(sessionId, request));
     }
+
+    /**
+     * Seed initial mock study sessions with attention scores for development/testing.
+     *
+     * <p>POST /api/v1/sessions/seed
+     *
+     * @return a message indicating successful seeding
+     */
+    @PostMapping("/seed")
+    public ResponseEntity<java.util.Map<String, String>> seedSessions() {
+        studySessionService.seedSessionData();
+        return ResponseEntity.ok(java.util.Map.of("message", "Mock study sessions and attention scores seeded successfully"));
+    }
 }

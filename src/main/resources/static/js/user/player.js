@@ -839,7 +839,6 @@ function initPlayer() {
         }
 
         try {
-            await Api.get("/api/v1/auth/me");
             const playlist = await Playlist.getById(state.playlistId);
             state.playlistName = playlist.title || playlist.name || "Untitled Playlist";
             state.playlistItems = normalizePlaylistVideos(playlist);
@@ -1041,6 +1040,22 @@ function initPlayer() {
     }
 
     async function init() {
+        try {
+            const me = await Api.get("/api/v1/auth/me");
+            if (me && me.id && window.LocalDB) {
+                LocalDB.setUserScope(me.id);
+                localStorage.setItem("cognelearn_scoped_user_id", String(me.id));
+            }
+        } catch (error) {
+            console.error("Auth check failed in player init:", error);
+            if (error && (error.status === 401 || error.status === 403)) {
+                window.location.href = "auth/login.html";
+                return;
+            }
+            redirectToDashboard("unauthorized");
+            return;
+        }
+
         const launchContext = resolveLaunchContext();
         console.log("[player] init source", {
             playlistIdFromUrl: getPlaylistIdFromUrl(),

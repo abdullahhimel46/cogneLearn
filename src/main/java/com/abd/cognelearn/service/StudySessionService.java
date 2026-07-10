@@ -272,6 +272,68 @@ public class StudySessionService {
     }
 
     /**
+     * Seed study sessions and attention scores for the currently logged-in user.
+     */
+    @Transactional
+    public void seedSessionData() {
+        UserEntity user = currentUserService.requireUser();
+
+        // 1. Session 1: 2 days ago (avg score 82)
+        Instant startTime1 = Instant.now().minus(2, java.time.temporal.ChronoUnit.DAYS);
+        Instant endTime1 = startTime1.plus(25, java.time.temporal.ChronoUnit.MINUTES);
+        StudySessionEntity s1 = new StudySessionEntity(
+                UUID.randomUUID(), user, null, "dQw4w9WgXcQ",
+                startTime1, 25, startTime1
+        );
+        s1.setStatus(SessionStatus.COMPLETED);
+        s1.setEndTime(endTime1);
+        s1.setCompletedDuration(25);
+        int[] scores1 = {80, 85, 78, 82, 88, 75, 83, 81, 84, 80};
+        for (int i = 0; i < scores1.length; i++) {
+            s1.getAttentionScores().add(new AttentionScoreEntity(
+                    UUID.randomUUID(), s1, scores1[i], startTime1.plus(i * 2, java.time.temporal.ChronoUnit.MINUTES)
+            ));
+        }
+        studySessionRepository.save(s1);
+
+        // 2. Session 2: 1 day ago (avg score 61.6)
+        Instant startTime2 = Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS);
+        Instant endTime2 = startTime2.plus(25, java.time.temporal.ChronoUnit.MINUTES);
+        StudySessionEntity s2 = new StudySessionEntity(
+                UUID.randomUUID(), user, null, "dQw4w9WgXcQ",
+                startTime2, 25, startTime2
+        );
+        s2.setStatus(SessionStatus.COMPLETED);
+        s2.setEndTime(endTime2);
+        s2.setCompletedDuration(20);
+        int[] scores2 = {60, 65, 58, 70, 68, 55, 63, 61, 64, 60};
+        for (int i = 0; i < scores2.length; i++) {
+            s2.getAttentionScores().add(new AttentionScoreEntity(
+                    UUID.randomUUID(), s2, scores2[i], startTime2.plus(i * 2, java.time.temporal.ChronoUnit.MINUTES)
+            ));
+        }
+        studySessionRepository.save(s2);
+
+        // 3. Session 3: Today (avg score 91.2)
+        Instant startTime3 = Instant.now().minus(30, java.time.temporal.ChronoUnit.MINUTES);
+        Instant endTime3 = startTime3.plus(25, java.time.temporal.ChronoUnit.MINUTES);
+        StudySessionEntity s3 = new StudySessionEntity(
+                UUID.randomUUID(), user, null, "dQw4w9WgXcQ",
+                startTime3, 25, startTime3
+        );
+        s3.setStatus(SessionStatus.COMPLETED);
+        s3.setEndTime(endTime3);
+        s3.setCompletedDuration(25);
+        int[] scores3 = {90, 92, 89, 95, 91, 88, 93, 91, 94, 90};
+        for (int i = 0; i < scores3.length; i++) {
+            s3.getAttentionScores().add(new AttentionScoreEntity(
+                    UUID.randomUUID(), s3, scores3[i], startTime3.plus(i * 2, java.time.temporal.ChronoUnit.MINUTES)
+            ));
+        }
+        studySessionRepository.save(s3);
+    }
+
+    /**
      * Convert a {@link StudySessionEntity} database object into a {@link SessionResponse} DTO.
      *
      * <p>This is an internal helper used by all public methods above.
@@ -295,7 +357,7 @@ public class StudySessionService {
                 session.getEndTime(),
                 session.getDuration(),
                 session.getCompletedDuration(),
-                session.getStatus().name().toLowerCase(),  // "ACTIVE" â†’ "active" (matches JS)
+                session.getStatus().name().toLowerCase(),  // "ACTIVE" → "active" (matches JS)
                 session.getCreatedAt(),
                 scores
         );

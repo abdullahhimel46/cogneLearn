@@ -129,6 +129,23 @@ function initDashboard() {
         }
     }
 
+    function toLocalISODate(date) {
+        const d = new Date(date);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function getSessionDateString(session) {
+        if (session && session.date) {
+            return session.date;
+        }
+        const rawDate = session ? (session.startTime || session.createdAt) : null;
+        if (!rawDate) return "";
+        return toLocalISODate(rawDate);
+    }
+
     function getSessionDate(session) {
         return session.date || session.startTime || session.createdAt || null;
     }
@@ -237,7 +254,7 @@ function initDashboard() {
         for (let i = 89; i >= 0; i--) {
             const d = new Date(today);
             d.setDate(d.getDate() - i);
-            dates.push(d.toISOString().split("T")[0]);
+            dates.push(toLocalISODate(d));
         }
 
         // Group by weeks (columns)
@@ -461,10 +478,9 @@ function initDashboard() {
 
         for (let offset = 6; offset >= 0; offset -= 1) {
             const date = new Date();
-            date.setHours(0, 0, 0, 0);
             date.setDate(date.getDate() - offset);
             buckets.push({
-                key: date.toISOString().slice(0, 10),
+                key: toLocalISODate(date),
                 label: date.toLocaleDateString("en-US", { weekday: "short" }),
                 minutes: 0,
                 focusTotal: 0,
@@ -473,12 +489,7 @@ function initDashboard() {
         }
 
         sessions.forEach((session) => {
-            const date = new Date(getSessionDate(session));
-            if (Number.isNaN(date.getTime())) {
-                return;
-            }
-
-            const key = date.toISOString().slice(0, 10);
+            const key = getSessionDateString(session);
             const bucket = buckets.find((item) => item.key === key);
             if (!bucket) {
                 return;
@@ -501,10 +512,9 @@ function initDashboard() {
 
         for (let offset = 29; offset >= 0; offset -= 1) {
             const date = new Date();
-            date.setHours(0, 0, 0, 0);
             date.setDate(date.getDate() - offset);
             buckets.push({
-                key: date.toISOString().slice(0, 10),
+                key: toLocalISODate(date),
                 label: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
                 minutes: 0,
                 focusTotal: 0,
@@ -514,12 +524,7 @@ function initDashboard() {
         }
 
         sessions.forEach((session) => {
-            const date = new Date(getSessionDate(session));
-            if (Number.isNaN(date.getTime())) {
-                return;
-            }
-
-            const key = date.toISOString().slice(0, 10);
+            const key = getSessionDateString(session);
             const bucket = buckets.find((item) => item.key === key);
             if (!bucket) {
                 return;
@@ -1636,6 +1641,28 @@ function initDashboard() {
 
     window.logout = async function logout() {
         await Auth.logout();
+    };
+
+    window.seedDemoData = async function() {
+        console.log("Seeding demo session data on server...");
+        try {
+            await Api.post("/api/v1/sessions/seed", {});
+            console.log("Seeding completed on server. Re-syncing client database...");
+            if (window.LocalAnalytics && typeof LocalAnalytics.bootstrapFromServer === "function") {
+                if (window.LocalDB) {
+                    await LocalDB.clearStore(LocalDB.STORES.STUDY_SESSIONS);
+                    await LocalDB.clearStore(LocalDB.STORES.DAILY_ANALYTICS);
+                }
+                await LocalAnalytics.bootstrapFromServer();
+            }
+            console.log("Re-sync complete. Reloading dashboard statistics...");
+            await loadDashboardData();
+            console.log("Dashboard updated successfully!");
+            alert("Mock study sessions with attention scores seeded and client statistics updated!");
+        } catch (e) {
+            console.error("Failed to seed demo data", e);
+            alert("Failed to seed data: " + (e.message || e));
+        }
     };
 
     function restoreTheme() {

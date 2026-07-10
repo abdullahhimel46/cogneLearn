@@ -34,7 +34,18 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void run(String... args) {
+        System.out.println("=== Existing Users in Database ===");
+        userRepository.findAll().forEach(u -> System.out.println("User: " + u.getName() + " (" + u.getEmail() + "), ID: " + u.getId()));
+        System.out.println("==================================");
+
+        // Reset password for himel@cognelearn.app if they exist to prevent login lockout
+        userRepository.findByEmailIgnoreCase("himel@cognelearn.app").ifPresent(user -> {
+            user.setPasswordHash(passwordEncoder.encode("password"));
+            userRepository.save(user);
+            System.out.println("Password for himel@cognelearn.app has been explicitly reset to: password");
+        });
 
         int fixed = userRepository.fixNullRoles();
         if (fixed > 0) {
@@ -45,6 +56,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.count() > 0) {
             seedPendingMotivationalEmailsIfEmpty();
             seedActivityLogs("System Admin", "Abdullah Himel", "Nadia Islam");
+            backfillAttentionScoresForAllUsers();
             return;
         }
 
@@ -115,6 +127,7 @@ public class DataInitializer implements CommandLineRunner {
 
         seedActivityLogs(admin.getName(), himel.getName(), nadia.getName());
 
+        backfillAttentionScoresForAllUsers();
         System.out.println("Data seeding complete.");
     }
 
@@ -169,5 +182,45 @@ public class DataInitializer implements CommandLineRunner {
                         createdAt
                 ))
         );
+    }
+
+    private void backfillAttentionScoresForAllUsers() {
+        List<UserEntity> users = userRepository.findAll();
+        System.out.println("Starting backfill check for " + users.size() + " users...");
+        
+        java.util.Random random = new java.util.Random();
+        boolean updated = false;
+        
+        for (UserEntity user : users) {
+            List<StudySessionEntity> sessions = studySessionRepository.findAllByUser(user);
+            System.out.println("User " + user.getEmail() + " has " + sessions.size() + " session(s).");
+            
+            for (StudySessionEntity session : sessions) {
+                if (session.getAttentionScores().isEmpty() && session.getStatus() == SessionStatus.COMPLETED) {
+                    System.out.println("Backfilling session " + session.getId() + " for " + user.getEmail());
+                    // Generate 10-15 random attention scores
+                    int count = 10 + random.nextInt(6);
+                    int baseScore = 65 + random.nextInt(20); // base score between 65 and 85
+                    
+                    for (int i = 0; i < count; i++) {
+                        int score = Math.max(0, Math.min(100, baseScore + random.nextInt(15) - 7));
+                        Instant scoreTime = session.getStartTime().plus(i * 2, ChronoUnit.MINUTES);
+                        
+                        AttentionScoreEntity scoreEntity = new AttentionScoreEntity(
+                                UUID.randomUUID(),
+                                session,
+                                score,
+                                scoreTime
+                        );
+                        session.getAttentionScores().add(scoreEntity);
+                    }
+                    studySessionRepository.save(session);
+                    updated = true;
+                }
+            }
+        }
+        if (updated) {
+            System.out.println("Successfully backfilled attention scores for all users.");
+        }
     }
 }

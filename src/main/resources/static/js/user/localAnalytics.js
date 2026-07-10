@@ -359,7 +359,7 @@
         if (typeof Api === "undefined" || typeof StudySession === "undefined" || typeof LocalDB === "undefined") return;
 
         const MIGRATION_KEY = "cognelearn_idb_version";
-        const CURRENT_VERSION = 2;
+        const CURRENT_VERSION = 3;
 
         try {
             const storedVersion = Number(localStorage.getItem(MIGRATION_KEY) || 0);
