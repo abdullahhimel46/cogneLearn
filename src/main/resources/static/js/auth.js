@@ -99,7 +99,12 @@ const Auth = {
         } catch (e) {
             // Still clear client state even if the network call fails.
         }
-        User.logout();
+        if (typeof User !== 'undefined') {
+            User.logout();
+        } else {
+            localStorage.removeItem('cognelearn_user');
+            localStorage.removeItem('cognelearn_session');
+        }
         if (window.LocalDB) {
             LocalDB.setUserScope(null);
         }
