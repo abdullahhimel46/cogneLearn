@@ -38,11 +38,16 @@
     background: #0f172a;
 }
 
-.video-shell video {
+.video-shell video,
+.video-shell iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover;
+    border: none;
 }
 
 .center-play {
@@ -337,6 +342,14 @@
     .player-modal-actions {
         flex-direction: column;
     }
+
+    .custom-nav-row {
+        padding: 0 !important;
+    }
+
+    .custom-player-details {
+        padding: 16px 12px !important;
+    }
 }
 
 /* Custom Sleek Player Layout */
@@ -352,6 +365,8 @@
     border-radius: 16px;
     border: 1px solid rgba(226, 232, 240, 0.8);
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    min-width: 0;
 }
 
 .custom-nav-row {
@@ -370,6 +385,7 @@
     padding: 4px 12px;
     border-radius: 9999px;
     border: 1px solid rgba(226, 232, 240, 0.8);
+    white-space: nowrap;
 }
 
 .custom-title-row {
@@ -378,6 +394,8 @@
     gap: 4px;
     align-items: center;
     text-align: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .custom-lesson-label {

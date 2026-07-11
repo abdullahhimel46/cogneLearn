@@ -31,6 +31,8 @@ body {
     background: #F1F5F9;
     color: var(--text-primary);
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* ========================================
@@ -777,6 +779,20 @@ body.sidebar-collapsed .site-footer {
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         padding-top: 3rem;
     }
+    
+    .site-footer.site-footer--compact .footer-main-grid {
+        gap: 1rem;
+        flex-direction: column;
+    }
+    .site-footer.site-footer--compact .footer-brand-section {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+    .site-footer.site-footer--compact {
+        padding: 1rem 0;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1205,6 +1221,8 @@ body.sidebar-collapsed .sidebar-control {
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
 }
 
 .eyebrow,
@@ -1579,27 +1597,28 @@ body.sidebar-collapsed .sidebar-control {
 }
 
 .playlists-panel .playlist-card {
-    background: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    backdrop-filter: blur(6px);
-    box-shadow: none;
+    background: var(--dashboard-surface) !important;
+    border: 1px solid var(--dashboard-border) !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    color: var(--dashboard-text) !important;
 }
 
 .playlists-panel .playlist-card:hover {
-    background: rgba(255, 255, 255, 0.14) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: var(--dashboard-surface) !important;
+    border-color: var(--dashboard-primary) !important;
     transform: translateY(-2px);
-    box-shadow: 0 14px 26px rgba(15, 23, 42, 0.16);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
 }
 
 .playlists-panel .playlist-actions .btn-secondary {
-    background: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: var(--dashboard-bg) !important;
+    color: var(--dashboard-text) !important;
+    border: 1px solid var(--dashboard-border) !important;
 }
 
 .playlists-panel .playlist-actions .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--dashboard-surface) !important;
+    border-color: #cbd5e1 !important;
     box-shadow: none;
 }
 
@@ -1685,20 +1704,29 @@ body.sidebar-collapsed .sidebar-control {
 
 .sessions-panel .session-row:hover {
     transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 14px 26px rgba(15, 23, 42, 0.16);
+    background: var(--dashboard-bg);
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
 }
 
 .sessions-panel .session-badge {
-    background: rgba(255, 255, 255, 0.16);
-    color: #ffffff;
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none !important;
 }
 
 .sessions-panel .session-badge.is-incomplete {
-    background: rgba(254, 242, 242, 0.18);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: none !important;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 /* Show more: keep inside panel with scroll */
@@ -2425,17 +2453,40 @@ body.dashboard-theme-dark select {
 }
 
 @media (max-width: 960px) {
-    .app-sidebar {
+    .app-sidebar,
+    body.sidebar-collapsed .app-sidebar {
+        width: 250px !important;
+        padding: 16px 12px !important;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
     }
 
-    .app-sidebar.is-open {
+    .site-footer,
+    .dashboard-body .site-footer,
+    body.sidebar-collapsed .site-footer {
+        margin-left: 0 !important;
+    }
+
+    .app-sidebar.is-open,
+    body.sidebar-collapsed .app-sidebar.is-open {
         transform: translateX(0);
     }
 
-    .app-main {
-        margin-left: 0;
+    body.sidebar-collapsed .brand-copy,
+    body.sidebar-collapsed .nav-link span:not(.nav-icon),
+    body.sidebar-collapsed .sidebar-control span:not(.nav-icon) {
+        display: block !important;
+    }
+
+    body.sidebar-collapsed .brand-lockup,
+    body.sidebar-collapsed .nav-link,
+    body.sidebar-collapsed .sidebar-control {
+        justify-content: flex-start !important;
+    }
+
+    .app-main,
+    body.sidebar-collapsed .app-main {
+        margin-left: 0 !important;
     }
 
     .fab-container {
@@ -2463,8 +2514,10 @@ body.dashboard-theme-dark select {
         background: rgba(255, 255, 255, 0.86);
         display: grid;
         place-items: center;
+        align-content: center;
         gap: 4px;
         cursor: pointer;
+        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
     }
 
     .drawer-toggle-btn {
@@ -2478,6 +2531,26 @@ body.dashboard-theme-dark select {
         height: 2px;
         background: var(--dashboard-text);
         border-radius: 999px;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .app-sidebar.is-open #menuToggle span:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+    }
+
+    .app-sidebar.is-open #menuToggle span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .app-sidebar.is-open #menuToggle span:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+    }
+
+    body.mobile-sidebar-open #mobileMenuToggle {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.8);
+        visibility: hidden;
     }
 
     .app-overlay {
@@ -2485,6 +2558,7 @@ body.dashboard-theme-dark select {
         inset: 0;
         background: rgba(15, 23, 42, 0.38);
         z-index: 20;
+        display: none;
     }
 
     .app-overlay.is-visible {
@@ -2508,6 +2582,15 @@ body.dashboard-theme-dark select {
         align-items: stretch;
     }
 
+    .hero-header .header-actions {
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .section-heading {
+        margin-bottom: 16px !important;
+    }
+
     .progress-metrics,
     .stats-grid {
         grid-template-columns: 1fr;
@@ -2524,7 +2607,14 @@ body.dashboard-theme-dark select {
 
     .scroll-row-wrap,
     .premium-playlist-list {
-        max-height: 320px;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+
+    .scroll-row-wrap.is-expanded,
+    .premium-playlist-list.is-expanded {
+        max-height: none !important;
+        overflow-y: visible !important;
     }
 }
 

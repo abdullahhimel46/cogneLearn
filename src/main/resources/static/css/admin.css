@@ -63,6 +63,8 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 a {
@@ -1840,4 +1842,103 @@ body.admin-theme-dark .modal-content {
 
 .user-inspect-card button:not(.danger):hover {
   background: var(--bg-hover);
+}
+
+/* ── Responsive Admin Dashboard ───────────────────────────────── */
+@media (max-width: 1024px) {
+  .sidebar,
+  body.sidebar-collapsed .sidebar {
+    width: var(--sidebar-w) !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.is-open,
+  body.sidebar-collapsed .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  body.sidebar-collapsed .sidebar__brand-text,
+  body.sidebar-collapsed .nav-item span,
+  body.sidebar-collapsed .sidebar__back-link span,
+  body.sidebar-collapsed .sidebar__theme-toggle span {
+    display: flex !important;
+  }
+  
+  body.sidebar-collapsed .sidebar__brand,
+  body.sidebar-collapsed .nav-item,
+  body.sidebar-collapsed .sidebar__back-link,
+  body.sidebar-collapsed .sidebar__theme-toggle {
+    justify-content: flex-start !important;
+  }
+
+  .sidebar-toggle {
+    display: none !important;
+  }
+
+  .admin-mobile-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 46px;
+    height: 46px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s, background 0.2s, box-shadow 0.2s;
+  }
+
+  .admin-mobile-toggle span {
+    width: 18px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 999px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  body.mobile-sidebar-open .admin-mobile-toggle {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+    visibility: hidden;
+  }
+
+  .main,
+  body.sidebar-collapsed .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 16px !important;
+  }
+
+  .page {
+    padding: 24px 16px !important;
+    margin-top: 60px !important; /* Make room for the floating sidebar button */
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .activity-charts {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .page__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .admin-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

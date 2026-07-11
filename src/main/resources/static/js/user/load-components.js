@@ -17,6 +17,60 @@ async function loadComponents() {
             const sidebarHtml = await sidebarRes.text();
             sidebarContainer.innerHTML = sidebarHtml;
 
+            // 2a. Inject mobile menu toggle button dynamically
+            const mobileHeader = document.querySelector('.mobile-header');
+            if (mobileHeader && !mobileHeader.querySelector('.mobile-menu-btn')) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'mobile-menu-btn drawer-toggle-btn';
+                toggleBtn.id = 'mobileMenuToggle';
+                toggleBtn.type = 'button';
+                toggleBtn.setAttribute('aria-label', 'Toggle menu');
+                toggleBtn.innerHTML = '<span></span><span></span><span></span>';
+                mobileHeader.appendChild(toggleBtn);
+
+                const sidebar = document.getElementById('appSidebar');
+                const overlay = document.getElementById('appOverlay');
+
+                const openMobileSidebar = () => {
+                    if (sidebar) sidebar.classList.add('is-open');
+                    if (overlay) overlay.classList.add('is-visible');
+                    document.body.classList.add('mobile-sidebar-open');
+                };
+
+                const closeMobileSidebar = () => {
+                    if (sidebar) sidebar.classList.remove('is-open');
+                    if (overlay) overlay.classList.remove('is-visible');
+                    document.body.classList.remove('mobile-sidebar-open');
+                };
+
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (sidebar && sidebar.classList.contains('is-open')) {
+                        closeMobileSidebar();
+                    } else {
+                        openMobileSidebar();
+                    }
+                });
+
+                if (overlay) {
+                    overlay.addEventListener('click', closeMobileSidebar);
+                }
+
+                // Also bind close button inside the sidebar
+                setTimeout(() => {
+                    const menuToggleInside = document.getElementById('menuToggle');
+                    if (menuToggleInside) {
+                        menuToggleInside.addEventListener('click', (e) => {
+                            if (window.innerWidth <= 960) {
+                                e.stopPropagation();
+                                closeMobileSidebar();
+                            }
+                        });
+                    }
+                }, 100);
+            }
+
+
             // Execute scripts inside sidebar
             const scripts = sidebarContainer.querySelectorAll('script');
             scripts.forEach(oldScript => {

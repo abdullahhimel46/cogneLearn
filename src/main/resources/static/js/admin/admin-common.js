@@ -189,9 +189,12 @@ function initTheme() {
 
   const sidebarMenuToggle = document.getElementById('sidebarToggle');
   if (sidebarMenuToggle) {
-    sidebarMenuToggle.addEventListener('click', () => {
-      const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
-      localStorage.setItem('cognelearn_admin_sidebar', isCollapsed ? 'collapsed' : 'expanded');
+    sidebarMenuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.innerWidth > 1024) {
+        const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('cognelearn_admin_sidebar', isCollapsed ? 'collapsed' : 'expanded');
+      }
     });
 
     const pref = localStorage.getItem('cognelearn_admin_sidebar');
@@ -199,6 +202,51 @@ function initTheme() {
       document.body.classList.add('sidebar-collapsed');
     } else if (window.innerWidth <= 1024 && pref !== 'expanded') {
       document.body.classList.add('sidebar-collapsed');
+    }
+
+    // Inject mobile toggle if page header exists
+    const pageHeader = document.querySelector('.page__header');
+    if (pageHeader && !document.querySelector('.admin-mobile-toggle')) {
+      const mobileBtn = document.createElement('button');
+      mobileBtn.className = 'admin-mobile-toggle';
+      mobileBtn.innerHTML = '<span></span><span></span><span></span>';
+      mobileBtn.type = 'button';
+      mobileBtn.setAttribute('aria-label', 'Toggle mobile menu');
+      
+      // Ensure the header accommodates the new button layout
+      if (window.innerWidth <= 1024) {
+          pageHeader.style.flexDirection = 'row';
+          pageHeader.style.alignItems = 'center';
+      }
+      
+      pageHeader.insertBefore(mobileBtn, pageHeader.firstChild);
+
+      mobileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+          const isOpen = sidebar.classList.toggle('is-open');
+          if (isOpen) {
+            document.body.classList.add('mobile-sidebar-open');
+          } else {
+            document.body.classList.remove('mobile-sidebar-open');
+          }
+        }
+      });
+    }
+
+    // Close admin sidebar on mobile when clicking the main content area
+    const mainEl = document.getElementById('main');
+    if (mainEl) {
+      mainEl.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+          const sidebar = document.getElementById('sidebar');
+          if (sidebar && sidebar.classList.contains('is-open')) {
+            sidebar.classList.remove('is-open');
+            document.body.classList.remove('mobile-sidebar-open');
+          }
+        }
+      });
     }
   }
 }
