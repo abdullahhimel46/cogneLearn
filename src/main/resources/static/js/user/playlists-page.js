@@ -634,6 +634,14 @@ function initPlaylistsPage() {
         const ok = await ensureLoggedIn();
         if (ok) {
             await loadPlaylists();
+            
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('select_playlist') === 'true') {
+                window.history.replaceState({}, document.title, window.location.pathname);
+                if (window.NotificationManager) {
+                    NotificationManager.toast("Please select a playlist to start a focus session.", { durationMs: 4000 });
+                }
+            }
         }
     }
 

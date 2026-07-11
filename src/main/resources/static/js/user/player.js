@@ -154,9 +154,13 @@ function initPlayer() {
     }
 
     function redirectToDashboard(reason) {
-        console.warn("[player] Redirecting to dashboard because:", reason);
+        console.warn("[player] Redirecting because:", reason);
         clearLaunchIntent();
-        window.location.href = "user/user-dashboard.html";
+        if (reason && (reason.includes("missing playlist") || reason.includes("missing session config"))) {
+            window.location.href = "user/playlist.html?select_playlist=true";
+        } else {
+            window.location.href = "user/user-dashboard.html";
+        }
     }
 
     function resolveLaunchContext() {
