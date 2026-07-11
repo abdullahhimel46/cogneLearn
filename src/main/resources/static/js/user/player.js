@@ -782,6 +782,21 @@ function initPlayer() {
             titleDisplay.textContent = state.playlistItems[index].title || "Untitled Video";
         }
 
+        const indexDisplay = document.getElementById("customVideoIndexDisplay");
+        if (indexDisplay) {
+            indexDisplay.textContent = `${index + 1} / ${state.playlistItems.length}`;
+        }
+
+        const progressFill = document.getElementById("customProgressFill");
+        const progressText = document.getElementById("customProgressText");
+        if (progressFill && progressText) {
+            const total = state.playlistItems.length;
+            const current = index + 1;
+            const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}%`;
+        }
+
         console.log("[player] loadVideo", { index: index, shouldAutoplay: shouldAutoplay });
         return player.load(state.playlistItems[index], shouldAutoplay).then(function (token) {
             if (token !== state.currentVideoToken) {

@@ -61,10 +61,16 @@
                             <button id="centerPlayButton" class="center-play" type="button"
                                 aria-label="Play video">▶</button>
                         </div>
-                        <div class="player-controls-bar">
-                            <button id="prevVideoButton" class="btn btn-secondary btn-small" type="button">◀ Previous</button>
-                            <span id="currentVideoTitleDisplay" class="current-video-title">Select a video to begin</span>
-                            <button id="nextVideoButton" class="btn btn-secondary btn-small" type="button">Next ▶</button>
+                        <div class="custom-player-details">
+                            <div class="custom-nav-row">
+                                <button id="prevVideoButton" class="btn btn-primary" type="button">◀ Previous</button>
+                                <span id="customVideoIndexDisplay" class="custom-nav-index">1 / 1</span>
+                                <button id="nextVideoButton" class="btn btn-primary" type="button">Next ▶</button>
+                            </div>
+                            <div class="custom-title-row">
+                                <div class="custom-lesson-label">Currently Playing</div>
+                                <div id="currentVideoTitleDisplay" class="custom-lesson-title">Select a video to begin</div>
+                            </div>
                         </div>
                     </article>
 
