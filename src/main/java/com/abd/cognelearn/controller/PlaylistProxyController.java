@@ -71,12 +71,14 @@ public class PlaylistProxyController {
     @GetMapping("/playlist")
     public ResponseEntity<Map<String, Object>> getPlaylist(@RequestParam String playlistId) {
         // Delegate to the service which handles caching and the actual HTTP call to YouTube
-        List<String> videoIds = playlistProxyService.fetchPlaylistVideoIds(playlistId);
+        List<Map<String, String>> videos = playlistProxyService.fetchPlaylistVideos(playlistId);
+        List<String> videoIds = videos.stream().map(v -> v.get("id")).toList();
 
-        // Return the playlistId, video IDs, and a count for convenience
+        // Return the playlistId, video IDs, full videos details, and a count for convenience
         Map<String, Object> response = Map.of(
                 "playlistId", playlistId,
                 "videoIds", videoIds,
+                "videos", videos,
                 "count", videoIds.size()
         );
         return ResponseEntity.ok(response);

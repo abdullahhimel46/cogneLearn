@@ -595,6 +595,17 @@ function initPlayer() {
         loadVideo((state.currentIndex + 1) % state.playlistItems.length, state.timerRunning);
     }
 
+    function playPrevVideo() {
+        if (state.playlistItems.length === 0) {
+            return;
+        }
+        let prevIndex = state.currentIndex - 1;
+        if (prevIndex < 0) {
+            prevIndex = state.playlistItems.length - 1;
+        }
+        loadVideo(prevIndex, state.timerRunning);
+    }
+
     function createPlayerAdapter() {
         const listeners = { play: [], pause: [], ended: [] };
         let pendingYouTubeReady = null;
@@ -765,6 +776,12 @@ function initPlayer() {
         }
         state.currentIndex = index;
         renderPlaylist();
+
+        const titleDisplay = document.getElementById("currentVideoTitleDisplay");
+        if (titleDisplay && state.playlistItems[index]) {
+            titleDisplay.textContent = state.playlistItems[index].title || "Untitled Video";
+        }
+
         console.log("[player] loadVideo", { index: index, shouldAutoplay: shouldAutoplay });
         return player.load(state.playlistItems[index], shouldAutoplay).then(function (token) {
             if (token !== state.currentVideoToken) {
@@ -977,6 +994,15 @@ function initPlayer() {
     }
 
     function bindEvents() {
+        const prevBtn = document.getElementById("prevVideoButton");
+        const nextBtn = document.getElementById("nextVideoButton");
+        if (prevBtn) {
+            prevBtn.addEventListener("click", playPrevVideo);
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener("click", playNextVideo);
+        }
+
         dom.playButton.addEventListener("click", function () {
             if (!state.sessionConfig) {
                 openSessionModal();

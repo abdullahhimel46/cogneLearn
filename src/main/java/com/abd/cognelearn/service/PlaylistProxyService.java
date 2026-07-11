@@ -109,7 +109,7 @@ public class PlaylistProxyService {
      * @return a list of YouTube video IDs in playlist order
      * @throws IllegalStateException if the API key is not set, or YouTube returns an error
      */
-    public List<String> fetchPlaylistVideoIds(String playlistId) {
+    public List<Map<String, String>> fetchPlaylistVideos(String playlistId) {
         // Step 1: Check if the API key is configured
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
@@ -120,20 +120,20 @@ public class PlaylistProxyService {
         // Step 2: Check the cache first (avoid unnecessary API calls)
         CacheEntry cached = cache.get(playlistId);
         if (cached != null && !cached.isExpired(cacheTtlMs)) {
-            // Cache hit â€” return the stored result immediately
-            return cached.videoIds();
+            // Cache hit ─ return the stored result immediately
+            return cached.videos();
         }
 
         // Step 3: Fetch from YouTube (cache miss or expired)
-        List<String> videoIds = new ArrayList<>();
+        List<Map<String, String>> videos = new ArrayList<>();
         String pageToken = "";  // empty string = first page
 
         try {
-            // YouTube paginates results â€” loop until there are no more pages
+            // YouTube paginates results ─ loop until there are no more pages
             do {
-                // Step 3a: Build the YouTube API URL
+                // Step 3a: Build the YouTube API URL with part=snippet
                 String url = "https://www.googleapis.com/youtube/v3/playlistItems"
-                        + "?part=contentDetails"
+                        + "?part=snippet"
                         + "&maxResults=50"
                         + "&playlistId=" + URLEncoder.encode(playlistId, StandardCharsets.UTF_8)
                         + "&key=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8)
@@ -151,15 +151,17 @@ public class PlaylistProxyService {
                     );
                 }
 
-                // Step 3d: Parse the JSON response and extract video IDs
+                // Step 3d: Parse the JSON response and extract video IDs and titles
                 JsonNode root = objectMapper.readTree(response.body());
                 JsonNode items = root.get("items");
                 if (items != null && items.isArray()) {
                     for (JsonNode item : items) {
-                        // Each item has: { "contentDetails": { "videoId": "xxx" } }
-                        JsonNode videoId = item.at("/contentDetails/videoId");
-                        if (!videoId.isMissingNode() && !videoId.asText().isBlank()) {
-                            videoIds.add(videoId.asText());
+                        JsonNode videoIdNode = item.at("/snippet/resourceId/videoId");
+                        JsonNode titleNode = item.at("/snippet/title");
+                        if (!videoIdNode.isMissingNode() && !videoIdNode.asText().isBlank()) {
+                            String videoId = videoIdNode.asText();
+                            String title = (titleNode != null && !titleNode.isMissingNode()) ? titleNode.asText("Video") : "Video";
+                            videos.add(Map.of("id", videoId, "title", title));
                         }
                     }
                 }
@@ -179,21 +181,27 @@ public class PlaylistProxyService {
         }
 
         // Step 4: Store the results in the cache for future requests
-        cache.put(playlistId, new CacheEntry(System.currentTimeMillis(), videoIds));
+        cache.put(playlistId, new CacheEntry(System.currentTimeMillis(), videos));
 
-        return videoIds;
+        return videos;
+    }
+
+    public List<String> fetchPlaylistVideoIds(String playlistId) {
+        return fetchPlaylistVideos(playlistId).stream()
+                .map(v -> v.get("id"))
+                .toList();
     }
 
     /**
-     * CacheEntry â€” stores a list of video IDs with the timestamp they were fetched.
+     * CacheEntry ─ stores a list of video details with the timestamp they were fetched.
      *
      * <p>This is a private record (only used inside PlaylistProxyService).
      * Records automatically generate {@code equals()}, {@code hashCode()}, and {@code toString()}.
      *
      * @param fetchedAt  the {@code System.currentTimeMillis()} when this entry was cached
-     * @param videoIds   the list of video IDs fetched from YouTube
+     * @param videos     the list of videos fetched from YouTube (id and title maps)
      */
-    private record CacheEntry(long fetchedAt, List<String> videoIds) {
+    private record CacheEntry(long fetchedAt, List<Map<String, String>> videos) {
 
         /**
          * Check if this cache entry has expired.

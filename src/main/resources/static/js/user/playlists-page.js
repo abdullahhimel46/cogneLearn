@@ -332,6 +332,11 @@ function initPlaylistsPage() {
         return data && Array.isArray(data.videoIds) ? data.videoIds : [];
     }
 
+    async function fetchPlaylistVideos(playlistId) {
+        const data = await Api.get(`/api/v1/proxy/playlist?playlistId=${encodeURIComponent(playlistId)}`);
+        return data && Array.isArray(data.videos) ? data.videos : [];
+    }
+
     function bindEvents() {
         if (dom.menuToggle) {
             dom.menuToggle.addEventListener("click", toggleDrawer);
@@ -444,13 +449,77 @@ function initPlaylistsPage() {
 
     window.addPlaylist = async function addPlaylist() {
         const name = dom.playlistName.value.trim() || "Untitled Playlist";
-        const videos = getFlattenedPlaylistVideos().map((video) => ({
-            id: video.id,
-            title: video.title || "Video",
-            kind: "video"
-        }));
+        
+        if (state.playlistItems.length === 0) {
+            alert("Please add at least one video or playlist.");
+            return;
+        }
+
+        const addedVideosMap = new Map(); // videoId -> title
+        const addPlaylistIdSet = new Set();
+        const playlistFallbacks = [];
+
+        state.playlistItems.forEach((item) => {
+            const normalized = normalizeYouTubeInput(item.value);
+            if (normalized.videoId) {
+                addedVideosMap.set(normalized.videoId, "Video");
+            }
+            if (normalized.playlistId) {
+                addPlaylistIdSet.add(normalized.playlistId);
+            }
+            if (!normalized.videoId && !normalized.playlistId && item.value) {
+                const trimmed = item.value.trim();
+                if (Video.isValidYouTubeId(trimmed)) {
+                    addedVideosMap.set(trimmed, "Video");
+                } else if (/^PL[a-zA-Z0-9_-]+$/.test(trimmed)) {
+                    addPlaylistIdSet.add(trimmed);
+                } else {
+                    playlistFallbacks.push(trimmed);
+                }
+            }
+        });
+
+        for (const playlistId of Array.from(addPlaylistIdSet)) {
+            try {
+                const playlistVideos = await fetchPlaylistVideos(playlistId);
+                playlistVideos.forEach((v) => {
+                    if (v.id) {
+                        addedVideosMap.set(v.id, v.title || "Video");
+                    }
+                });
+            } catch (error) {
+                playlistFallbacks.push(playlistId);
+            }
+        }
+
+        const videos = [];
+        
+        // Add parsed videos
+        let idx = 1;
+        addedVideosMap.forEach((title, id) => {
+            if (Video.isValidYouTubeId(id)) {
+                const finalTitle = (title === "Video") ? `Video ${idx}` : title;
+                videos.push({
+                    id: id,
+                    title: finalTitle,
+                    kind: "video"
+                });
+                idx++;
+            }
+        });
+
+        // Add fallbacks for unexpanded playlists or other links
+        playlistFallbacks.forEach((id, fIdx) => {
+            const isPlaylist = /^PL[a-zA-Z0-9_-]+$/.test(id) || id.includes("list=");
+            videos.push({
+                id: id,
+                title: isPlaylist ? `Playlist ${fIdx + 1}` : `Video ${videos.length + fIdx + 1}`,
+                kind: isPlaylist ? "playlist" : "video"
+            });
+        });
 
         if (videos.length === 0) {
+            alert("No valid videos or playlists found in input.");
             return;
         }
 
@@ -461,6 +530,7 @@ function initPlaylistsPage() {
             await loadPlaylists();
         } catch (error) {
             console.error(error);
+            alert(error && error.message ? error.message : "Failed to create playlist.");
         }
     };
 
