@@ -19,19 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * StudySessionService â€” manages all study session operations.
- *
- * <p>A "study session" represents one timed focus period (like a Pomodoro block).
- * This service maps to multiple JavaScript modules:
- * <ul>
- *   <li>{@code StudySession.js} â€” create, get, end sessions</li>
- *   <li>{@code SessionManager.js} â€” active session tracking</li>
- *   <li>{@code SessionController.js} â€” timer lifecycle (start, pause, resume, complete)</li>
- * </ul>
- *
- * <p>{@code @Service} tells Spring this is a service bean to manage automatically.
- * {@code @Transactional} on methods tells JPA to wrap the database operations in a
- * transaction â€” if anything fails, ALL changes are rolled back (all-or-nothing).
+ * Service class for managing study sessions.
  */
 @Service
 public class StudySessionService {
@@ -39,21 +27,8 @@ public class StudySessionService {
     private final StudySessionRepository studySessionRepository;
     private final PlaylistRepository playlistRepository;
     private final CurrentUserService currentUserService;
-
-    /**
-     * Privacy-first default: do NOT store per-sample attention scores on the server.
-     *
-     * <p>Set {@code cognelearn.attention.store-on-server=true} to enable server-side storage.
-     */
     private final boolean storeAttentionOnServer;
 
-    /**
-     * Constructor â€” Spring injects all required dependencies automatically.
-     *
-     * @param studySessionRepository repository for session DB operations
-     * @param playlistRepository     repository for playlist lookups
-     * @param currentUserService     helper to get the logged-in user
-     */
     public StudySessionService(
             StudySessionRepository studySessionRepository,
             PlaylistRepository playlistRepository,
@@ -67,13 +42,9 @@ public class StudySessionService {
     }
 
     /**
-     * Get all study sessions for the currently logged-in user.
-     *
-     * <p>Maps to JS: {@code StudySession.getAll()}
-     *
-     * @return list of all sessions for the current user
+     * Get all study sessions for the current user.
      */
-    @Transactional(readOnly = true)  // readOnly = true is a performance hint (no writes)
+    @Transactional(readOnly = true)
     public List<SessionResponse> listSessions() {
         UserEntity user = currentUserService.requireUser();
         return studySessionRepository.findAllByUser(user)
@@ -83,12 +54,7 @@ public class StudySessionService {
     }
 
     /**
-     * Get a specific session by its UUID.
-     *
-     * <p>Maps to JS: {@code StudySession.getById(sessionId)}
-     *
-     * @param sessionId the UUID of the session to retrieve
-     * @return the session, or throws IllegalArgumentException if not found
+     * Get a specific session by ID.
      */
     @Transactional(readOnly = true)
     public SessionResponse getSession(UUID sessionId) {
@@ -99,51 +65,34 @@ public class StudySessionService {
     }
 
     /**
-     * Create a new study session and immediately start it.
-     *
-     * <p>Maps to JS: {@code StudySession.create(sessionData)} + {@code SessionManager.start()}
-     *
-     * @param request the session data from the browser
-     * @return the newly created session
+     * Create and start a new study session.
      */
     @Transactional
     public SessionResponse createSession(SessionCreateRequest request) {
         UserEntity user = currentUserService.requireUser();
 
-        // Step 1: Look up the playlist if a playlistId was provided
-        // (playlist is optional â€” user can study without selecting one)
         PlaylistEntity playlist = null;
         if (request.playlistId() != null && !request.playlistId().isBlank()) {
             playlist = playlistRepository.findByIdAndUser(UUID.fromString(request.playlistId()), user)
                     .orElseThrow(() -> new IllegalArgumentException("Playlist not found: " + request.playlistId()));
         }
 
-        // Step 2: Build the new session object
         StudySessionEntity session = new StudySessionEntity(
-                UUID.randomUUID(),           // generate a new unique ID
-                user,                        // link to the current user
-                playlist,                    // link to the playlist (or null)
-                request.videoId(),           // the video being watched (or null)
-                Instant.now(),               // record the start time
-                request.duration(),          // planned duration in minutes
-                Instant.now()                // creation timestamp
+                UUID.randomUUID(),
+                user,
+                playlist,
+                request.videoId(),
+                Instant.now(),
+                request.duration(),
+                Instant.now()
         );
 
-        // Step 3: Save to the database (INSERT INTO study_sessions ...)
         studySessionRepository.save(session);
-
-        // Step 4: Return the session as a response DTO
         return toResponse(session);
     }
 
     /**
      * Pause an active session.
-     *
-     * <p>Maps to JS: {@code SessionController.pause()} and then
-     * the session status in {@code StudySession.js} changing to 'paused'.
-     *
-     * @param sessionId the UUID of the session to pause
-     * @return the updated session
      */
     @Transactional
     public SessionResponse pauseSession(UUID sessionId) {
@@ -151,12 +100,10 @@ public class StudySessionService {
         StudySessionEntity session = studySessionRepository.findByIdAndUser(sessionId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
-        // Only allow pausing an active session
         if (session.getStatus() != SessionStatus.ACTIVE) {
             throw new IllegalArgumentException("Can only pause an ACTIVE session. Current status: " + session.getStatus());
         }
 
-        // Update status to PAUSED
         session.setStatus(SessionStatus.PAUSED);
         studySessionRepository.save(session);
         return toResponse(session);
@@ -164,11 +111,6 @@ public class StudySessionService {
 
     /**
      * Resume a paused session.
-     *
-     * <p>Maps to JS: {@code SessionController.resume()} which changes session status back to 'running'.
-     *
-     * @param sessionId the UUID of the session to resume
-     * @return the updated session
      */
     @Transactional
     public SessionResponse resumeSession(UUID sessionId) {
@@ -176,26 +118,17 @@ public class StudySessionService {
         StudySessionEntity session = studySessionRepository.findByIdAndUser(sessionId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
-        // Only allow resuming a paused session
         if (session.getStatus() != SessionStatus.PAUSED) {
             throw new IllegalArgumentException("Can only resume a PAUSED session. Current status: " + session.getStatus());
         }
 
-        // Update status back to ACTIVE
         session.setStatus(SessionStatus.ACTIVE);
         studySessionRepository.save(session);
         return toResponse(session);
     }
 
     /**
-     * Mark a session as completed and record how long the user actually studied.
-     *
-     * <p>Maps to JS: {@code SessionController.stop()} â†’ {@code StudySession.end(sessionId, completedMinutes)}
-     * and updates {@code playlist.totalFocusMinutes} like {@code Playlist.addSession()}.
-     *
-     * @param sessionId the UUID of the session to complete
-     * @param request   contains the actual minutes completed
-     * @return the completed session
+     * Mark a session as completed.
      */
     @Transactional
     public SessionResponse completeSession(UUID sessionId, SessionCompleteRequest request) {
@@ -203,14 +136,11 @@ public class StudySessionService {
         StudySessionEntity session = studySessionRepository.findByIdAndUser(sessionId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
-        // Step 1: Record the actual completed time and mark as done
         session.setCompletedDuration(request.completedDuration());
         session.setStatus(SessionStatus.COMPLETED);
         session.setEndTime(Instant.now());
         studySessionRepository.save(session);
 
-        // Step 2: Update the playlist's total focus minutes
-        // (Maps to JS: Playlist.addSession() which increments playlist.totalFocusMinutes)
         if (session.getPlaylist() != null) {
             PlaylistEntity playlist = session.getPlaylist();
             int newTotal = playlist.getTotalFocusMinutes() + request.completedDuration();
@@ -222,14 +152,7 @@ public class StudySessionService {
     }
 
     /**
-     * Record a single attention score reading from the face-api.js tracker.
-     *
-     * <p>Maps to JS: {@code StudySession.addAttentionScore(sessionId, score)}
-     * The browser calls this endpoint periodically while the session is running.
-     *
-     * @param sessionId the UUID of the active session
-     * @param request   contains the score (0â€“100)
-     * @return the updated session with the new score appended to attentionScores
+     * Record a single attention score reading.
      */
     @Transactional
     public SessionResponse addAttentionScore(UUID sessionId, AttentionScoreRequest request) {
@@ -237,31 +160,24 @@ public class StudySessionService {
         StudySessionEntity session = studySessionRepository.findByIdAndUser(sessionId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
-        // Privacy-first: ignore attention samples unless explicitly enabled.
         if (!storeAttentionOnServer) {
             return toResponse(session);
         }
 
-        // Create a new score record and link it to the session
         AttentionScoreEntity scoreEntity = new AttentionScoreEntity(
-                UUID.randomUUID(),    // unique ID for this score measurement
-                session,              // the parent session
-                request.score(),      // the 0-100 attention value
-                Instant.now()         // when it was recorded
+                UUID.randomUUID(),
+                session,
+                request.score(),
+                Instant.now()
         );
 
-        // Add it to the session's list (cascade will persist it)
         session.getAttentionScores().add(scoreEntity);
         studySessionRepository.save(session);
         return toResponse(session);
     }
 
     /**
-     * Check if the current user has an active (running) session right now.
-     *
-     * <p>Maps to JS: {@code SessionManager.hasActive()}
-     *
-     * @return true if the user has a session with status ACTIVE
+     * Check if the current user has an active session.
      */
     @Transactional(readOnly = true)
     public boolean hasActiveSession() {
@@ -272,13 +188,12 @@ public class StudySessionService {
     }
 
     /**
-     * Seed study sessions and attention scores for the currently logged-in user.
+     * Seed initial mock study sessions.
      */
     @Transactional
     public void seedSessionData() {
         UserEntity user = currentUserService.requireUser();
 
-        // 1. Session 1: 2 days ago (avg score 82)
         Instant startTime1 = Instant.now().minus(2, java.time.temporal.ChronoUnit.DAYS);
         Instant endTime1 = startTime1.plus(25, java.time.temporal.ChronoUnit.MINUTES);
         StudySessionEntity s1 = new StudySessionEntity(
@@ -296,7 +211,6 @@ public class StudySessionService {
         }
         studySessionRepository.save(s1);
 
-        // 2. Session 2: 1 day ago (avg score 61.6)
         Instant startTime2 = Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS);
         Instant endTime2 = startTime2.plus(25, java.time.temporal.ChronoUnit.MINUTES);
         StudySessionEntity s2 = new StudySessionEntity(
@@ -314,7 +228,6 @@ public class StudySessionService {
         }
         studySessionRepository.save(s2);
 
-        // 3. Session 3: Today (avg score 91.2)
         Instant startTime3 = Instant.now().minus(30, java.time.temporal.ChronoUnit.MINUTES);
         Instant endTime3 = startTime3.plus(25, java.time.temporal.ChronoUnit.MINUTES);
         StudySessionEntity s3 = new StudySessionEntity(
@@ -333,17 +246,7 @@ public class StudySessionService {
         studySessionRepository.save(s3);
     }
 
-    /**
-     * Convert a {@link StudySessionEntity} database object into a {@link SessionResponse} DTO.
-     *
-     * <p>This is an internal helper used by all public methods above.
-     * We extract only the data safe to send to the browser (no sensitive internal fields).
-     *
-     * @param session the entity loaded from the database
-     * @return a response DTO ready to be serialized to JSON
-     */
     private SessionResponse toResponse(StudySessionEntity session) {
-        // Collect all attention scores into a simple List<Integer>
         List<Integer> scores = session.getAttentionScores()
                 .stream()
                 .map(AttentionScoreEntity::getScore)
@@ -357,7 +260,7 @@ public class StudySessionService {
                 session.getEndTime(),
                 session.getDuration(),
                 session.getCompletedDuration(),
-                session.getStatus().name().toLowerCase(),  // "ACTIVE" → "active" (matches JS)
+                session.getStatus().name().toLowerCase(),
                 session.getCreatedAt(),
                 scores
         );

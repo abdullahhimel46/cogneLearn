@@ -18,14 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * PlaylistService â€” manages all playlist and video operations.
- *
- * <p>Maps to the JavaScript {@code playlist.js} module. All CRUD operations
- * (Create, Read, Update, Delete) for playlists and their videos are handled here.
- *
- * <p>Key difference from JS: ownership is enforced at the database query level.
- * Every method checks that the logged-in user owns the playlist before any operation.
- * In the old JS version, any user who guessed a playlistId could theoretically access it.
+ * Service class for playlist and video operations.
  */
 @Service
 public class PlaylistService {
@@ -34,13 +27,6 @@ public class PlaylistService {
     private final StudySessionRepository studySessionRepository;
     private final CurrentUserService currentUserService;
 
-    /**
-     * Constructor â€” Spring injects required dependencies.
-     *
-     * @param playlistRepository     the JPA repository for playlist operations
-     * @param studySessionRepository the JPA repository for study session operations
-     * @param currentUserService     helper to get the logged-in user
-     */
     public PlaylistService(PlaylistRepository playlistRepository,
                            StudySessionRepository studySessionRepository,
                            CurrentUserService currentUserService) {
@@ -51,10 +37,6 @@ public class PlaylistService {
 
     /**
      * Get all playlists belonging to the current user.
-     *
-     * <p>Maps to JS: {@code Playlist.getAll()}
-     *
-     * @return list of all playlists (empty list if none)
      */
     @Transactional(readOnly = true)
     public List<PlaylistResponse> listPlaylists() {
@@ -66,13 +48,7 @@ public class PlaylistService {
     }
 
     /**
-     * Get a specific playlist by its UUID.
-     *
-     * <p>Maps to JS: {@code Playlist.getById(playlistId)}
-     *
-     * @param playlistId the UUID of the playlist
-     * @return the playlist data
-     * @throws IllegalArgumentException if not found or not owned by current user
+     * Get a specific playlist by ID.
      */
     @Transactional(readOnly = true)
     public PlaylistResponse getPlaylist(UUID playlistId) {
@@ -83,18 +59,12 @@ public class PlaylistService {
     }
 
     /**
-     * Create a new playlist for the current user.
-     *
-     * <p>Maps to JS: {@code Playlist.create(playlistData)}
-     *
-     * @param request the playlist data from the browser
-     * @return the newly created playlist
+     * Create a new playlist.
      */
     @Transactional
     public PlaylistResponse createPlaylist(PlaylistRequest request) {
         UserEntity user = currentUserService.requireUser();
 
-        // Step 1: Create the playlist entity
         PlaylistEntity playlist = new PlaylistEntity(
                 UUID.randomUUID(),
                 user,
@@ -103,24 +73,15 @@ public class PlaylistService {
                 Instant.now()
         );
 
-        // Step 2: Add initial videos if any were provided
         List<VideoItemEntity> videos = mapVideoRequests(playlist, request.videos());
         playlist.setVideos(videos);
 
-        // Step 3: Save to database
         playlistRepository.save(playlist);
         return toResponse(playlist);
     }
 
     /**
-     * Update an existing playlist's title, description, or videos.
-     *
-     * <p>Maps to JS: {@code Playlist.update(playlistId, updates)}
-     * Only fields provided (non-null) are updated.
-     *
-     * @param playlistId the UUID of the playlist to update
-     * @param request    the fields to update (null fields = no change)
-     * @return the updated playlist
+     * Update an existing playlist.
      */
     @Transactional
     public PlaylistResponse updatePlaylist(UUID playlistId, PlaylistUpdateRequest request) {
@@ -128,7 +89,6 @@ public class PlaylistService {
         PlaylistEntity playlist = playlistRepository.findByIdAndUser(playlistId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found: " + playlistId));
 
-        // Only update fields that were provided in the request (partial update)
         if (request.title() != null) {
             playlist.setTitle(request.title());
         }
@@ -136,7 +96,6 @@ public class PlaylistService {
             playlist.setDescription(request.description());
         }
         if (request.videos() != null) {
-            // Replace the entire video list
             playlist.getVideos().clear();
             playlist.getVideos().addAll(mapVideoRequests(playlist, request.videos()));
         }
@@ -147,13 +106,6 @@ public class PlaylistService {
 
     /**
      * Add a video to an existing playlist.
-     *
-     * <p>Maps to JS: {@code Playlist.addVideo(playlistId, videoData)}
-     * Duplicate video IDs are silently ignored (same behavior as JS version).
-     *
-     * @param playlistId the UUID of the target playlist
-     * @param request    the video data to add
-     * @return the updated playlist
      */
     @Transactional
     public PlaylistResponse addVideo(UUID playlistId, VideoItemRequest request) {
@@ -161,12 +113,10 @@ public class PlaylistService {
         PlaylistEntity playlist = playlistRepository.findByIdAndUser(playlistId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found: " + playlistId));
 
-        // Check for duplicates (same as JS: if (!p.videos.some(v => v.id === videoData.id)))
         boolean alreadyExists = playlist.getVideos().stream()
                 .anyMatch(video -> video.getExternalId().equals(request.id()));
 
         if (!alreadyExists) {
-            // Add the new video to the list
             playlist.getVideos().add(new VideoItemEntity(
                     UUID.randomUUID(),
                     playlist,
@@ -183,13 +133,7 @@ public class PlaylistService {
     }
 
     /**
-     * Remove a video from a playlist by its YouTube video ID.
-     *
-     * <p>Maps to JS: {@code Playlist.removeVideo(playlistId, videoId)}
-     *
-     * @param playlistId the UUID of the playlist
-     * @param videoId    the YouTube video ID to remove (e.g., "dQw4w9WgXcQ")
-     * @return the updated playlist
+     * Remove a video from a playlist.
      */
     @Transactional
     public PlaylistResponse removeVideo(UUID playlistId, String videoId) {
@@ -197,20 +141,13 @@ public class PlaylistService {
         PlaylistEntity playlist = playlistRepository.findByIdAndUser(playlistId, user)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found: " + playlistId));
 
-        // Remove the video by its YouTube ID
-        // (orphanRemoval = true on PlaylistEntity means this deletes the DB row too)
         playlist.getVideos().removeIf(video -> video.getExternalId().equals(videoId));
         playlistRepository.save(playlist);
         return toResponse(playlist);
     }
 
     /**
-     * Delete an entire playlist and all its videos.
-     *
-     * <p>Maps to JS: {@code Playlist.delete(playlistId)}
-     * Videos are automatically deleted too (CascadeType.ALL on PlaylistEntity).
-     *
-     * @param playlistId the UUID of the playlist to delete
+     * Delete a playlist and unlink from sessions.
      */
     @Transactional
     public void deletePlaylist(UUID playlistId) {
@@ -219,24 +156,13 @@ public class PlaylistService {
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found: " + playlistId));
         
         studySessionRepository.unlinkPlaylistFromSessions(playlistId);
-        
         playlistRepository.delete(playlist);
     }
 
-    // â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    /**
-     * Convert a list of {@link VideoItemRequest} DTOs to {@link VideoItemEntity} objects.
-     * This is an internal helper used during playlist creation and update.
-     *
-     * @param playlist  the playlist these videos belong to
-     * @param requests  list of video request DTOs (can be null)
-     * @return a list of VideoItemEntity objects (empty if input was null)
-     */
     private List<VideoItemEntity> mapVideoRequests(PlaylistEntity playlist, List<VideoItemRequest> requests) {
         List<VideoItemEntity> result = new ArrayList<>();
         if (requests == null) {
-            return result;  // return empty list if no videos were provided
+            return result;
         }
         for (VideoItemRequest item : requests) {
             result.add(new VideoItemEntity(
@@ -252,15 +178,7 @@ public class PlaylistService {
         return result;
     }
 
-    /**
-     * Convert a {@link PlaylistEntity} database object into a {@link PlaylistResponse} DTO.
-     * This method is used by all public service methods to build API responses.
-     *
-     * @param playlist the entity loaded from the database
-     * @return a response DTO safe to serialize to JSON
-     */
     private PlaylistResponse toResponse(PlaylistEntity playlist) {
-        // Map each VideoItemEntity to a VideoItemResponse DTO
         List<VideoItemResponse> videoResponses = playlist.getVideos().stream()
                 .map(video -> new VideoItemResponse(
                         video.getExternalId(),
