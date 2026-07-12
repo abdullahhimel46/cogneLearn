@@ -115,6 +115,38 @@ public class PlaylistProxyService {
                 .toList();
     }
 
+    /**
+     * Fetch video title from YouTube.
+     */
+    public String fetchVideoTitle(String videoId) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return "Video";
+        }
+        try {
+            String url = "https://www.googleapis.com/youtube/v3/videos"
+                     + "?part=snippet"
+                     + "&id=" + URLEncoder.encode(videoId, StandardCharsets.UTF_8)
+                     + "&key=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
+
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() < 400) {
+                JsonNode root = objectMapper.readTree(response.body());
+                JsonNode items = root.get("items");
+                if (items != null && items.isArray() && items.size() > 0) {
+                    JsonNode titleNode = items.get(0).at("/snippet/title");
+                    if (titleNode != null && !titleNode.isMissingNode()) {
+                        return titleNode.asText("Video");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            // Fallback
+        }
+        return "Video";
+    }
+
     private record CacheEntry(long fetchedAt, List<Map<String, String>> videos) {
         boolean isExpired(long ttlMs) {
             return System.currentTimeMillis() - fetchedAt > ttlMs;

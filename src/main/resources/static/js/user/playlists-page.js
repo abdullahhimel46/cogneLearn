@@ -337,6 +337,31 @@ function initPlaylistsPage() {
         return data && Array.isArray(data.videos) ? data.videos : [];
     }
 
+    async function fetchVideoTitle(videoId) {
+        try {
+            const data = await Api.get(`/api/v1/proxy/video?videoId=${encodeURIComponent(videoId)}`);
+            if (data && data.title && data.title !== "Video") {
+                return data.title;
+            }
+        } catch (e) {
+            console.warn("Backend video title proxy failed, trying noembed...", e);
+        }
+
+        try {
+            const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.title) {
+                    return data.title;
+                }
+            }
+        } catch (e) {
+            console.warn("noembed failed to fetch title", e);
+        }
+
+        return "Video";
+    }
+
     function bindEvents() {
         if (dom.menuToggle) {
             dom.menuToggle.addEventListener("click", toggleDrawer);
@@ -492,6 +517,20 @@ function initPlaylistsPage() {
             }
         }
 
+        // Fetch titles for individual videos if they default to "Video"
+        for (const [id, title] of addedVideosMap.entries()) {
+            if (title === "Video") {
+                try {
+                    const actualTitle = await fetchVideoTitle(id);
+                    if (actualTitle && actualTitle !== "Video") {
+                        addedVideosMap.set(id, actualTitle);
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch title for video: " + id, e);
+                }
+            }
+        }
+
         const videos = [];
         
         // Add parsed videos
@@ -577,7 +616,9 @@ function initPlaylistsPage() {
         const removeIds = Array.from(removeVideoIdSet).filter((id) => Video.isValidYouTubeId(id));
 
         for (const [idx, id] of addIds.entries()) {
-            await Playlist.addVideo(state.editingPlaylistId, { id, title: `Video ${idx + 1}`, kind: "video" });
+            const actualTitle = await fetchVideoTitle(id);
+            const title = (actualTitle === "Video") ? `Video ${idx + 1}` : actualTitle;
+            await Playlist.addVideo(state.editingPlaylistId, { id, title, kind: "video" });
         }
         for (const [idx, id] of playlistFallbacks.entries()) {
             await Playlist.addVideo(state.editingPlaylistId, { id, title: `Playlist ${idx + 1}`, kind: "playlist" });

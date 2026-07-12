@@ -38,4 +38,13 @@ public class PlaylistProxyController {
         );
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Fetch video title from YouTube.
+     */
+    @GetMapping("/video")
+    public ResponseEntity<Map<String, String>> getVideo(@RequestParam String videoId) {
+        String title = playlistProxyService.fetchVideoTitle(videoId);
+        return ResponseEntity.ok(Map.of("id", videoId, "title", title));
+    }
 }
